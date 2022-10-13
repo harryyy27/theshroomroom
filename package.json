@@ -9,7 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "bcrypt": "^5.0.1",
+    "mongodb": "^4.10.0",
+    "mongoose": "^6.6.2",
     "next": "12.2.5",
+    "next-auth": "^4.12.2",
+    "nodemailer": "^6.8.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
