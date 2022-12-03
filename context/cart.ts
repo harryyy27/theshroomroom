@@ -1,27 +1,41 @@
-import {createContext, useEffect,useState} from 'react';
-interface ProductInterface{
-    _id: String,
-    quantity: Number,
-    name: String,
-    price: Number,
-    image: String
-}
+import {createContext,Dispatch,SetStateAction} from 'react';
+import {Product} from '../utils/types';
+
 interface ContextInterface {
-    cart:{ items:ProductInterface[]},
-    subTotal: Number,
-    total: Number,
-    shipping: Number,
+    state: {
+        cart:{ items:Product[]},
+        subTotal: Number,
+        total: Number,
+        shipping: Number,
+        shippingMethod:String,
+        totalQuantity:Number
+
+    },
     loaded: Boolean,
-    saveCart?: ()=>void,
+    dispatch: Dispatch<{
+        type: String,
+        payload: { items:Product[]}
+    }>|undefined,
+    setLoaded:Dispatch<SetStateAction<boolean>>|undefined,
+    saveCart?: (product:Product)=>Promise<void>|undefined,
 }
 const defaultState={
-    cart: {
-        items:[]
+    state: {
+        cart: {
+            items:[]
+        },
+        subTotal:0,
+        total:5,
+        shipping:5,
+        shippingMethod:"Standard",
+        totalQuantity:0
     },
+    dispatch:undefined,
+    loaded: false,
+    setLoaded:undefined,
+    saveCart:undefined
 }
 const CartContext = createContext<ContextInterface>(defaultState);
-
-
 
 
 export {CartContext};

@@ -1,0 +1,198 @@
+
+.header {
+    color: white;
+    background-image: url('/Mushies.webp');
+    background-size: cover;
+    position: relative;
+    height:12rem;
+}
+
+
+
+@media(max-width:767px){
+    .nav {
+        height:100%;
+        position:relative;
+    }
+    .nav-list {
+        position:fixed;
+        width:100%;
+        height:100vh;
+        z-index: 90;
+        padding:0;
+        background-color: rgba(0,0,0,0.7);
+        top:0;
+        overflow-y:scroll;
+        overflow-x:hidden;
+    }
+    .nav-list::-webkit-scrollbar {
+            display: none;
+    }
+    
+    .nav-heading {
+        display:block;
+        width: 40%;
+        margin: auto;
+        border-bottom: 1px solid white;
+        font-size: 1.5rem;
+        padding-bottom: 0.5rem;
+
+    }
+    .nav-element {
+        text-align: center;
+        padding-left:0;
+        margin-bottom:1rem;
+    }
+    .hello {
+        padding-top: 1rem;
+        font-size: 2rem;
+        text-align: center;
+        width: 60%;
+        margin:auto;
+        padding-bottom: 1rem; 
+        margin-bottom: 1rem;
+    }
+    .title {
+        text-align:center;
+        text-shadow: 2px 2px #000;
+        margin:0;
+    }
+    .title-bar-element {
+        position:absolute;
+    }
+    .title-bar {
+        padding-top:1rem;
+        position:static;
+
+    }
+    .title-bar > div:first-child{
+        text-align:right;
+        top: 1rem;
+        right:0.5rem;
+    }
+    .title-bar> :nth-child(2){
+        top:50%;
+        transform:translate(-50%,-50%);
+        left:50%;
+        width:100%;
+    }
+    .sub-menu{
+        padding:0;
+        padding-top: 0.5rem;
+    }
+    .sub-menu-element {
+        padding-bottom:0.5rem;
+
+    }
+    .mobile-menu-visibility {
+        display: none !important;
+    }
+    .burger-menu-container {
+        width:2rem;
+        height:2rem;
+        cursor: pointer;
+        position:absolute;
+        left: 1rem;
+        z-index:100;
+    }
+    .burger-menu-element{
+        margin:20px 0px;
+        display:block;
+        width:2rem;
+        height:0.4rem;
+        background-color:white;
+        position:absolute;
+        top:0.8rem;
+    }
+    .burger-menu-element:before {
+        position:absolute;
+        display:block;
+        width:2rem;
+        height:0.4rem;
+        background-color:white;
+        content: '';
+        top:-0.8rem;
+    
+    }
+    .burger-menu-element:after {
+        position:absolute;
+        top: 0.8rem;
+        display:block;
+        width:2rem;
+        height:0.4rem;
+        background-color:white;
+        content: '';
+    
+    }
+}
+@media(min-width:768px){
+    .burger-menu-container {
+        display: none;
+
+    }
+    .nav-list{
+        width:100%;
+        color: red;
+        display: flex;
+        justify-content: space-around;
+        position:absolute;
+        bottom:0;
+        align-items: flex-end;
+    }
+    .nav-element {
+        color:red;
+        font-size: 30px;
+    }
+    .nav-heading {
+        transform:translateX(-50%);
+    }
+    .nav-element:hover {
+        text-shadow: 1px 1px 1px #fff, -1px -1px 1px #fff, 1px -1px 1px #fff,-1px 1px 1px #fff;
+    }
+    .nav-element:hover > .sub-menu {
+        display: block;
+    
+    }
+    .header-bar {
+        color:red;
+    }
+    .title-bar-element {
+        width:33%;
+        text-align:center;
+    }
+    .title-bar {
+        display: flex;
+        justify-content:space-evenly;
+    }
+    .title-bar > div:last-child{
+        text-align:right;
+        align-self:flex-start;
+        padding-top:1rem;
+    }
+    .title-bar > div:first-child{
+        display: flex;
+        align-self: flex-start;
+        justify-content: flex-start;
+        padding-top:1rem;
+    }
+    .title {
+        font-size: 50px;
+        text-shadow: 2px 2px #000;
+        transform:translateY(3rem);
+        width:100%;
+
+    }
+    .sub-menu {
+        display: none;
+        background: black;
+        opacity: 0.8;
+        position: absolute;
+        padding-right: 1rem;
+        z-index: 10;
+        transform:translateX(-50%);
+    }
+    .toolbar-element {
+        padding: 0 1rem;
+        cursor: pointer;
+    }
+}

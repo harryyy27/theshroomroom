@@ -1,93 +1,110 @@
-import { getSession } from "next-auth/react"
-import { useEffect, useState } from "react"
 
+import { loadStripe } from '@stripe/stripe-js';
+import {
+    Elements
+  } from "@stripe/react-stripe-js";
+import Stripe from "stripe";
+const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
+  );
+// import {useEffect,useContext} from 'react';
+import {parseCookies, setCookie} from 'nookies'
+import CheckoutForm from '../components/checkout-form'
+import { getSession, getCsrfToken } from 'next-auth/react';
+import { Product } from '../utils/types'
+import { v4 as uuidv4 } from 'uuid';
+import errorHandler from '../utils/errorHandler'
 
+export default function Checkout({paymentIntent}:any){
+    
+    // const context = useContext(CartContext);
+    // useEffect(()=>{
 
-export default function Checkout(){
-    const [dFirstName,setDFirstName]=useState('');
-    const [dSurname,setDSurname]=useState('');
-    const [dFirstLine,setDFirstLine]=useState('');
-    const [dSecondLine,setDSecondLine]=useState('');
-    const [dCity,setDCity]=useState('');
-    const [dPostcode,setBPostcode]=useState('');
-    const [bFirstName,setBFirstName]=useState('');
-    const [bSurname,setBSurname]=useState('');
-    const [bFirstLine,setBFirstLine]=useState('');
-    const [bSecondLine,setBSecondLine]=useState('');
-    const [bCity,setBCity]=useState('');
-    const [bPostcode,setDPostcode]=useState('');
-    const [user,setUser]=useState({})
-    useEffect(()=>{
-        const initiate = async()=>{
-            const session = await getSession()
-            if(session){
-                fetch(`http://localhost:3000/api/getUser/email=${session.user.email}`)
-                .then((res)=>{
-                    return res.json()
-                })
-                .then((res)=>{
-                        console.log(res)
-                        // for(var i:Number=0;i<objkeys.length;i++){
-                        //     console.log(document.getElementById(objkeys[i]))
-                        //     console.log(document.getElementById(objkeys[i]).value)
-                        //     document.getElementById(objkeys[i]).value=res.user.address[objkeys[i]]
-                        // }
-                        setUser(res.user)
-                        setDFirstName(res.user.dAddress.surname);
-                        setDSurname(res.user.dAddress.surname);
-                        setDFirstLine(res.user.dAddress.firstLine);
-                        setDSecondLine(res.user.dAddress.secondLine);
-                        setDCity(res.user.dAddress.city);
-                        setDPostcode(res.user.dAddress.postcode);
-                        setBFirstName(res.user.bAddress.surname);
-                        setBSurname(res.user.bAddress.surname);
-                        setBFirstLine(res.user.bAddress.firstLine);
-                        setBSecondLine(res.user.bAddress.secondLine);
-                        setBCity(res.user.bAddress.city);
-                        setBPostcode(res.user.bAddress.postcode);
-                })
-            }
-        }
-        initiate()
-    },[])
+    // },[])
+    const options = {
+        clientSecret: paymentIntent.client_secret
+    }
+   
     
     return(
-        <div>
-            <h1>CHECK ME OUT</h1>
-            <form action="">
-                <h2>Delivery Address</h2>
-                <label htmlFor="dFirstName">First Name</label>
-                <input  id="dFirstName" value={dFirstName} onChange={(e)=>setDFirstName(e.target.value)}/>
-                <label htmlFor="dSurname">Surname</label>
-                <input id="dSurname" value={dSurname} onChange={(e)=>setDSurname(e.target.value)}/>
-                <label htmlFor="dFirstLine">Street name and number</label>
-                <input id="dFirstLine1" value={dFirstLine} onChange={(e)=>setDFirstLine(e.target.value)}/>
-                <label htmlFor="dSecondLine">2nd Line of address</label>
-                <input id="dSecondLine" value={dSecondLine} onChange={(e)=>setDSecondLine(e.target.value)}/>
-                <label htmlFor="dCity">City</label>
-                <input id="dCity" value={dCity} onChange={(e)=>setDCity(e.target.value)}/>
-                <label htmlFor="dPostcode">Postcode</label>
-                <input id="dPostcode" value={dPostcode} onChange={(e)=>setDPostcode(e.target.value)}/>
-                <label htmlFor="updates">Receive updates</label>
-                <input id="updates" type="checkbox" onChange={(e)=>setUpdates(e.target.checked)}/>
-                <h2>Billing Address</h2>
-                <label htmlFor="bFirstName">First Name</label>
-                <input  id="bFirstName" value={bFirstName} onChange={(e)=>setBFirstName(e.target.value)}/>
-                <label htmlFor="bSurname">Surname</label>
-                <input id="bSurname" value={bSurname} onChange={(e)=>setBSurname(e.target.value)}/>
-                <label htmlFor="bFirstLine">Street name and number</label>
-                <input id="bFirstLine1" value={bFirstLine} onChange={(e)=>setBFirstLine(e.target.value)}/>
-                <label htmlFor="bSecondLine">2nd Line of address</label>
-                <input id="bSecondLine" value={bSecondLine} onChange={(e)=>setBSecondLine(e.target.value)}/>
-                <label htmlFor="bCity">City</label>
-                <input id="bCity" value={bCity} onChange={(e)=>setBCity(e.target.value)}/>
-                <label htmlFor="bPostcode">Postcode</label>
-                <input id="bPostcode" value={bPostcode} onChange={(e)=>setBPostcode(e.target.value)}/>
-                <button type="submit" onClick={(e)=>placeOrder(e)}>Submit</button>
-            </form>
-        </div>
 
-
-
+            <Elements stripe={stripePromise} options={options}>
+                <CheckoutForm paymentIntent={paymentIntent}  />
+            </Elements>
     )
+}
+
+export const getServerSideProps =  async(ctx:any) => {
+    const {req,res} = ctx;
+    try {
+        const secret_key = process.env.STRIPE_SECRET_KEY as string;
+        var stripe = new Stripe(secret_key,{
+            apiVersion:"2022-08-01",
+            maxNetworkRetries:3
+        })
+        const sesh = await getSession(ctx)
+        const {Cart}= parseCookies(ctx)
+        let total;
+        if(sesh&&sesh.user&&sesh.user.cart){
+            total = sesh.user.cart.items.reduce((a:number,b:Product)=>{
+                return a+b.price
+            },0)
+
+        }
+        else if(Cart) {
+            console.log('CHECKOUT CARTTT',Cart)
+            total = JSON.parse(Cart).items.reduce((a:number,b:Product)=>{
+                return a+b.price
+            },0)
+        }
+
+        if(!sesh&&!Cart){
+            return {
+                redirect: {
+                  permanent: false,
+                  destination: "/",
+                },
+                props:{},
+              };
+        }
+        console.log('YO',total)
+        let paymentIntent;
+        const {paymentIntentId} = parseCookies(ctx)
+        if(paymentIntentId){
+            paymentIntent=await stripe.paymentIntents.retrieve(paymentIntentId)
+            if(paymentIntent.amount!==total*100){
+                
+                paymentIntent=await stripe.paymentIntents.update(paymentIntentId,{
+                    amount:total*100+500
+                })
+            }
+            return {
+                props: {
+                    paymentIntent:paymentIntent
+                }
+            }
+        }
+        const idempotencyKey = uuidv4();
+        paymentIntent = await stripe.paymentIntents.create({
+            amount: total*100+500,
+            currency: 'gbp',
+            automatic_payment_methods: {
+                enabled: true,
+              },
+            
+        },{
+            idempotencyKey:idempotencyKey
+        })
+        setCookie(ctx,'paymentIntentId',paymentIntent.id)
+        return {
+            props: {
+                paymentIntent:paymentIntent,
+            }
+        }
+    }
+    catch(e){
+        await errorHandler(JSON.stringify(req.headers),req.body?JSON.stringify(req.body):'no body',req.method, e.message,e.stack,false)
+        console.log(e)
+    }
+    
 }

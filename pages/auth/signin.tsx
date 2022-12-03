@@ -1,16 +1,13 @@
-import {signIn,getCsrfToken} from "next-auth/react";
-import {useState,FormEvent, useContext} from 'react';
-import {CartContext} from '../../context/cart'
-import {getSession} from 'next-auth/react';
-import Router from 'next/router';
+import {useState,FormEvent} from 'react';
+import {signIn,getCsrfToken} from 'next-auth/react';
+import Link from 'next/link'
 export default function SignIn(){
     const [username,setUsername] =useState('');
     const [password,setPassword]= useState('');
-    const [message,setMessage] =useState(null);
+    const [message,setMessage] =useState<string|null>(null);
     const signInUser=async(e:FormEvent) => {
         try {
             e.preventDefault();
-    
             let options = {redirect:false,username,password}
     
             const res= await signIn("credentials",options);
@@ -25,19 +22,32 @@ export default function SignIn(){
             }
 
         }
-        catch(e){
-            console.log(e)
+        catch(error){
+            await fetch('/api/clientSideError',{
+                method:"POST",
+                headers: {
+                    "csrfToken": await getCsrfToken() as string,
+                    "client-error": "true"
+                },
+                body:JSON.stringify({
+                    error:error.message,
+                    stack:error.stack
+                })
+            })
+            setMessage('We\'re sorry something has gone wrong. Please try again later')
+            
         }
     }
     return(
         <>
-                    <form method="post">
+                    <form method="POST">
                         <label htmlFor="username">Username</label>
                         <input id="username" type="email" placeholder="Enter email here" value={username} onChange={e =>setUsername(e.target.value)}/>
                         <label htmlFor="password">Password</label>
                         <input id="password" type="password" placeholder="Enter password here" value={password} onChange={e=>setPassword(e.target.value)}/>
-                        <button onClick={(e)=>signInUser(e)}type="submit">Sign In</button>
-
+                        <button onClick={async(e)=>await signInUser(e)}type="submit">Sign In</button>
+                        <Link href="/forgotten-password"><a>forgotten password?</a></Link>
+                        
                     </form>
                     <p style={{color:"red"}}>{message}</p>
                     </>

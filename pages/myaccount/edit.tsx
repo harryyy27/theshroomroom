@@ -1,6 +1,7 @@
 import {useState, useEffect, FormEvent} from 'react';
-import {getSession,signIn} from 'next-auth/react';
-import LoadingIndicator from '../../components/loadingIndicator'
+import {getCsrfToken, getSession,signIn} from 'next-auth/react';
+import LoadingIndicator from '../../components/loadingIndicator';
+import authenticate from '../../utils/authenticationRequired';
 
 export default function Edit(){
     const [loading, setLoading]=useState(true);
@@ -63,29 +64,63 @@ export default function Edit(){
 
     },[])
     async function editUser(e:FormEvent){
-        e.preventDefault()
-        const body = {
-            ...user,
-            address:
-            {
-                firstName:firstName,
-                surname: surname,
-                firstLine: firstLine,
-                secondLine:secondLine,
-                city:city,
-                postcode:postcode
-            },
-            updates:updates
+        try{
+            e.preventDefault()
+            const body = {
+                ...user,
+                dAddress:
+                {
+                    firstName:dFirstName,
+                    surname: dSurname,
+                    firstLine: dFirstLine,
+                    secondLine:dSecondLine,
+                    city:dCity,
+                    postcode:dPostcode
+                },
+                bAddress:
+                {
+                    firstName:bFirstName,
+                    surname: bSurname,
+                    firstLine: bFirstLine,
+                    secondLine:bSecondLine,
+                    city:bCity,
+                    postcode:bPostcode
+                },
+                updates:updates
+            }
+            console.log(body)
+            // const requestHeaders: HeadersInit = new Headers();
+            const csrftoken =await getCsrfToken()
+            if(!csrftoken){
+                throw new Error('Csrf token failure, no csrfin')
+            }
+            const res = await fetch('http://localhost:3000/api/editUser',{
+                method:"POST",
+                headers: {
+                    csrftoken: csrftoken
+                },
+                body: JSON.stringify(body)
+            })
+            setMessage('Successfully updated profile')
+            setTimeout((e)=>{
+                setMessage('')
+            },1500)
+
         }
-        console.log(body)
-        const res = await fetch('http://localhost:3000/api/editUser',{
-            method:"POST",
-            body: JSON.stringify(body)
-        })
-        setMessage('Successfully updated profile')
-        setTimeout((e)=>{
-            setMessage('')
-        },1500)
+        catch(e){
+            await fetch('/api/clientSideError',{
+                method:"POST",
+                headers: {
+                    "csrfToken": await getCsrfToken() as string,
+                    "client-error": "true"
+                },
+                body:JSON.stringify({
+                    error:e.message,
+                    stack:e.stack
+                })
+            })
+            setMessage('We\'re sorry something has gone wrong. Please try again later')
+        }
     }
 
     return(
@@ -140,3 +175,10 @@ export default function Edit(){
     )
 }
 
+export async function getServerSideProps(ctx:any){
+    return authenticate(ctx,({session}:any)=>{
+        return {
+            props: session
+        }
+    })
+}

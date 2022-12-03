@@ -5,11 +5,11 @@ const { DB_URL } = process.env
 
 // connection function
 export default async function connect() {
-  const conn = await mongoose
-    .connect(DB_URL as string)
-    .catch(err => console.log(err))
+  if(process.env.NODE_ENV!=='test'){
+    const conn = await mongoose
+      .connect(DB_URL as string)
+      .catch(err => console.log(err))
+    return conn
 
-
-
-  return conn
+  }
 }

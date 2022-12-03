@@ -2,27 +2,120 @@ import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import connect from "../../../utils/connection";
 import {User} from "../../../utils/schema";
-import {Credentials} from "../../../utils/types"
-import bcrypt from 'bcrypt';
+import signInUser from "../../../utils/nextAuthUtils";
+import {UserSchema} from '../../../utils/types'
+import {Session} from 'next-auth';
+import ErrorHandler from '../../../utils/errorHandler';
+export async function findUser(credentials:Record<string,string>|undefined):Promise<{user?:UserSchema,error?:any,stack?:any,password?:string}|undefined>{
+    try{
+        if(!credentials){
+            throw new Error('Credentials not provided.')
+        }
+        if(!credentials.username){
+            throw new Error('No username provided.')
+        }
+        if(!credentials.password){
+            throw new Error('No password provided.')
+        }
+        const username= credentials?.username;
+        const password = credentials?.password;
+        const user = await User().findOne({username:username})
+        if(user){
+            return {user,password}
+        }
+        else {
+            
+            throw new Error("You haven't registered yet.")
+        }
+
+    }
+    catch(e:any){
+        return {
+            error:e.message,
+            stack:e.stack
+        }
+    }
+}
+export async function setupSession(session: Session){
+    try{
+        if(session&&session.user){
+            var email=session.user.email
+            var data = await User().findOne({username:email})
+            session.user.name=data.name
+            session.user.cart= data.cart
+            session.user.id=data._id
+            session.user.dAddress=data.dAddress
+            session.user.bAddress=data.bAddress
+        }
+
+    }
+    catch(e:any){
+        await ErrorHandler('next-auth-callback-headers',JSON.stringify(session),'GET',e.error,e.stack,false)
+
+
+        session.user.cart = {
+            items:[]
+        }
+
+    }
+    
+    return session
+
+}
+
+export async function getUser(creds:{user?:UserSchema,error?:any,stack?:any,password?:string}|undefined){
+    try{
+        if(creds?.error){
+            throw new Error(creds.error)
+        }
+        if(creds?.user&&creds?.password){
+            var {user,password}=creds;
+        }
+        else {
+            throw new Error('Creds wrong')
+        }
+        if(password&&user.password){
+            const confirmedUser= await signInUser(user.password,password)
+            if(confirmedUser){
+                return {
+                    email:user.username
+                }
+            }
+            else {
+                throw new Error("Sign in failed.")
+            }
+
+        }
+        else {
+            throw new Error("No password detected.")
+        }
+        
+
+    }
+    catch(e:any){
+        return {
+            error:e.message,
+            stack:e.stack
+        }
+    }
+}
 export default NextAuth({
     providers: [
         CredentialsProvider({
             name: "Credentials",
-            async authorize(credentials, req){
-                await connect();
-                const username= credentials.username;
-                const password = credentials.password;
-                const user = await User.findOne({username})
-                console.log(user)
-                console.log('yo')
-                if(!user){
-                    throw new Error("You haven't registered yet")
-                }
-                else {
-
-                    const confirmedUser= await signInUser({user,password})
-                    return confirmedUser
-                }
+            authorize: async(credentials, req)=>{
+                    await connect();
+                    console.log(credentials)
+                    const creds = await findUser(credentials)
+                    
+                    const user = await (getUser(creds) as any)
+                    if(user.error){
+                        await ErrorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,user.error,user.stack,false)
+                        throw new Error(user.error)
+                    }
+                    else {
+                        return user
+                    }
 
             },
             credentials: {
@@ -51,34 +144,10 @@ export default NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         async session({session,user,token}){
-            console.log("session",session)
-            console.log("user",user)
-            console.log("token",token)
-            if(session){
-                var email=session.user.email
-                var data = await User.findOne({email})
-                session.user.cart= data.cart
-            }
-            else {
-                session.user.cart = []
-            }
-            console.log(session)
-            
-            return session
+            const sesh = await setupSession(session)
+            return sesh
         }
     }
     
 })
 
-const signInUser = async({user,password})=> {
-    if(!password){
-        throw new Error("Please enter password")
-    }
-    const isMatch = await bcrypt.compare(password,user.password)
-    console.log('YO')
-    if(!isMatch){
-        throw new Error("Password incorrect")
-    }
-    user.email= user.username
-    return user
-}

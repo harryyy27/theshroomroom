@@ -12,12 +12,17 @@ const ProductSchema = new Schema({
     price: {
         type: Number,
         required:true
+    },
+    productType: {
+        type:String,
+        required:false
     }
 })
 // OUR TODO MODEL
-const Product = models.Product || model("Product", ProductSchema)
+const Product = function(){
+    return models.Product || model("Product", ProductSchema)
+}
 
-export {Product}
 
 const UserSchema=new Schema({
 
@@ -60,7 +65,8 @@ const UserSchema=new Schema({
     dAddress: {
         firstName: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         },
         surname: {
             type: String,
@@ -68,53 +74,233 @@ const UserSchema=new Schema({
         },
         firstLine: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         },
         secondLine: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         },
         city: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         },
         postcode: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         }
     },
     bAddress: {
         firstName: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         },
         surname: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         },
         firstLine: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         },
         secondLine: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         },
         city: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         },
         postcode: {
             type: String,
-            required: false
+            required: false,
+            default: ''
         }
     },
     updates: {
         type: Boolean,
+        default:false,
         required: true
     }
 })
-
-const User = models.User || model("User", UserSchema)
-
-export {User}
+const User = function(){
+    return models.User || model("User", UserSchema)
+}
+const OrderSchema=new Schema({
+    userId: {
+        type:String,
+        required: false
+    },
+    email: {
+        type:String,
+        required:true
+    },
+    guestCheckout: {
+        type:Boolean,
+        required: false
+    },
+    dAddress: {
+        firstName: {
+            type:String,
+            required: true
+        },
+        surname: {
+            type:String,
+            required:true
+        },
+        firstLine: {
+            type:String,
+            required: true
+        },
+        secondLine: {
+            type:String,
+            required:false
+        },
+        city: {
+            type:String,
+            required:true
+        },
+        postcode: {
+            type:String,
+            required:true
+        }
+    },
+    bAddress: {
+        firstName: {
+            type:String,
+            required:true
+        },
+        surname: {
+            type:String,
+            required:true
+        },
+        firstLine: {
+            type:String,
+            required:true
+        },
+        secondLine: {
+            type:String,
+            required:false
+        },
+        city: {
+            type:String,
+            required:true
+        },
+        postcode: {
+            type:String,
+            required:true
+        }
+    },
+    products: {
+        items: [{
+            _id: {
+                type:String,
+                required:true
+            },
+            quantity: {
+                type:Number,
+                required:true
+            },
+            name: {
+                type:String,
+                required:true
+            },
+            price: {
+                type:Number,
+                required:true
+            }
+        }]
+    },
+    paymentIntentId: {
+        type:String,
+        required:true
+    },
+    dateOfPurchase: {
+        type:Date,
+        required:true
+    },
+    shippingMethod: {
+        type:String,
+        required:true
+    },
+    shippingCost: {
+        type:Number,
+        required:true
+    },
+    subtotal: {
+        type:Number,
+        required:true
+    },
+    total: {
+        type:Number,
+        required:true
+    },
+    error: {
+        type:String,
+        required: true
+    },
+    status:{
+        type:String,
+        required:true
+    }
+})
+const Order = function(){
+    return models.Order || model("Order", OrderSchema)
+}
+const PasswordReset = new Schema({
+    passwordResetToken: {
+        type: String,
+        required: true,
+    },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+    expireAt: {
+        type: Date,
+        default: Date.now,
+        index: { expires: '60m' },
+    },
+})
+const PasswordResetToken = function(){
+    return models.PasswordReset || model("PasswordReset",PasswordReset)
+}
+const ErrorSchema= new Schema({
+    reqHeaders: {
+        type: String,
+        required: true
+    },
+    reqBody: {
+        type: String,
+        required: true
+    },
+    reqMethod: {
+        type: String,
+        required: true
+    },
+    errorMessage: {
+        type:String,
+        required:true
+    },
+    callStack: {
+        type:String,
+        required: true
+    },
+    timestamp: {
+        type:Date,
+        required: true
+    }
+})
+const Errors = function(){
+    return models.Errors || model("Errors",ErrorSchema)
+}
+export {User,Order,Product,Errors,PasswordResetToken}
