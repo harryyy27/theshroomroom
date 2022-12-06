@@ -90,21 +90,23 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
         </>
     )
 }
-export async function getServerSideProps(){
+export async function getServerSideProps(ctx:any){
+    const {req,res} = ctx
     console.log('EVEN MORE PRE CONNECT')
+    console.log(req.headers.host)
     try {
-        const data= await fetch(`${process.env.ORIGIN_URL}/api/products/`)
-        const res = await data.json()
+        const data= await fetch(`https://${req.headers.host}/api/products/`)
+        var response = await data.json()
     
        
-        return {
-            props:{
-                mushrooms:[...res]
-            }
-        }
 
     }
     catch(e:any){
         console.log('error yo',e)
+    }
+    return {
+        props:{
+            mushrooms:[...response]
+        }
     }
 }
