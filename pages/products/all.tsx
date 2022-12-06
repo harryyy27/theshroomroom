@@ -95,7 +95,7 @@ export async function getServerSideProps(ctx:any){
     console.log('EVEN MORE PRE CONNECT')
     console.log(req.headers.host)
     try {
-        const data= await fetch(`https://${req.headers.host}/api/products/`)
+        const data= await fetch(`http://${req.headers.host}/api/products/`)
         var response = await data.json()
     
        
