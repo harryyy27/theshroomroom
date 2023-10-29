@@ -1,5 +1,7 @@
 
 import { loadStripe } from '@stripe/stripe-js';
+import {Metadata} from '../utils/metadata/metadata';
+import Head from 'next/head';
 import {
     Elements
   } from "@stripe/react-stripe-js";
@@ -27,10 +29,17 @@ export default function Checkout({paymentIntent}:any){
    
     
     return(
-
-            <Elements stripe={stripePromise} options={options}>
-                <CheckoutForm paymentIntent={paymentIntent}  />
-            </Elements>
+            <>
+                <Head>
+                    <title>Mycotanical garden - rare, healthy, London grown lion's mane mushrooms</title>
+                    <meta name="description" content="Discover the Power of Lion's Mane Mushrooms! 🍄 Elevate your well-being with our premium Lion's Mane mushrooms - nature's brain booster and immunity enhancer. Handpicked for quality and potency, our organic Lion's Mane products are a natural path to mental clarity and vitality. Explore our range of fresh and dried Lion's Mane mushrooms today and experience the unmatched benefits of this extraordinary fungi. Your journey to optimal health starts here."/>
+                    <meta property="og:title" content="Mycotanical garden - buy our high quality lion's mane mushrooms here"/>
+                    <meta property="og:description" content="Reap the rewards of adding this healthy, medicinal and delicious mushroom to your diet"/>
+                </Head>
+                <Elements stripe={stripePromise} options={options}>
+                    <CheckoutForm paymentIntent={paymentIntent}  />
+                </Elements>
+            </>
     )
 }
 
@@ -52,7 +61,6 @@ export const getServerSideProps =  async(ctx:any) => {
 
         }
         else if(Cart) {
-            console.log('CHECKOUT CARTTT',Cart)
             total = JSON.parse(Cart).items.reduce((a:number,b:Product)=>{
                 return a+b.price
             },0)
@@ -67,7 +75,6 @@ export const getServerSideProps =  async(ctx:any) => {
                 props:{},
               };
         }
-        console.log('YO',total)
         let paymentIntent;
         const {paymentIntentId} = parseCookies(ctx)
         if(paymentIntentId){
@@ -104,7 +111,6 @@ export const getServerSideProps =  async(ctx:any) => {
     }
     catch(e:any){
         await errorHandler(JSON.stringify(req.headers),req.body?JSON.stringify(req.body):'no body',req.method, e.message,e.stack,false)
-        console.log(e)
     }
     
 }

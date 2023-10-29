@@ -12,7 +12,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             throw new Error('No csrf header found.')
         }
         const csrfClient=req.headers.csrftoken;
-        const csrfServer = await getCsrfToken({req});
+        const csrfServer = await getCsrfToken({req:{headers:req.headers}});
         if(csrfClient !== csrfServer){
             throw new Error('CSRF authentication failed.')
         }
@@ -20,13 +20,12 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         const emailStr=email.email
         await connect()
         const deleted = await User().deleteOne({username:emailStr})
-        console.log(deleted)
         res.status(200).json({message:"Successfully deleted account"})
 
     }
     catch(e:any){
-        console.log(e)
-        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.error,e.stack,false)
+        console.log(e.error)
+        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.message,e.stack,false)
 
         res.status(500).json({error:e.message})
     }

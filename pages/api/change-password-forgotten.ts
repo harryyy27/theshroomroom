@@ -6,27 +6,22 @@ import errorHandler from '../../utils/errorHandler';
 import bcrypt from 'bcrypt';
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
     try{
-        console.log('oiii')
         if(req.method!=="PUT"){
             throw new Error('Not post request.')
         }
         if(!req.headers.csrftoken){
             throw new Error('No csrf header found.')
         }
-        const csrftoken = await getCsrfToken({req})
+        const csrftoken = await getCsrfToken({req:{headers:req.headers}})
         if(req.headers.csrftoken!==csrftoken){
             throw new Error('CSRF authentication failed.')
         }
         
         await connect()
-        console.log('OI')
         const body = JSON.parse(req.body);
         const messageToClient=await User().findOne({username:body.username})
         if(messageToClient){
-            console.log(body.passwordResetToken);
-            console.log(messageToClient._id)
             const token= await PasswordResetToken().findOneAndDelete({passwordResetToken:body.passwordResetToken,userId:messageToClient._id})
-            console.log('TOOOOOOKEN')
             if(!token){
                 res.status(403).json({message:"Unauthorised attempt to change password"})
             }
@@ -47,8 +42,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
     }
     catch(e:any){
-        console.log(e)
-        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.error,e.stack,false)
+        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.message,e.stack,false)
 
         res.status(500).json({error:e.message})
     }

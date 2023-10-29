@@ -30,6 +30,7 @@ declare module "next-auth" {
           city: String,
           postcode: String,
       },
+      updates:boolean
 
     }
   }

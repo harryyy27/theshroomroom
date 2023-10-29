@@ -22,10 +22,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         const messageToClient=await User().findOne({username:body.username})
 
         const isMatch = await bcrypt.compare(body.currentPassword,messageToClient.password)
-        console.log(isMatch)
         if(isMatch){
             const salt = await bcrypt.genSalt(10);
-            console.log(salt)
             const newPassword = await bcrypt.hash(body.newPassword,salt)
             await User().findOneAndUpdate({
                 username:body.username
@@ -42,7 +40,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     }
     catch(e:any){
         console.log(e)
-        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.error,e.stack,false)
+        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.message,e.stack,false)
 
         res.status(500).json({error:e.message})
     }

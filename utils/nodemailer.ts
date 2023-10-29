@@ -5,8 +5,8 @@ const OAuth2 = google.auth.OAuth2;
 interface mailOptions {
     subject: string,
     text?: string|undefined,
-    to: string,
-    from: string,
+    to: string|undefined,
+    from: string|undefined,
     html?:string|undefined,
 
 }
@@ -36,7 +36,7 @@ const createTransporter = async () => {
           accessToken,
           clientId: process.env.GOOGLEAPI_OAUTH_CLIENT_ID,
           clientSecret: process.env.GOOGLEAPI_OAUTH_CLIENT_SECRET,
-          refreshToken: process.env.REFRESH_TOKEN
+          refreshToken: process.env.OAUTH_REFRESH_TOKEN
         }
       });
       return transporter;
@@ -45,7 +45,6 @@ const createTransporter = async () => {
 const sendEmail = async (emailOptions:mailOptions)=>{
     let emailTransporter = await createTransporter();
     await emailTransporter.sendMail(emailOptions)
-    console.log('errrr')
 }
 
 export {sendEmail}

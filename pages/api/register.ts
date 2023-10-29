@@ -10,7 +10,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse) {
             if(!req.headers.csrftoken){
                 throw new Error('No csrf header found.')
             }
-            const csrftoken = await getCsrfToken({req})
+            const csrftoken = await getCsrfToken({req:{headers:req.headers}})
             if(req.headers.csrftoken!==csrftoken){
                 throw new Error('CSRF authentication failed.')
             }

@@ -14,7 +14,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         if(!req.headers.csrftoken){
             throw new Error('No csrf header found.')
         }
-        const csrftoken = await getCsrfToken({req})
+        const csrftoken = await getCsrfToken({req:{headers:req.headers}})
         if(req.headers.csrftoken!==csrftoken){
             throw new Error('CSRF authentication failed.')
         }
@@ -27,7 +27,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 passwordResetToken:token,
                 userId: messageToClient._id
             })
-            console.log(resetToken)
             resetToken.save()
             await sendEmail({
                 subject: "Password reset",
@@ -45,7 +44,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     }
     catch(e:any){
         console.log(e)
-        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.error,e.stack,false)
+        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.message,e.stack,false)
 
         res.status(500).json({error:e.message})
     }

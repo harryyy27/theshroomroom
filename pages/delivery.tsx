@@ -1,7 +1,16 @@
+import Head from 'next/head';
+import {Metadata} from '../utils/metadata/metadata';
+
 export default function Delivery(){
     return (
-        <>
-        <h1>Delivery</h1>
+        <div className="static-container">
+            <Head>
+                <title>{Metadata["delivery"]["title"]}</title>
+                <meta name="description" content={Metadata["delivery"]["description"]}/>
+                <meta property="og:title" content={Metadata["delivery"]["title"]}/>
+                <meta property="og:description" content={Metadata["delivery"]["description"]}/>
+            </Head>
+        <h1 className="main-heading">Delivery</h1>
         <section>
             <h2>Mushies</h2>
             <p>
@@ -15,6 +24,6 @@ export default function Delivery(){
             </p>
 
         </section>
-        </>
+        </div>
     )
 }

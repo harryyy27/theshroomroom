@@ -27,12 +27,9 @@ describe("1) Throw error for non post requests. 2) Throw error for no csrf heade
         const mockConnectValue: string = 'connected';
         // jest.spyOn(User.prototype,"save")
         await deleteaccount(req,res)
-        console.log(Object.getOwnPropertyNames(res))
-        console.log(res._getStatusCode())
         expect(res._getStatusCode()).toBe(500)
         const received = await res._getData()
         const jsonReceived = await JSON.parse(received).error
-        console.log(jsonReceived)
        
         expect(jsonReceived).toEqual("Not delete request.")
     })
@@ -54,7 +51,6 @@ describe("1) Throw error for non post requests. 2) Throw error for no csrf heade
         await deleteaccount(req,res)
         expect(res._getStatusCode()).toBe(500)
         const received = res._getData()
-        console.log(Object.getOwnPropertyNames(received))
         const jsonReceived = JSON.parse(received).error
         expect(jsonReceived).toEqual("No csrf header found.")
 
