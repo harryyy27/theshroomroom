@@ -95,7 +95,7 @@ export default function ProductDetails(){
             </section>
             <section className="text-section">
                 <h1 className="main-heading product-heading" id="productName">{name?name:null} </h1>
-                <p id="productDescription">{description?description:null} Learn more about <a className="link"href="/whatwegrow">{name}</a>.</p>
+                <p id="productDescription">{description?description:null} Learn more about <a className="link"href="/what-we-grow">{name}</a>.</p>
                 <div role="listbox" aria-label="select fresh or dry">
                 <button role="option"className="select-custom fresh-dry select-active" aria-selected={true}onClick={(e)=>{
                     setFresh(true);
