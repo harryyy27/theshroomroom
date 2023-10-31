@@ -78,7 +78,7 @@ export default function Header(){
                                 (!session&& status!=="loading")?
                                 <>
                                     <span id="signIn"className={router.pathname.includes("signin")?styles["acc-link"]+ " "+styles["active-link"]:styles["acc-link"]} onClick={e=>signIn()} >Sign In</span>
-                                    <Link id="signUpDesktop" href="/auth/signup" passHref replace><span className={router.pathname.includes("signup")?styles["acc-link"]+ " "+styles["active-link"]:styles["acc-link"]}>Sign Up</span></Link>
+                                    <Link href="/auth/signup" passHref replace><span className={router.pathname.includes("signup")?styles["acc-link"]+ " "+styles["active-link"]:styles["acc-link"]}>Sign Up</span></Link>
                                 </>
                                 :
                                 <>
@@ -106,7 +106,7 @@ export default function Header(){
                                         signIn()
                                         menuOpen()
                                         }} >Sign In</span>
-                                    <button id="signUpMobile" className={router.pathname.includes("signup")?styles["acc-link"]+ " "+styles["active-link"]:styles["acc-link"]}><Link href="/auth/signup" passHref replace onClick={()=>menuOpen()}><span className={styles["toolbar-element"]}>Sign Up</span></Link></button>
+                                    <Link className={router.pathname.includes("signup")?styles["acc-link"]+ " "+styles["active-link"]:styles["acc-link"]}href="/auth/signup" passHref replace onClick={()=>menuOpen()}><span className={styles["toolbar-element"]}>Sign Up</span></Link>
                                 </div>
                                 :
                                 <div className={styles["acc-stuff"]}>
