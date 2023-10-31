@@ -13,7 +13,7 @@ export default async function ErrorHandler(headers:string,body:string,method:str
         timestamp: Date.now()
 
     })
-    console.log(error)
+    // console.log(error)
     error.save()
     try{
         sendEmail({
