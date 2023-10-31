@@ -13,7 +13,7 @@ export default function Wholesale(){
         </div>
         <div className={homeStyles["image-section"]}>
             <figure className={homeStyles["hero-image-wrap"]}>
-                <Image alt="hero mush" className={homeStyles["banner-image"]} fill sizes="(max-width: 480px) 480px, (max-width:767px) 767px, (max-width:1024px) 1024px,(max-width:1200px) 1200px" loading="lazy" src='/home/wholesale.jpg' placeholder="blur" blurDataURL='/home/wholesale.jpg' />
+                <Image alt="hero mush" className={homeStyles["banner-image"]} fill sizes="(max-width: 480px) 480px, (max-width:767px) 767px, (max-width:1024px) 1024px,(max-width:1200px) 1200px" priority src='/home/wholesale.jpg' placeholder="blur" blurDataURL='/home/wholesale.jpg' />
                 </figure>
         </div>
         </div>

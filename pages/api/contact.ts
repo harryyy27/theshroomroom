@@ -27,6 +27,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         }
     }
     catch(e:any){
+        console.log(e)
         await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.message,e.stack,false)
         res.status(500).json({
             success:false
