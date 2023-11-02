@@ -22,9 +22,9 @@ export default function Cart(){
     return(
         <div className="static-container">
                     <Head>
-                        <title>Mycotanical garden - rare, healthy, London grown lion's mane mushrooms</title>
+                        <title>Mega Mushrooms - rare, healthy, London grown lion's mane mushrooms</title>
                         <meta name="description" content="Discover the Power of Lion's Mane Mushrooms! 🍄 Elevate your well-being with our premium Lion's Mane mushrooms - nature's brain booster and immunity enhancer. Handpicked for quality and potency, our organic Lion's Mane products are a natural path to mental clarity and vitality. Explore our range of fresh and dried Lion's Mane mushrooms today and experience the unmatched benefits of this extraordinary fungi. Your journey to optimal health starts here."/>
-                        <meta property="og:title" content="Mycotanical garden - buy our high quality lion's mane mushrooms here"/>
+                        <meta property="og:title" content="Mega Mushrooms - buy our high quality lion's mane mushrooms here"/>
                         <meta property="og:description" content="Reap the rewards of adding this healthy, medicinal and delicious mushroom to your diet"/>
                     </Head>
                     {

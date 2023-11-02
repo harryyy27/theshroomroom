@@ -9,22 +9,22 @@ export default function Mushrooms(){
                 <meta property="og:title" content={Metadata["about"]["title"]}/>
                 <meta property="og:description" content={Metadata["about"]["description"]}/>
             </Head>
-            <h1 className="main-heading">Welcome to Mycotanical Garden: Cultivating Nature's Finest Fungi</h1>
+            <h1 className="main-heading">Welcome to Mega Mushrooms: Cultivating Nature's Finest Fungi</h1>
             <section>
-                <p>At Mycotanical Garden, our passion for mushrooms goes far beyond the ordinary. We are more than just cultivators; we are storytellers, advocates for sustainable living, and enthusiasts of the extraordinary world of fungi. Nestled amidst the serene landscapes, our garden is a testament to the beauty and potential of these remarkable organisms.</p>
+                <p>At Mega Mushrooms, our passion for mushrooms goes far beyond the ordinary. We are more than just cultivators; we are storytellers, advocates for sustainable living, and enthusiasts of the extraordinary world of fungi. Nestled amidst the serene landscapes, our garden is a testament to the beauty and potential of these remarkable organisms.</p>
 
-                <p>Our journey began with a fascination for the profound ecological roles mushrooms play in our world. Inspired by the harmony between fungi and nature, we embarked on a mission to bring the wonders of mushrooms closer to your table. Mycotanical Garden isn't merely a brand; it's a philosophy rooted in the belief that mushrooms, with their rich flavors and exceptional health benefits, can redefine the way we nourish our bodies.</p>
+                <p>Our journey began with a fascination for the profound ecological roles mushrooms play in our world. Inspired by the harmony between fungi and nature, we embarked on a mission to bring the wonders of mushrooms closer to your table. Mega Mushrooms isn't merely a brand; it's a philosophy rooted in the belief that mushrooms, with their rich flavors and exceptional health benefits, can redefine the way we nourish our bodies.</p>
 
                 <p>With meticulous care and unwavering dedication, we cultivate a diverse array of fungi, each with its unique story to tell. From the elegant Lion's Mane, celebrated for its cognitive-enhancing properties, to the earthy Shiitake, known for its immune-boosting virtues, our garden is a treasure trove of natural wonders.</p>
 
-                <p>Join us on this enchanting journey into the heart of Mycotanical Garden. Explore the magic, savor the flavors, and embrace the sustainability that mushrooms offer. Every mushroom we cultivate is a testament to our commitment to quality, ethics, and the celebration of nature's wisdom.</p>
+                <p>Join us on this enchanting journey into the heart of Mega Mushrooms. Explore the magic, savor the flavors, and embrace the sustainability that mushrooms offer. Every mushroom we cultivate is a testament to our commitment to quality, ethics, and the celebration of nature's wisdom.</p>
 
-                <p>Discover the world of mushrooms in a way you've never experienced before. Mycotanical Garden welcomes you to a place where fungi flourish, and where your culinary adventures and well-being find their perfect companions.</p>
+                <p>Discover the world of mushrooms in a way you've never experienced before. Mega Mushrooms welcomes you to a place where fungi flourish, and where your culinary adventures and well-being find their perfect companions.</p>
             </section>
             <section>
                 <h2>Our Vision: Redefining Nutrition, Enriching Communities, and Unveiling the Fungal Frontier</h2>
 
-                <p>At Mycotanical Garden, we envision a future where fungi aren't just a culinary delight but a cornerstone of a healthier, sustainable world. Our vision extends far beyond our Lion's Mane cultivation. We are on a mission to revolutionize diets, expand our horizons, and illuminate the diverse and transformative potential of fungi.</p>
+                <p>At Mega Mushrooms, we envision a future where fungi aren't just a culinary delight but a cornerstone of a healthier, sustainable world. Our vision extends far beyond our Lion's Mane cultivation. We are on a mission to revolutionize diets, expand our horizons, and illuminate the diverse and transformative potential of fungi.</p>
                 <ul>
                     <li>
                         <h3>Revolutionizing Diets:</h3>
@@ -49,12 +49,12 @@ export default function Mushrooms(){
                     </li>
                 </ul>
 
-                <p>At Mycotanical Garden, our vision isn't just a dream; it's a roadmap. We invite you to be a part of this transformative journey, where the wonders of fungi enrich lives, communities thrive, and the world embraces the extraordinary potential of mycology. Together, let's redefine the future, one mushroom at a time.</p>
+                <p>At Mega Mushrooms, our vision isn't just a dream; it's a roadmap. We invite you to be a part of this transformative journey, where the wonders of fungi enrich lives, communities thrive, and the world embraces the extraordinary potential of mycology. Together, let's redefine the future, one mushroom at a time.</p>
             </section>
             <section>
                 <h2>Our Commitment to Sustainability</h2>
 
-                <p>At Mycotanical Garden, our love for mushrooms is harmonized with a deep respect for our planet. Sustainability isn't just a buzzword for us; it's the very foundation upon which our practices are built.</p>
+                <p>At Mega Mushrooms, our love for mushrooms is harmonized with a deep respect for our planet. Sustainability isn't just a buzzword for us; it's the very foundation upon which our practices are built.</p>
                 <ul>
                     <li>
                         <h3>Eco-Friendly Cultivation:</h3> 
