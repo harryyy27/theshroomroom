@@ -11,9 +11,9 @@ export default function Mushrooms(){
             </Head>
             <h1 className="main-heading">Welcome to Mega Mushrooms: Cultivating Nature's Finest Fungi</h1>
             <section>
-                <p>We at Mega Mushrooms are a small, London based start up with a passion for all things fungi. We've seen many of the wonderful applications of fungi at work over the years, such as the yeasts used to brew alcohol and the penicillin used to cure bacterial infections and felt that it was time to explore the fungal kingdom further; by first bringing all the culinary delights it has to offer to your dinner plates.</p>
+                <p>Mega Mushrooms are a small, London based start up with a passion for all things fungi. We've seen many of the wonderful applications of fungi at work over the years, such as the yeasts used to brew alcohol and the penicillin used to cure bacterial infections and felt that it was time to explore the fungal kingdom further; by first bringing all the culinary delights it has to offer to your dinner plates.</p>
 
-                <p>We've refined our growing process over many iterations in order to offer you a delicious and medicinally potent lion's mane mushrooms at the best possible prices.</p>
+                <p>We've refined our growing process over many iterations in order to offer you delicious and medicinally potent lion's mane mushrooms at the best possible prices.</p>
             </section>
             <section>
                 <h2>Our Vision: Redefining Nutrition, Enriching Communities, and Unveiling the Fungal Frontier</h2>
@@ -46,11 +46,11 @@ export default function Mushrooms(){
                 <ul>
                     <li>
                         <h3>Eco-Friendly Cultivation:</h3> 
-                        <p>We employ eco-friendly cultivation methods that minimize our environmental footprint. From compostable substrates to water-efficient irrigation, we ensure our cultivation processes are as gentle on the Earth as they are bountiful. We have additional measures lined up to reduce our environmental impact further such as using the waste products from other local businesses.</p>
+                        <p>We employ eco-friendly cultivation methods that minimize our environmental footprint. From compostable substrates to biodegradable packaging, we ensure our cultivation processes are as gentle on the Earth as they are bountiful. We have additional measures lined up to reduce our environmental impact further e.g utilising the waste products from other local businesses.</p>
                     </li>
                     <li>
                         <h3>Waste Reduction:</h3> 
-                        <p>We're passionate about waste reduction. Our packaging materials are carefully chosen to be minimalistic, recyclable or biodegradable. We are now in the process of reducing this waste further by moving away from the traditional filter patch bags in favour of the more economic and reusable silicone boxes.</p>
+                        <p>We're passionate about waste reduction and ultimately aim to be a zero waste operation. Our current packaging materials are carefully chosen to be reusable, recyclable or biodegradable. We are now in the process of reducing this waste further by moving away from the traditional filter patch bags in favour of more economic and reusable silicone boxes.</p>
                     </li>
                 </ul>
             </section>

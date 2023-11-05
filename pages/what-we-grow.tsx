@@ -35,18 +35,18 @@ export default function WhatWeGrow(props:any) {
                 </li>
                 <li>
                 <h3>Health Benefits:</h3>
-                    <p>Lion's Mane mushroom is not just a culinary delight; it is also renowned for its potent medicinal properties. Rich in bioactive compounds, including polysaccharides, beta-glucans, and hericenones, Lion's Mane is believed to offer a wide array of health benefits. It is particularly famous for its potential neuroprotective effects, supporting brain health and cognitive function. Studies suggest that Lion's Mane may stimulate nerve growth factor (NGF) production, aiding in nerve regeneration and potentially offering therapeutic benefits for neurological disorders.</p>
-                    <p>Additionally, Lion's Mane is valued for its anti-inflammatory, immune-modulating, and antioxidant properties. It has been traditionally used in herbal medicine for centuries, particularly in Asian cultures, for various ailments and overall well-being.</p>
+                    <p>Lion's mane mushrooms are not just a culinary delight but also renowned for their potent medicinal properties. Rich in bioactive compounds, including polysaccharides, beta-glucans, and hericenones, lion's mane is believed to offer a wide array of health benefits. It is particularly famous for its potential neuroprotective effects, supporting brain health and cognitive function. Studies suggest that lion's mane may stimulate nerve growth factor (NGF) production, aiding in nerve regeneration and potentially offering therapeutic benefits for neurological disorders.</p>
+                    <p>Additionally, lion's mane are valued for their anti-inflammatory, immune-modulating and antioxidant properties. It has been traditionally used in herbal medicine for centuries, particularly in Asian cultures for various ailments and overall well-being.</p>
                 </li>
                 
                 <li>
                     <h3>Cultural Significance:</h3>
-                    <p>Lion's Mane mushroom has a rich cultural and historical significance. In traditional Chinese and Japanese medicine, it has been cherished for its healing properties, often regarded as a symbol of longevity, mental clarity, and spiritual potency. Ancient texts and scrolls extol its benefits, frequently associating it with wisdom and enlightenment.</p>
+                    <p>The lion's mane mushroom has a rich cultural and historical significance. In traditional Chinese and Japanese medicine, it has been cherished for its healing properties, often regarded as a symbol of longevity, mental clarity, and spiritual potency. Ancient texts and scrolls extol its benefits, frequently associating it with wisdom and enlightenment.</p>
                 </li>
                 
                 <li>
                     <h3>A Fungus of Fascination:</h3>
-                    <p>Beyond its practical uses, Lion's Mane mushroom continues to captivate mycologists, herbalists, and nature enthusiasts. Its unique appearance and multifaceted benefits make it a subject of scientific research and culinary exploration, contributing to its growing popularity in modern gastronomy and natural medicine.</p>
+                    <p>Beyond its practical uses, lion's mane mushrooms continue to captivate mycologists, herbalists, and nature enthusiasts. Its unique appearance and multifaceted benefits make it a subject of scientific research and culinary exploration, contributing to its growing popularity in modern gastronomy and natural medicine.</p>
                 </li>
             
 
