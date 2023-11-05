@@ -11,7 +11,7 @@ export default function Cookies(){
                 <meta property="og:title" content={Metadata["cookies"]["title"]}/>
                 <meta property="og:description" content={Metadata["cookies"]["description"]}/>
             </Head>
-        <h1 className="main-heading">COOKIESSSS</h1>
+        <h1 className="main-heading">COOKIES</h1>
         <p>Cookies are little text files stored on your computer that help us make your experience on this website as smooth as possible. These involve collecting stuff like session data and occasionally we allow third parties to use cookies to streamline their applications on this website. If you do happen to block the use of cookies in your browser.. the website may not work as intended. Just a warning!</p>
         <p>Cookies on this website are NOT malicious.</p>
         <ul>

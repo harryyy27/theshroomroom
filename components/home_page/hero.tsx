@@ -9,7 +9,7 @@ export default function Hero(){
             <section className={homeStyles["hero-container"]}>
 
                 <div className={homeStyles["text-section"]+ " " + homeStyles["left"]}>
-                    <h1 className={homeStyles["hero-heading"]}>Fix Your Brain With Lion's Mane</h1>
+                    <h1 className={homeStyles["hero-heading"]}>Boost Your Brain With Lion's Mane</h1>
                     <h2 className={homeStyles["hero-sub-heading"]}>Fresh, tasty, locally cultivated lion's mane mushrooms</h2>
                     <p className={homeStyles["hero-text"]}>Are you ready for your Mane Course?</p>
                     <button className="cta"><Link href="/products">BUY NOW</Link></button>

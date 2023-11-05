@@ -18,20 +18,20 @@ export default function WhatWeGrow(props:any) {
                 <meta property="og:description" content={Metadata["whatwegrow"]["description"]}/>
             </Head>
             <h1>What we grow</h1>
-            <p>For now, we are only growing lion's mane mushrooms. We are currently not working with a lot of space and in order to optimise growing conditions, we decided upon only growing 1 type of mushroom rather than compromise on growing conditions, which inevitably leads to an inferior product and growth process. However, we will soon be renting out a warehouse which should give us the space we need to grow a broad range of mushrooms for your consumption. Stay tuned!</p>
-            <p>Would you like to be notified of any additional products we choose to sell?</p>
+            <p>For now, we are only growing lion's mane mushrooms. We are currently not working with a lot of space and in order to optimise growing conditions, we decided to commit to the temperature and humidity requirements of 1 type of mushroom rather than work with averages, which inevitably leads to an inferior product and slower growth process. However, we will soon be renting out a warehouse which should give us the space we need to grow a broad range of mushrooms for your consumption. Stay tuned!</p>
+
             <h2>Lion's Mane Mushroom: Nature's Neuroprotective Treasure</h2>
 
-            <p>Lion's Mane mushroom, scientifically known as Hericium erinaceus, is a marvel of the fungal kingdom, revered for its stunning appearance, delectable taste, and remarkable health benefits. Often referred to as the "Pom Pom" mushroom due to its distinctive appearance, Lion's Mane is a mesmerizing organism that captivates with its cascading icicle-like spines.</p>
+            <p>The lion's mane mushroom, scientifically known as hericium erinaceus, is a marvel of the fungal kingdom, revered for its stunning appearance, delectable taste and remarkable health benefits. Often referred to as the "Pom Pom" mushroom due to its distinctive appearance or the monkey head mushroom in east Asia, lion's mane is saprophytic meaning it .</p>
             <ul>
                 <li>
                     <h3>Physical Appearance:</h3>
-                    <p>In its wild form, Lion's Mane mushroom grows on trees, resembling a cascading waterfall of cascading, spine-like structures. Its pure white, shaggy mane bears a striking resemblance to the mane of a lion, which inspired its name. As it matures, the spines elongate and become more pronounced, creating a truly majestic sight in the forest.</p>
+                    <p>In its wild form, lion's mane mushroom grows on trees, resembling a cascading waterfall of spine-like structures. Its pure white, shaggy mane bears a striking resemblance to the mane of a lion, which inspired its name. As it matures, the spines elongate and become more pronounced, creating a truly majestic sight in the forest.</p>
 
                 </li>
                 <li>
                     <h3>Culinary Delight:</h3>
-                    <p>Beyond its aesthetic allure, Lion's Mane is celebrated in culinary traditions worldwide. When cooked, this mushroom takes on a tender, succulent texture with a delicate seafood-like flavor. Its ability to absorb surrounding flavors makes it a versatile ingredient in various cuisines. It can be sautéed, grilled, roasted, or used in soups and stews, adding a unique taste and texture to dishes.</p>
+                    <p>Beyond its aesthetic allure, Lion's Mane is celebrated in culinary traditions worldwide. When cooked, this mushroom takes on a tender, succulent texture with a delicate seafood-like flavor. Its ability to absorb surrounding flavors makes it a versatile ingredient in various cuisines. It can be sautéed, grilled, roasted, or used in soups,sauces and stews, adding a unique taste and texture to dishes. It's meaty texture also makes it a great substitute for meat making it a great option for vegans</p>
                 </li>
                 <li>
                 <h3>Health Benefits:</h3>
@@ -41,7 +41,7 @@ export default function WhatWeGrow(props:any) {
                 
                 <li>
                     <h3>Cultural Significance:</h3>
-                    <p>Lion's Mane mushroom has a rich cultural and historical significance. In traditional Chinese and Japanese medicine, it has been cherished for its healing properties, often regarded as a symbol of longevity, mental clarity, and spiritual potency. Ancient texts and scrolls extol its virtues, associating it with wisdom and enlightenment.</p>
+                    <p>Lion's Mane mushroom has a rich cultural and historical significance. In traditional Chinese and Japanese medicine, it has been cherished for its healing properties, often regarded as a symbol of longevity, mental clarity, and spiritual potency. Ancient texts and scrolls extol its benefits, frequently associating it with wisdom and enlightenment.</p>
                 </li>
                 
                 <li>
@@ -51,7 +51,6 @@ export default function WhatWeGrow(props:any) {
             
 
             </ul>
-            <p>In the heart of the forest, among ancient trees and whispered secrets, Lion's Mane mushroom stands as a testament to nature's ingenuity—a wondrous organism that not only delights the senses but also nurtures the body and mind, embodying the harmony between humans and fungi.</p>
 
             <p>Shop for <Link className="link" href="/products">lion's mane</Link></p>
             

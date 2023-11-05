@@ -68,13 +68,13 @@ export default function Contact(){
     return(
         <form className={styles["form"]}>
             <FormComponent page={"Contact"} user={user} labelName={"First Name"}variable={name} variableName={Object.keys({name})[0]} setVariable={setName} variableVal={nameVal} setVariableVal={setNameVal} inputType={"text"} required={true}/>
-            <FormComponent page={"Contact"} user={user} labelName={"Email"}variable={email} variableName={Object.keys({email})[0]} setVariable={setEmail} variableVal={nameVal} setVariableVal={setEmailVal} inputType={"text"} required={true}/>
+            <FormComponent page={"Contact"} user={user} labelName={"Email"}variable={email} variableName={Object.keys({email})[0]} setVariable={setEmail} variableVal={emailVal} setVariableVal={setEmailVal} inputType={"text"} required={true}/>
             
             
             
             <div className={styles["form-element-wrapper"]}>
-                    <label className={styles["form-label"]} htmlFor={"emailContent"}>What the hell do you want?</label>
-                        <input className={styles["form-element"]} autoComplete="fuck-off" type="text" required id={"emailContent"} value={content||''} 
+                    <label className={styles["form-label"]} htmlFor={"emailContent"}>Message:</label>
+                        <textarea className={styles["form-element"]} autoComplete="fuck-off" required id={"emailContent"} value={content||''} 
                         onBlur={(e)=>{
                                 if(e.target.checkValidity()){
                                     setContentVal(true)
