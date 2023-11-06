@@ -1,26 +1,38 @@
 import type { NextPage } from 'next';
-import HomeBanner from '../components/banner'
-import Carousel from '../components/carousel'
-import {CarouselHomeNewArrivals} from '../utils/carouselConfig/home.module'
-import styles from '../styles/Pages/Home.module.css'
+import Hero from '../components/home_page/hero'
+import Faq from '../components/home_page/faq';
+// import Testimonials from '../components/home_page/testimonials';
+import Benefits from '../components/home_page/benefits';
+import Wholesale from '../components/home_page/wholesale';
+import Contact from '../components/home_page/contact';
+// import Carousel from '../components/carousel';
+// import {CarouselHomeNewArrivals} from '../utils/carouselConfig/home.module'
+
+import Head from 'next/head';
+import {Metadata}from '../utils/metadata/metadata';
 const Home: NextPage = () => {
   // useEffect(()=>{
   //   const initiateSession=async()=>{
   //     const session = await getSession()
-  //     console.log(session)
   //   }
   //   initiateSession()
   
   // })
   return (
-    <>
-        <HomeBanner id="#homeBanner" src={'/openingImage'} width={300} height={168}fileType={'jpg'}alt={'Opening day is upon us'}/>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">The Shroom Room!</a>
-        </h1>
-
-       <Carousel imageProps={CarouselHomeNewArrivals} />
-      </>
+    
+    <>  
+      <Head>
+        <title>{Metadata["home"]["title"]}</title>
+        <meta name="description" content={Metadata["home"]["description"]}/>
+        <meta property="og:title" content={Metadata["home"]["title"]}/>
+        <meta property="og:description" content={Metadata["home"]["description"]}/>
+      </Head>
+      <Hero />
+      <Wholesale />
+      <Benefits />
+      <Faq />
+      <Contact/>
+    </>
   )
 }
 

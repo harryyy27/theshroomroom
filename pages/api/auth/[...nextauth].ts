@@ -6,7 +6,7 @@ import signInUser from "../../../utils/nextAuthUtils";
 import {UserSchema} from '../../../utils/types'
 import {Session} from 'next-auth';
 import ErrorHandler from '../../../utils/errorHandler';
-export async function findUser(credentials:Record<string,string>|undefined):Promise<{user?:UserSchema,error?:any,stack?:any,password?:string}|undefined>{
+export async function findUser(credentials:Record<string,string>|undefined):Promise<{user?:UserSchema,message?:any,stack?:any,password?:string}|undefined>{
     try{
         if(!credentials){
             throw new Error('Credentials not provided.')
@@ -31,14 +31,16 @@ export async function findUser(credentials:Record<string,string>|undefined):Prom
     }
     catch(e:any){
         return {
-            error:e.message,
+            message:e.message,
             stack:e.stack
         }
     }
 }
 export async function setupSession(session: Session){
     try{
+
         if(session&&session.user){
+            await connect()
             var email=session.user.email
             var data = await User().findOne({username:email})
             session.user.name=data.name
@@ -46,6 +48,7 @@ export async function setupSession(session: Session){
             session.user.id=data._id
             session.user.dAddress=data.dAddress
             session.user.bAddress=data.bAddress
+            session.user.updates=data.updates
         }
 
     }
@@ -94,7 +97,7 @@ export async function getUser(creds:{user?:UserSchema,error?:any,stack?:any,pass
     }
     catch(e:any){
         return {
-            error:e.message,
+            message:e.message,
             stack:e.stack
         }
     }
@@ -105,7 +108,6 @@ export default NextAuth({
             name: "Credentials",
             authorize: async(credentials, req)=>{
                     await connect();
-                    console.log(credentials)
                     const creds = await findUser(credentials)
                     
                     const user = await (getUser(creds) as any)

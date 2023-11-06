@@ -1,8 +1,10 @@
 .footer { 
     width:100%;
+    transform:translateY(3.25rem);
     height: 8rem;
-    background-color: rgba(0,0,0,0.8);
-    padding:0.5rem;
+    /* background:linear-gradient(0deg,var(--pri),var(--sec)); */
+    background-color:var(--pri);
+    padding:0.5rem 2rem;
 }
 .footer-heading {
     font-size: 1.5rem;
@@ -14,4 +16,8 @@
 }
 .footer-link {
     color:white;
+}
+.footer-link:hover{
+  cursor:pointer;
+  text-shadow: 1px 1px 1px var(--ter2), -1px -1px 1px var(--ter2), 1px -1px 1px var(--ter2),-1px 1px 1px var(--ter2);
 }

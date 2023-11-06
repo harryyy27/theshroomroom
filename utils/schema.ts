@@ -14,16 +14,64 @@ const ProductSchema = new Schema({
         required:true
     },
     productType: {
-        type:String,
+        type: String,
         required:false
-    }
+    },
+
+    price_dry_100g: {
+
+        type: Number,
+        required:false
+    },
+    price_dry_10g:{
+
+        type: Number,
+        required:false
+    },
+    price_dry_25g:{
+
+        type: Number,
+        required:false
+    },
+    price_dry_50g:{
+
+        type: Number,
+        required:false
+    },
+    price_fresh_100g:{
+
+        type: Number,
+        required:false
+    },
+    price_fresh_1kg:{
+
+        type: Number,
+        required:false
+    },
+    price_fresh_250g:{
+
+        type: Number,
+        required:false
+    },
+    price_fresh_500g:{
+
+        type: Number,
+        required:false
+    },
 })
 // OUR TODO MODEL
 const Product = function(){
     return models.Product || model("Product", ProductSchema)
 }
-
-
+const SubscriptionSchema= new Schema({
+    email: {
+        type:String,
+        required:true
+    }
+})
+const Subscription = function(){
+    return models.Subscription || model("Subscription", SubscriptionSchema)
+}
 const UserSchema=new Schema({
 
     name: {
@@ -57,6 +105,14 @@ const UserSchema=new Schema({
                 price: {
                     type: Number,
                     required: true
+                },
+                size: {
+                    type:String,
+                    required:true
+                },
+                fresh:{
+                    type:Boolean,
+                    required:true
                 }
 
             }
@@ -303,4 +359,4 @@ const ErrorSchema= new Schema({
 const Errors = function(){
     return models.Errors || model("Errors",ErrorSchema)
 }
-export {User,Order,Product,Errors,PasswordResetToken}
+export {User,Order,Product,Subscription,Errors,PasswordResetToken}

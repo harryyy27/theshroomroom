@@ -1,12 +1,20 @@
 import {signIn,getCsrfToken} from "next-auth/react";
 import {useState, FormEvent} from 'react';
 import Router from 'next/router';
+import Head from 'next/head';
+import FormComponent from "../../components/form-component";
+import {Metadata} from '../../utils/metadata/metadata'
 
+import styles from '../../styles/Components/Form.module.css'
 export default function SignUp(){
     const [name,setName]=useState('');
+    const [nameVal,setNameVal]=useState('');
     const [username,setUsername]=useState('');
+    const [usernameVal,setUsernameVal]=useState('');
     const [password,setPassword]=useState('');
+    const [passwordVal,setPasswordVal]=useState('');
     const [message,setMessage]=useState('');
+    const [user,setUser]=useState('');
     const signupUser=async(e:FormEvent)=>{
         try{
             e.preventDefault();
@@ -52,19 +60,26 @@ export default function SignUp(){
 
     }
     return(
-        <form onSubmit={(e)=>signupUser(e)}>
-            <label htmlFor="name">Name</label>
-            <input required id="name" type="text" value={name} onChange={e=>setName(e.target.value)}/>
-            <label htmlFor="username">Username</label>
-            <input required id="username" type="email" value={username} onChange={e=>setUsername(e.target.value)}/>
-            <label htmlFor="password">Password</label>
-            <input required id="password" type="password" value={password} onChange={e=>setPassword(e.target.value)}/>
-            <button id="submit" type="submit" value="submit" >Submit</button>
+        <div className="static-container">
+            <Head>
+                <title>{Metadata["signup"]["title"]}</title>
+                <meta name="description" content={Metadata["signup"]["description"]}/>
+                <meta property="og:title" content={Metadata["signup"]["title"]}/>
+                <meta property="og:description" content={Metadata["signup"]["description"]}/>
+            </Head>
+        <h1 className="main-heading center">Sign Up</h1>
+        <form className={styles["form"]} onSubmit={(e)=>signupUser(e)}>
+            <FormComponent user={user} labelName={"First Name"}variable={name} variableName={Object.keys({name})[0]} setVariable={setName} variableVal={nameVal} setVariableVal={setNameVal} inputType={"text"} required={true}/>
+            <FormComponent user={user} labelName={"Username"}variable={username} variableName={Object.keys({username})[0]} setVariable={setUsername} variableVal={usernameVal} setVariableVal={setUsernameVal} inputType={"text"} required={true}/>
+            <FormComponent user={user} labelName={"Password"}variable={password} variableName={Object.keys({password})[0]} setVariable={setPassword} variableVal={passwordVal} setVariableVal={setPasswordVal} inputType={"text"} required={true}/>
+
+            <button id="submit" className="cta" type="submit" value="submit" >Submit</button>
             {/* <button id="googleSignUp">Sign up with Google</button> */}
             <p>
                 {message}
             </p>
         </form>
+        </div>
     )
 }
 

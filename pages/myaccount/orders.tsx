@@ -3,6 +3,7 @@ import {Session} from 'next-auth';
 import {useRouter} from "next/router";
 import { useEffect,useState,FormEvent } from "react";
 import authenticate from '../../utils/authenticationRequired';
+import Link from 'next/link';
 
 export default function MyAccountOrders(){
     const [orders,setOrders]=useState([])
@@ -26,7 +27,7 @@ export default function MyAccountOrders(){
             }
         }
         initiate()
-    },[])
+    },[router])
     async function getOrders(sesh:Session){
         try{
             const orderData = await fetch(`/api/order/?id=${sesh.user.id}`,{
@@ -131,8 +132,8 @@ export default function MyAccountOrders(){
         }
     }
     return(
-        <>
-        <h1>MY Orders</h1>
+        <div className="static-container">
+        <h1 className="main-heading center">My Orders</h1>
         {
         error?
             <p>{error}</p>:
@@ -169,10 +170,11 @@ export default function MyAccountOrders(){
 
                     </div>
                 )
-            }):null
+            }):
+            <p>You do not currently have any orders. Would you like to <button style={{"display":"inline-block"}}className="cta"><Link href="/products">SHOP</Link></button></p>
         }
 
-        </>
+        </div>
     )
 }
 export async function getServerSideProps(ctx:any){

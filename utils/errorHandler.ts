@@ -13,13 +13,20 @@ export default async function ErrorHandler(headers:string,body:string,method:str
         timestamp: Date.now()
 
     })
-    console.log(error)
-    // error.save()
-    // sendEmail({
-    //     subject: client?"Client Side Error":"Server Side Error",
-    //     text:"New error mate",
-    //     to:"theshroomroomdev@gmail.com",
-    //     from: "ServerSideError@theshroomroomdev.com"
-    // })
+    // console.log(error)
+    error.save()
+    try{
+        sendEmail({
+            subject: client?"Client Side Error":"Server Side Error",
+            text:"New error mate",
+            to:"theshroomroomdev@gmail.com",
+            from: "ServerSideError@theshroomroomdev.com"
+        })
+
+    }
+    catch(e){
+        console.log(e)
+    }
+    console.log('yepppp')
 
 }

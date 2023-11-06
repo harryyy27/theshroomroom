@@ -7,12 +7,11 @@ import errorHandler from '../../utils/errorHandler'
 async function handler(req:NextApiRequest,res:NextApiResponse){
     try {
         await connect()
-        console.log(req.method)
         if(req.method!=='GET'){
             if(!req.headers.csrftoken){
                 throw new Error('No csrf header found.')
             }
-            const csrftoken = await getCsrfToken({req})
+            const csrftoken = await getCsrfToken({req:{headers:req.headers}})
             if(req.headers.csrftoken!==csrftoken){
                 throw new Error('CSRF authentication failed.')
             }
@@ -22,9 +21,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             var order = new (Order())(body)
             order.dateOfPurchase= Date.now();
             var validated = await order.save()
-            console.log('FEELING VALIDATEDDDD',validated)
             if(validated){
-                console.log()
                 return res.status(200).json({success:true})
             }
             else {
@@ -38,8 +35,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             }
             const id = req.url?.split('id=')[1];
             const orders= await Order().find({userId:id}).exec()
-            console.log("IDDD",id)
-            console.log("ORDERRRRR",orders)
             return res.status(200).json({orders:orders})
 
         }
@@ -53,7 +48,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId},{...body})
             }
 
-            console.log(order)
             if(order){
                 return res.status(200).json({success:true})
             }

@@ -5,11 +5,11 @@ import {useState,FormEvent} from 'react';
 
 export default function ResetPassword(){
     const [email,setEmail] = useState<string>('');
-    const [validateEmail,setValidateEmail]=useState<boolean|undefined>(undefined);
+    const [validateEmail,setValidateEmail]=useState<boolean|null>(null);
     const [password,setPassword]=useState<string>('');
-    const [validatePassword,setValidatePassword]=useState<boolean|undefined>(undefined)
+    const [validatePassword,setValidatePassword]=useState<boolean|null>(null)
     const [confirmPassword,setConfirmPassword]=useState<string>('');
-    const [validateConfirmPassword,setValidateConfirmPassword]=useState<boolean|undefined>(undefined)
+    const [validateConfirmPassword,setValidateConfirmPassword]=useState<boolean|null>(null)
     const [passwordChanged,setPasswordChanged]=useState('');
     const [formError,setFormError]=useState('');
     const formValidated=()=>{
@@ -22,13 +22,11 @@ export default function ResetPassword(){
     }
     const router = useRouter();
     const token = router.query.token
-    console.log(token)
     const changePasswordHandler=async(e:FormEvent)=>{
         try{
             setFormError('')
             e.preventDefault()
             if(formValidated()){
-                console.log('YEYHHH')
                 const res = await fetch('/api/change-password-forgotten',{
                     method: "PUT",
                     headers:{
@@ -41,7 +39,6 @@ export default function ResetPassword(){
                     })
     
                 })
-                console.log('sup')
                 const resJson = await res.json()
                 if(resJson.error){    
                     throw new Error(resJson.error)
@@ -61,8 +58,8 @@ export default function ResetPassword(){
         }
     }
     return(
-        <>
-        <h1>Reset your password</h1>
+        <div className="static-container">
+        <h1 className="main-heading">Reset your password</h1>
         <form>
             <label htmlFor="email">Email address:</label>
             <input className="formInput" required type="email" name="email" id="email" value={email} placeholder="type email here" onChange={(e)=>setEmail(e.target.value)} onBlur={(e)=>e.target.checkValidity()?setValidateEmail(true):setValidateEmail(false)} />
@@ -80,6 +77,6 @@ export default function ResetPassword(){
             
             <p>{passwordChanged}{formError}</p>
         </form>
-        </>
+        </div>
     )
 }

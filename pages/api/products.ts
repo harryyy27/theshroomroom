@@ -11,21 +11,16 @@ type Data = {
 
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
   try{
-    console.log("HOOOOST",os.networkInterfaces())
     if(req.method!=='GET'){
       throw new Error('Only get requests for this route.');
     }
-    console.log('pre connect')
     await connect()
-    console.log('post connect')
     var response;
-    console.log(req.url);
     if(RegExp('product=').test(req.url as string)===true){
       response = await Product().findOne({name:req.url?.split('product=')[1].replace('%27','\'').replace('%20',' ')})
     }
     else if(RegExp('type=').test(req.url as string)===true){
       response = await Product().find({"productType":req.url?.split('type=')[1]},{})
-      console.log('RESSSSSSS',response)
     }
     else {
       response = await Product().find({})

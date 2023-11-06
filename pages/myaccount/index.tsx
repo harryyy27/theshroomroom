@@ -49,20 +49,31 @@ export default function MyAccount(){
        
     }
     return(
-        <>
-            <h1>My account</h1>
-            <Link href="/myaccount/edit" >Edit Details</Link>
-            <Link href="/myaccount/orders">Orders</Link>
-            <Link href="/myaccount/change-password">Change Password</Link>
-            <button id="deleteAccount"onClick={(e)=>{
+        <div className="static-container">
+            <h1 className="main-heading center">My Account</h1>
+            <ul>
+                <li className="account-list-element">
+                    <Link href="/myaccount/edit" >Edit Details</Link>
+                </li>
+                <li className="account-list-element">
+                    <Link href="/myaccount/orders">Orders</Link>
+                </li>
+                <li className="account-list-element">
+                    <Link href="/myaccount/change-password">Change Password</Link>
+                </li>
+            </ul>
+            
+            
+            
+            <button id="deleteAccount" className="cta"onClick={(e)=>{
                 updateSure(true)
             }}>Delete account</button>
             {
                 sure?
                 <div id="deleteAccountModal">
                     <p>Are you sure you wish to delete your account?</p>
-                    <button className="modal-buttons"id="confirmDeleteAccount"onClick={(e)=>deleteAccount(e)}>Yes</button>
-                    <button className="modal-buttons"id="cancelDeleteAccount" onClick={(e)=>updateSure(false)}>No</button>
+                    <button className="modal-buttons cta"id="confirmDeleteAccount"onClick={(e)=>deleteAccount(e)}>Yes</button>
+                    <button className="modal-buttons cta"id="cancelDeleteAccount" onClick={(e)=>updateSure(false)}>No</button>
                 </div>:
                 null
             }
@@ -74,7 +85,7 @@ export default function MyAccount(){
                 </>:
                 null
             }
-        </>
+        </div>
     )
 }
 

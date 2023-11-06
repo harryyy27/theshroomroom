@@ -1,0 +1,31 @@
+.email-content {
+    display:block;
+    width:80%;
+    height:5rem;
+    border-radius:0.5rem;
+    margin:auto;
+    margin-bottom:1rem;
+}
+.form-element-wrapper {
+    margin-bottom:1rem;
+}
+.form-element {
+    padding:0.5rem;
+    margin-left:10%;
+    width:80%;
+    border-radius:0.5rem;
+}
+
+.form-label {
+    display:block;
+    margin-bottom:0.5rem;
+    margin-left:10%;
+}
+.block {
+    display:block;
+}
+.form {
+    background-color: var(--ter2);
+    padding:2rem;
+    border-radius:1rem;
+}

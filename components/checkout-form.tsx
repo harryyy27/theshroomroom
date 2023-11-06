@@ -5,10 +5,13 @@ import {
     useStripe,
     useElements,
 } from '@stripe/react-stripe-js'
+
+import styles from '../styles/Components/Form.module.css'
 import {useRouter} from 'next/router'
 import {getCsrfToken} from 'next-auth/react'
 import {destroyCookie} from 'nookies'
 import {CartContext} from '../context/cart';
+import FormComponent from './form-component';
 export interface Product {
     _id: String,
     price: number,
@@ -44,6 +47,7 @@ interface UserSchema {
 }
 export default function CheckoutForm(props:any){
     const context = useContext(CartContext);
+    const router = useRouter();
     const [dFirstName,setDFirstName]=useState('');
     const [dFirstNameVal,setDFirstNameVal]=useState<boolean|null>(null);
     const [dSurname,setDSurname]=useState('');
@@ -79,7 +83,6 @@ export default function CheckoutForm(props:any){
     const elements:any=useElements();
     useEffect(()=>{
         const initiate = async()=>{
-            console.log(Object.getOwnPropertyNames(PaymentElement))
             const session = await getSession()
             if(session?.user){
                 setUser(session.user as any)
@@ -87,7 +90,6 @@ export default function CheckoutForm(props:any){
             if(session){
                 fetch(`http://localhost:3000/api/getUser/${session.user.email}`)
                 .then((res)=>{
-                    console.log('ehhhhhh')
                     return res.json()
                 })
                 .then((res)=>{
@@ -150,30 +152,25 @@ export default function CheckoutForm(props:any){
 ,[])
     const paymentElementHandler=(e:any)=>{
         if(e.complete){
-            console.log('incomplete')
             setCardDetailsValid(true)
         }
         else {
             setCardDetailsValid(false)
-            console.log('complete')
         }
 
     }
     const validate_form=()=>{
         if(dFirstNameVal&&dSurnameVal&&dFirstLineVal&&dCityVal&&dPostcodeVal&&bFirstNameVal&&bSurnameVal&&bFirstLineVal&&bCityVal&&bPostcodeVal&&cardDetailsValid){
             if(guestEmailAddressVal||user){
-                console.log('yo')
                 return true
             }
             else {
-                console.log('no')
                 setCheckoutError('Please either sign in or provide a valid email for guest checkout')
                 setFormPosition()
                 return false
             }
         }
         else {
-            console.log('fook')
             setCheckoutError('Please fill in all required fields')
             setFormPosition()
             return false
@@ -195,7 +192,6 @@ export default function CheckoutForm(props:any){
         try {
             setProcessing(true)
             const valid = validate_form()
-            console.log(valid)
             if(!valid){
                 throw new Error('Please enter form details correctly')
             }
@@ -296,8 +292,6 @@ export default function CheckoutForm(props:any){
             }
         }
         catch(e:any){
-            console.log('yoyoyoy')
-            console.log(e)
             setProcessing(false)
             setCheckoutError(e.message)
         }
@@ -305,366 +299,48 @@ export default function CheckoutForm(props:any){
     }
     if (checkoutSuccess) return <p>{checkoutSuccess}</p>
     return (
-        <>
-        <h1>CHECK ME OUT</h1>
+        <div className="static-container">
+        <h1 className="main-heading center">CHECK ME OUT</h1>
         {
             errorMessage!==''?
             <p>{errorMessage}</p>:
             null
         }
-            <form action="POST" onSubmit={(e)=>placeOrder(e)} autoComplete="fuck-off">
+            <form className={styles["form"]}action="POST" onSubmit={(e)=>placeOrder(e)} autoComplete="fuck-off">
                 <input autoComplete="new-password" name="hidden" type="text" style={{"display":"none"}}/>
-                {context.loaded&&user===null&&
-                <>
-                <h2>Guest Checkout</h2>
-                <label htmlFor="guestEmailAddress">Email Address</label>
-                <input autoComplete="fuck-off" type="email" required={!user} id="guestEmailAddress" value={guestEmailAddress} 
-                    onBlur={(e)=>{
-                        if(e.target.checkValidity()){
-                            setGuestEmailAddressVal(true)
-                        }
-                        else {
-                            setGuestEmailAddressVal(false)
-                        }
-
-                    }}
-                    onChange={(e)=>{
-                        setGuestEmailAddress(e.target.value)
-                        if(typeof guestEmailAddressVal==="boolean"){
-                            if(e.target.checkValidity()){
-                                setGuestEmailAddressVal(true)
-                            }
-                            else {
-                                setGuestEmailAddressVal(false)
-                            }
-
-                        }
-                    }
-                    }/>
                 {
-                    guestEmailAddressVal===false?
-                    <p className={"error-text"}>Please enter an email or sign in</p>
-                    :
-                    null
-
-                }
-                </>
-
-            }
-                <h2>Delivery Address</h2>
-                <label htmlFor="dFirstName">First Name</label>
-                <input  autoComplete="fuck-off" required id="dFirstName" value={dFirstName} 
-                    onBlur={(e)=>{
-                        if(e.target.value.length>0){
-                            setDFirstNameVal(true)
-                        }
-                        else {
-                            setDFirstNameVal(false)
-                        }
-                        
-                    }}
-                    onChange={(e)=>{
-                        setDFirstName(e.target.value)
-                        if(typeof dFirstNameVal==="boolean"){
-                            if(e.target.value.length>0){
-                                setDFirstNameVal(true)
-                            }
-                            else {
-                                setDFirstNameVal(false)
-                            }
-                        }
-                    }
-                }/>
-                {
-                    dFirstNameVal===false?
-                    <p className={'error-text'}>Please enter a valid name</p>
-                    :null
-                }
-                <label htmlFor="dSurname">Surname</label>
-                <input autoComplete="fuck-off" required id="dSurname" value={dSurname} 
-                    onBlur={(e)=>{
-                        if(e.target.value.length>0){
-                            setDSurnameVal(true)
-                        }
-                        else {
-                            setDSurnameVal(false)
-                        }
-                        
-                    }}
+                    context.loaded&&user===null&&
+                        <>
+                        <h2>Guest Checkout</h2>
+                            <FormComponent user={user} labelName={"Email Address"}variable={guestEmailAddress}variableName={Object.keys({guestEmailAddress})[0]}  setVariable={setGuestEmailAddress} variableVal={guestEmailAddressVal} setVariableVal={setGuestEmailAddressVal} inputType={"email"}required={!props.user}alternative={'sign in'}/>
                     
-                    onChange={(e)=>{
-                        setDSurname(e.target.value)
-                        if(typeof dSurnameVal === "boolean"){
-                            if(e.target.value.length>0){
-                                setDSurnameVal(true)
-                            }
-                            else {
-                                setDSurnameVal(false)
-                            }
+                        </>
 
-                        }
-                    }
-                }/>
-                {
-                    dSurnameVal===false?
-                    <p className={'error-text'}>Please enter a valid surname</p>
-                    :null
                 }
-                <label htmlFor="dFirstLine">Street name and number</label>
-                <input autoComplete="fuck-off" required id="dFirstLine1" value={dFirstLine}
-                    onBlur={(e)=>{
-                        if(e.target.value.length>0){
-                            setDFirstLineVal(true)
-                        }
-                        else {
-                            setDFirstLineVal(false)
-                        }
-                        
-                    }} 
+                <h2>Delivery Address</h2>
+                <FormComponent user={user} labelName={"First Name"}variable={dFirstName} variableName={Object.keys({dFirstName})[0]} setVariable={setDFirstName} variableVal={dFirstNameVal} setVariableVal={setDFirstNameVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"Surname"}variable={dSurname} variableName={Object.keys({dSurname})[0]} setVariable={setDSurname} variableVal={dSurnameVal} setVariableVal={setDSurnameVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"Street name and number"}variable={dFirstLine} variableName={Object.keys({dFirstLine})[0]}  setVariable={setDFirstLine} variableVal={dFirstLineVal} setVariableVal={setDFirstLineVal} inputType={"text"} required={true}/>
                 
-                    onChange={(e)=>{
-                        setDFirstLine(e.target.value)
-                        if(typeof dFirstLineVal==="boolean"){
-                            if(e.target.value.length>0){
-                                setDFirstLineVal(true)
-                            }
-                            else {
-                                setDFirstLineVal(false)
-                            }
-
-                        }
-                    }
-                }/>
-                {
-                    dFirstLineVal===false?
-                    <p className={'error-text'}>Please enter a valid name</p>
-                    :null
-
-                }
-                <label htmlFor="dSecondLine">2nd Line of address</label>
-                <input autoComplete="fuck-off" id="dSecondLine" value={dSecondLine} onChange={(e)=>setDSecondLine(e.target.value)}/>
-                <label htmlFor="dCity">City</label>
-                <input autoComplete="fuck-off" id="dCity" value={dCity} 
+                <FormComponent user={user} labelName={"2nd Line of address"}variable={dSecondLine} variableName={Object.keys({dSecondLine})[0]} setVariable={setDSecondLine} inputType={"text"} required={false}/>
+                <FormComponent user={user} labelName={"City"}variable={dCity} setVariable={setDCity} variableName={Object.keys({dCity})[0]}variableVal={dCityVal} setVariableVal={setDCityVal}inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"Postcode"}variable={dPostcode} variableName={Object.keys({dPostcode})[0]}setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true}/>
                 
-                    onBlur={(e)=>{
-                        if(e.target.value.length>0){
-                            setDCityVal(true)
-                        }
-                        else {
-                            setDCityVal(false)
-                        }
-                            
-                    }}
-                    onChange={(e)=>{
-                        setDCity(e.target.value)
-                        if(typeof dCityVal==="boolean"){
-                            if(e.target.value.length>0){
-                                setDCityVal(true)
-                            }
-                            else {
-                                setDCityVal(false)
-                            }
-
-                        }
-                    }
-                }/>
-                {
-                    dCityVal===false?
-                    <p className={'error-text'}>Please enter a valid name</p>
-                    :null
-
-                }
-                <label htmlFor="dPostcode">Postcode</label>
-                <input autoComplete="fuck-off" required id="dPostcode" value={dPostcode} 
-                
-                    onBlur={(e)=>{
-                        console.log(e.target.value.length)
-                        if(e.target.value.length>0){
-                            setDPostcodeVal(true)
-                        }
-                        else {
-                            setDPostcodeVal(false)
-                        }
-                            
-                    }}
-                    onChange={(e)=>{
-                        setDPostcode(e.target.value)
-                        if(typeof dPostcodeVal === 'boolean'){
-                            if(e.target.value.length>0){
-                                setDPostcodeVal(true)
-                            }
-                            else {
-                                setDPostcodeVal(false)
-                            }
-
-                        }
-                    }
-                }/>
-                {
-                    dPostcodeVal===false?
-                    <p className={'error-text'}>Please enter a valid name</p>
-                    :null
-
-                }
-                <label htmlFor="updates">Receive updates</label>
                 <h2>Billing Address</h2>
-                <label htmlFor="bFirstName">First Name</label>
-                <input autoComplete="fuck-off" required id="bFirstName" value={bFirstName} 
-
-                onBlur={(e)=>{
-                    if(e.target.value.length>0){
-                        setBFirstNameVal(true)
-                    }
-                    else {
-                        setBFirstNameVal(false)
-                    }
-                }}
+                <FormComponent user={user} labelName={"First Name"}variable={bFirstName} variableName={Object.keys({bFirstName})[0]}setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"Surname"}variable={bSurname} variableName={Object.keys({bSurname})[0]}setVariable={setBSurname} variableVal={bSurnameVal} setVariableVal={setBSurnameVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"Street name and number"}variable={bFirstLine} variableName={Object.keys({bFirstLine})[0]}setVariable={setBFirstLine} variableVal={bFirstLineVal} setVariableVal={setBFirstLineVal} inputType={"text"} required={true}/>
                 
-                onChange={(e)=>{
-                    setBFirstName(e.target.value)
-                    if(typeof bFirstName==="boolean"){
-                        if(e.target.value.length>0){
-                            setBFirstNameVal(true)
-                        }
-                        else {
-                            setBFirstNameVal(false)
-                        }
-
-                    }
-                }}/>
-                {
-                    bFirstNameVal===false?
-                    <p className={'error-text'}>Please enter a valid name</p>
-                    :null
-                }
-                <label htmlFor="bSurname">Surname</label>
-                <input autoComplete="fuck-off" required id="bSurname" value={bSurname} 
-                
-                    onBlur={(e)=>{
-                        if(e.target.value.length>0){
-                            setBSurnameVal(true)
-                        }
-                        else {
-                            setBSurnameVal(false)
-                        }
-                            
-                    }}
-                    onChange={(e)=>{
-                        setBSurname(e.target.value)
-                        if(typeof bSurnameVal==='boolean'){
-                            if(e.target.value.length>0){
-                                setBSurnameVal(true)
-                            }
-                            else {
-                                setBSurnameVal(false)
-                            }
-
-                        }
-                    }}
-                />
-                {
-                    bSurnameVal===false?
-                    <p className={'error-text'}>Please enter a valid surname</p>
-                    :null
-
-                }
-                <label htmlFor="bFirstLine">Street name and number</label>
-                <input autoComplete="fuck-off" required id="bFirstLine1" value={bFirstLine} 
-                
-                    onBlur={(e)=>{
-                        if(e.target.value.length>0){
-                            setBFirstLineVal(true)
-                        }
-                        else {
-                            setBFirstLineVal(false)
-                        }
-                            
-                    }}
-                    onChange={(e)=>{
-                        setBFirstLine(e.target.value)
-                        if(typeof bFirstLineVal==='boolean'){
-                            if(e.target.value.length>0){
-                                setBFirstLineVal(true)
-                            }
-                            else {
-                                setBFirstLineVal(false)
-                            }
-
-                        }
-                    }}
-                />
-                {
-                    bFirstLineVal===false?
-                    <p className={'error-text'}>Please enter a valid name</p>
-                    :null
-
-                }
-                <label htmlFor="bSecondLine">2nd Line of address</label>
-                <input autoComplete="fuck-off" id="bSecondLine" value={bSecondLine} onChange={(e)=>setBSecondLine(e.target.value)}/>
-                <label htmlFor="bCity">City</label>
-                <input autoComplete="fuck-off" id="bCity" value={bCity} 
-                
-                    onBlur={(e)=>{
-                        if(e.target.value.length>0){
-                            setBCityVal(true)
-                        }
-                        else {
-                            setBCityVal(false)
-                        }
-                            
-                    }}
-                    onChange={(e)=>{
-                        setBCity(e.target.value)
-                        if(typeof bCityVal==='boolean'){
-                            if(e.target.value.length>0){
-                                setBCityVal(true)
-                            }
-                            else {
-                                setBCityVal(false)
-                            }
-
-                        }
-                    }}
-                />
-                {
-                    bCityVal===false?
-                    <p className={'error-text'}>Please enter a valid name</p>
-                    :null
-
-                }
-                <label htmlFor="bPostcode">Postcode</label>
-                <input autoComplete="fuck-off" required id="bPostcode" value={bPostcode} 
-                    onBlur={(e)=>{
-                        if(e.target.value.length>0){
-                            setBPostcodeVal(true)
-                        }
-                        else {
-                            setBPostcodeVal(false)
-                        }
-                    }}
-                    onChange={(e)=>{
-                        setBPostcode(e.target.value)
-                        if(typeof bPostcodeVal==='boolean'){
-                            if(e.target.value.length>0){
-                                setBPostcodeVal(true)
-                            }
-                            else {
-                                setBPostcodeVal(false)
-                            }
-
-                        }
-                    }}
-                />
-                {
-                    bPostcodeVal===false?
-                    <p className={'error-text'}>Please enter a valid name</p>
-                    :null
-
-                }
+                <FormComponent user={user} labelName={"2nd Line of address"}variable={bSecondLine} variableName={Object.keys({bSecondLine})[0]}setVariable={setBSecondLine} inputType={"text"} required={false}/>
+                <FormComponent user={user} labelName={"City"}variable={bCity} variableName={Object.keys({bCity})[0]}setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal}inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"Postcode"}variable={bPostcode}variableName={Object.keys({bPostcode})[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true}/>
+                <h2>Card Details</h2>
                 <PaymentElement onChange={(e)=>paymentElementHandler(e)}/>
-
-                <label htmlFor="updates">Receive updates</label>
-                <input autoComplete="fuck-off" id="updates" type="checkbox" value={String(updates)} onChange={(e)=>setUpdates(e.target.checked)}/>
+                <div className={styles["form-element-wrapper"]}>
+                    <label className={styles["form-label"]} htmlFor="updates">Receive updates</label>
+                    <input className={styles["form-element"]} autoComplete="fuck-off" id="updates" type="checkbox" value={String(updates)} onChange={(e)=>setUpdates(e.target.checked)}/>
+                </div>
+                
                 {
                     context.loaded&&
                         <div>
@@ -674,9 +350,9 @@ export default function CheckoutForm(props:any){
 
                         </div>
                 }
-                <button id="placeOrder" type="submit" disabled={processing} onClick={(e)=>placeOrder(e)}>Submit</button>
+                <button id="placeOrder" className="cta" type="submit" disabled={processing} onClick={(e)=>placeOrder(e)}>Submit</button>
             </form>
             {checkoutError&& <p className="form-error"style={{color:"red"}}>{checkoutError}</p>}
-            </>
+            </div>
     )
 }
