@@ -22,12 +22,12 @@ export default function WhatWeGrow(props:any) {
 
             <h2>Lion's Mane Mushroom: Nature's Neuroprotective Treasure</h2>
 
-            <p>The lion's mane mushroom, scientifically known as hericium erinaceus, is a marvel of the fungal kingdom, revered for its stunning appearance, delectable taste and remarkable health benefits. Often referred to as the "Pom Pom" mushroom due to its distinctive appearance or the monkey head mushroom in east Asia, lion's mane is saprophytic meaning it .</p>
+            <p>The lion's mane mushroom, scientifically known as hericium erinaceus, is a marvel of the fungal kingdom, revered for its stunning appearance, delectable taste and remarkable health benefits. Often referred to as the "Pom Pom" mushroom due to its distinctive appearance or the monkey head mushroom in east Asia, lion's mane is saprophytic meaning it feeds on dead organic matter (dead trees in the case of lion's mane).</p>
             <ul>
                 <li>
                     <h3>Physical Appearance:</h3>
                     <p>In its wild form, lion's mane mushroom grows on trees, resembling a cascading waterfall of spine-like structures. Its pure white, shaggy mane bears a striking resemblance to the mane of a lion, which inspired its name. As it matures, the spines elongate and become more pronounced, creating a truly majestic sight in the forest.</p>
-
+                    {/* <Image />  */}
                 </li>
                 <li>
                     <h3>Culinary Delight:</h3>
@@ -35,8 +35,9 @@ export default function WhatWeGrow(props:any) {
                 </li>
                 <li>
                 <h3>Health Benefits:</h3>
-                    <p>Lion's mane mushrooms are not just a culinary delight but also renowned for their potent medicinal properties. Rich in bioactive compounds, including polysaccharides, beta-glucans, and hericenones, lion's mane is believed to offer a wide array of health benefits. It is particularly famous for its potential neuroprotective effects, supporting brain health and cognitive function. Studies suggest that lion's mane may stimulate nerve growth factor (NGF) production, aiding in nerve regeneration and potentially offering therapeutic benefits for neurological disorders.</p>
-                    <p>Additionally, lion's mane are valued for their anti-inflammatory, immune-modulating and antioxidant properties. It has been traditionally used in herbal medicine for centuries, particularly in Asian cultures for various ailments and overall well-being.</p>
+                    <p>Lion's mane mushrooms are not just a culinary delight but also renowned for their potent medicinal properties. Rich in bioactive compounds, including <cite>hericenones and erinacines</cite>, lion's mane is believed to offer a wide array of health benefits. It is particularly famous for its potential neuroprotective effects, <cite>supporting brain health and cognitive function</cite>. Studies suggest that lion's mane may <cite>stimulate nerve growth factor (NGF) production</cite>, aiding in nerve regeneration and potentially offering therapeutic benefits for neurological disorders. Countless small studies have demonstrated this including </p>
+                    <p>Additionally, lion's mane are valued for their anti-inflammatory, immune-modulating and antioxidant properties. It has been traditionally used in herbal medicine for centuries, particularly in Chinese medicine as a <cite>tonic for all 5 internal organs</cite>.</p>
+                    <p>In vitro studies have demonstrated lion's mane can also exhibit <cite><a href="">gastroprotective effects</a></cite> as well as <cite>anticancer properties</cite>. It has been demonstrated that the extracts stimulated the activities of natural killer cells and macrophages on one hand and blocked angiogenesis on the other.</p>
                 </li>
                 
                 <li>

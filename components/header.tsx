@@ -60,7 +60,7 @@ export default function Header(){
                     
                     <div className={styles["title-bar-element"]}>
                         <Link className={styles["title-bar-logo"]}href='/'>
-                            <Image className={styles["logo"]}alt="logo" width={40} height={40}src="/home/cropped_logo.jpg"/>
+                            <Image className={styles["logo"]}alt="logo" width={40} height={40}src="/home/scaled_cropped_logo2.jpg"/>
                             <h1 className={styles.title}>Mega Mushrooms</h1>
                         </Link>
                         
