@@ -31,7 +31,7 @@ export default function Mushrooms(){
                     </li>
                     <li>
                         <h3>Equality:</h3>
-                        <p>At Mega Mushrooms, we believe in equality. Everyone at mega mushrooms contributes to the value of the company and as such every individual who contributes will be rewarded equally and own an equal share of the company.</p>
+                        <p>At Mega Mushrooms, we believe in equality. Everyone at Mega Mushrooms contributes to the value of the company and as such every individual who contributes will be rewarded equally and own an equal share of the company.</p>
                     </li>
                     <li>
                         <h3>Knowledge:</h3>

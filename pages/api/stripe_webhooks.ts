@@ -6,10 +6,12 @@ import {buffer } from '../../utils/stripe_webhook'
 import connect from "../../utils/connection" 
 import errorHandler from '../../utils/errorHandler'
 
+import {getCsrfToken} from 'next-auth/react';
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
     try{
+        console.log('wait')
         await connect()
         if(req.method==="POST"){
             if(!req.headers["stripe-signature"]){
@@ -21,13 +23,21 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
             const event = stripe.webhooks.constructEvent(payload,signature,endpointSecret)
             var success;
+            const csrfToken = await getCsrfToken({req:{headers:req.headers}})
+            console.log(csrfToken)
+            const newCsrf = await getCsrfToken({req:{headers:req.headers}})
+            console.log(newCsrf)
             switch (event.type){
                 case "payment_intent.succeeded":
                     const update_success= await fetch(`http://${req.headers.host}/api/order`,{
                         method:"PUT",
+                        headers: {
+
+                            csrftoken:csrfToken as string
+                        },
                         body: JSON.stringify({
                             paymentIntentId: JSON.parse(payload).data.object.id,
-                            status:"ORDER_RECEIVED"
+                            status:"ORDER_RECEIVED",
                         })
                     })
                     const json_resp = await update_success.json()
@@ -36,9 +46,13 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 case "payment_intent.failed":
                     const update_failure= await fetch(`http://${req.headers.host}/api/order`,{
                         method:"PUT",
+                        headers: {
+
+                            csrftoken:csrfToken as string
+                        },
                         body: JSON.stringify({
                             paymentIntentId: JSON.parse(payload).data.object.id,
-                            status:"ORDER_FAILED"
+                            status:"ORDER_FAILED",
                         })
                     })
                     const json_resp_fail = await update_failure.json()
@@ -77,7 +91,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
     }
     catch(e:any){
-        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.message,e.stack,false)
+        console.log(e)
+        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.errorMessage,e.stack,false)
 
         res.status(500).json({success:false,error:e.message})
     }

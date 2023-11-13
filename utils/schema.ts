@@ -272,6 +272,14 @@ const OrderSchema=new Schema({
             price: {
                 type:Number,
                 required:true
+            },
+            size: {
+                type:String,
+                required:true
+            },
+            fresh:{
+                type:Boolean,
+                required:true
             }
         }]
     },
