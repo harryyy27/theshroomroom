@@ -58,7 +58,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
         }
         else{
-            await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.message,e.stack,false)
+            await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.errorMessage,e.stack,false)
             res.status(500).json({error:"Something has gone wrong and we are working to fix this. Sorry for any inconvenience caused."})
         }
         

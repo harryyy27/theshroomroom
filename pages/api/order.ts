@@ -7,11 +7,14 @@ import errorHandler from '../../utils/errorHandler'
 async function handler(req:NextApiRequest,res:NextApiResponse){
     try {
         await connect()
+
         if(req.method!=='GET'){
             if(!req.headers.csrftoken){
                 throw new Error('No csrf header found.')
             }
             const csrftoken = await getCsrfToken({req:{headers:req.headers}})
+            console.log(csrftoken)
+            console.log(req.headers.csrftoken)
             if(req.headers.csrftoken!==csrftoken){
                 throw new Error('CSRF authentication failed.')
             }
