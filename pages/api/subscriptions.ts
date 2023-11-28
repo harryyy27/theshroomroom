@@ -73,7 +73,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         // const eeee=Object.getPrototypeOf(error)
         var errorMsg;
         var errorStk;
-        const err2 =new Error(`${Object.getOwnPropertyNames(error)}`)
+        const err2 =new Error(`${Object.getOwnPropertyNames(error).join('')}`)
         console.log(err2)
         if(e.message){
             errorMsg=e.message
