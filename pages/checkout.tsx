@@ -17,7 +17,7 @@ import { Product } from '../utils/types'
 import { v4 as uuidv4 } from 'uuid';
 import {logger} from '../utils/logger'
 
-export default function Checkout({paymentIntent}:any){
+export default function Checkout({paymentIntent,setComponentLoading}:any){
     
     // const context = useContext(CartContext);
     // useEffect(()=>{
@@ -36,8 +36,8 @@ export default function Checkout({paymentIntent}:any){
                     <meta property="og:title" content="Mega Mushrooms - buy our high quality lion's mane mushrooms here"/>
                     <meta property="og:description" content="Reap the rewards of adding this healthy, medicinal and delicious mushroom to your diet"/>
                 </Head>
-                <Elements stripe={stripePromise} options={options}>
-                    <CheckoutForm paymentIntent={paymentIntent}  />
+                <Elements stripe={stripePromise} options={options} >
+                    <CheckoutForm paymentIntent={paymentIntent}  setComponentLoading={setComponentLoading}/>
                 </Elements>
             </>
     )

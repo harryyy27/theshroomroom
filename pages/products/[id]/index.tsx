@@ -29,7 +29,7 @@ interface Product {
     stripe_product_id_fresh_250g:string,
     stripe_product_id_fresh_500g:string,
     stripe_product_id_fresh_1kg:string}
-export default function ProductDetails(){
+export default function ProductDetails({setComponentLoading}:any){
     const context = useContext(CartContext);
     const [product,setProduct]=useState<Product>({
         _id:'',
@@ -72,6 +72,7 @@ export default function ProductDetails(){
     const [stripeProductId,setStripeProductId]=useState('');
 
     useEffect(()=>{
+        setComponentLoading(true)
         const urlArr =window.location.href.split('/')
         const productName = urlArr[urlArr.length-1].replace(/[\-]/gi,' ').replace('\&apos','\'');
         setImageUrl(urlArr[urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
@@ -95,7 +96,7 @@ export default function ProductDetails(){
         initiate()
 
 
-    },[])
+    },[setComponentLoading])
     function toggleBackground(button:HTMLElement | null,targetClass:string){
         const buttons= document.querySelectorAll('.'+targetClass);
         buttons.forEach((el)=>el.classList.remove('select-active'));
@@ -213,6 +214,7 @@ export default function ProductDetails(){
                
                 <button id="productAddToCart" className="cta"onClick={async(e)=>{
                             try{
+                                setComponentLoading(true)
                                 const input = document.getElementById(`productQuantity`) as HTMLInputElement;
                                 if(size!==''&&input.value!==''){
                                     console.log(context.state.cart)
@@ -225,10 +227,12 @@ export default function ProductDetails(){
                                         price: Number(price),
                                         stripeProductId:stripeProductId,
                                     }):null}
+                                    setComponentLoading(false)
                                 }
-                            
+                
                             catch(e){
-        
+                                console.log(e)
+                                setComponentLoading(false)
                             }
                         }
                             

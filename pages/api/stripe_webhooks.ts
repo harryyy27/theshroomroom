@@ -93,56 +93,57 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 case "customer.subscription.created":
                     console.log("customer.subscription.created")
                     console.log(JSON.parse(payload).data.object)
-                    var body={
+                    var subBody={
                         stripeCustomerId:JSON.parse(payload).data.object.customer,
                         isActive:true,
                         subscriptionId: JSON.parse(payload).data.object.id,
                         status:"SUBSCRIPTION_ACTIVE"
                     }
 
-                    var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId},{...body})
+                    var subscription = await Subscription().findOneAndUpdate({subscriptionId:subBody.subscriptionId},{...subBody})
 
                     if(subscription){
                         success=true
                     }
                     else {
-                        throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                        throw new Error(`Subscription update failed Subscription ID: ${subBody.subscriptionId}`)
                     }
                 break;
                 case "customer.subscription.updated":
                     console.log("customer.subscription.updated")
                     console.log(JSON.parse(payload).data.object)
-                    var body={
+                    var subBody={
                         stripeCustomerId:JSON.parse(payload).data.object.customer,
                         isActive:true,
                         subscriptionId: JSON.parse(payload).data.object.id,
                         status:"SUBSCRIPTION_CANCELLED"
                     }
                     if(JSON.parse(payload).data.object.canceled_at!==null){
-                        var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId},{status:body.status})
+                        var subscription = await Subscription().findOneAndUpdate({subscriptionId:subBody.subscriptionId},{status:subBody.status})
                     }
                     if(subscription){
                         success=true
                     }
                     else {
-                        throw new Error(`Subscription cancellation failed for subscription: ${body.subscriptionId}`)
+                        throw new Error(`Subscription cancellation failed for subscription id: ${subBody.subscriptionId}`)
                     }
                 break;
                 case "customer.subscription.deleted":
                     console.log(JSON.parse(payload).data.object.id)
 
-                    var body={
+                    var subBody={
                         stripeCustomerId:JSON.parse(payload).data.object.customer,
                         isActive:false,
                         subscriptionId: JSON.parse(payload).data.object.id,
+                        status:"SUBSCRIPTION_CANCELLED"
                     }
-                    var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId},{status:"SUBSCRIPTION_CANCELLED"})
+                    var subscription = await Subscription().findOneAndUpdate({subscriptionId:subBody.subscriptionId},{status:subBody.status})
                     
                     if(subscription){
                         success=true
                     }
                     else {
-                        throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                        throw new Error(`Could not cancel subscription. Subscription Id: ${subBody.subscriptionId}`)
                     }
                     break;
                 default:

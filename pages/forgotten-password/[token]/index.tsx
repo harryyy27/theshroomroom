@@ -3,7 +3,7 @@ import {useRouter} from 'next/router';
 import {useState,FormEvent} from 'react';
 
 
-export default function ResetPassword(){
+export default function ResetPassword({setComponentLoading}:any){
     const [email,setEmail] = useState<string>('');
     const [validateEmail,setValidateEmail]=useState<boolean|null>(null);
     const [password,setPassword]=useState<string>('');
@@ -24,6 +24,7 @@ export default function ResetPassword(){
     const token = router.query.token
     const changePasswordHandler=async(e:FormEvent)=>{
         try{
+            setComponentLoading(true)
             setFormError('')
             e.preventDefault()
             if(formValidated()){
@@ -50,11 +51,13 @@ export default function ResetPassword(){
             else {
                 setFormError('Please enter form details correctly')
             }
+            setComponentLoading(false)
 
         }
         catch(e:any){
             console.log(e);
             setFormError(e.message);
+            setComponentLoading(false)
         }
     }
     return(

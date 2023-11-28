@@ -1,5 +1,4 @@
 import {useContext,useEffect,useState} from 'react';
-import LoadingIndicator from '../components/loadingIndicator'
 import {CartContext} from '../context/cart'
 import Link from 'next/link';
 import {Metadata} from '../utils/metadata/metadata';
@@ -8,19 +7,22 @@ import {getSession} from 'next-auth/react'
 import Head from 'next/head';
 import CartElement from '../components/cartElement'
 
-export default function Cart(){
+export default function Cart({setComponentLoading}:any){
     let context=useContext(CartContext)
     const [user,setUser]=useState(false);
     
     useEffect(()=>{
+        setComponentLoading(true)
+        console.log('yooo')
         async function initiate(){
             const session = await getSession()
             if(session?.user){
                 setUser(true)
             }
+            setComponentLoading(false)
         }
         initiate()
-    },[])
+    },[setComponentLoading])
 
     return(
         <div className="static-container">

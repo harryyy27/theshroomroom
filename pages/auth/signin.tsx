@@ -5,7 +5,7 @@ import Head from 'next/head';
 import {Metadata} from '../../utils/metadata/metadata'
 import styles from '../../styles/Components/Form.module.css'
 import FormComponent from '../../components/form-component';
-export default function SignIn(){
+export default function SignIn({setComponentLoading}:any){
     const [username,setUsername] =useState('');
     const [usernameVal,setUsernameVal] =useState<boolean|null>(null);
     const [password,setPassword]= useState('');
@@ -14,11 +14,13 @@ export default function SignIn(){
     const [user,setUser]=useState('');
     const signInUser=async(e:FormEvent) => {
         try {
+            setComponentLoading(true)
             e.preventDefault();
             let options = {redirect:false,username,password}
     
             const res= await signIn("credentials",options);
             setMessage(null);
+            setComponentLoading(false)
             if(res?.error) {
                 setMessage(res.error)
             }
@@ -40,6 +42,7 @@ export default function SignIn(){
                     stack:error.stack
                 })
             })
+            setComponentLoading(false)
             setMessage('We\'re sorry something has gone wrong. Please try again later')
             
         }

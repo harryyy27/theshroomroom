@@ -4,7 +4,6 @@ import connect from '../../utils/connection'
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {getCsrfToken} from 'next-auth/react';
 import errorHandler from '../../utils/errorHandler';
-import Stripe from 'stripe';
 export default async function handler(req:NextApiRequest,res:NextApiResponse) {
     try{
         if(req.method==='POST'){

@@ -5,7 +5,6 @@ import {
     useStripe,
     useElements,
 } from '@stripe/react-stripe-js'
-import Spinner from '../components/loadingIndicator'
 
 import Dropdown from '../components/dropdown'
 import styles from '../styles/Components/Form.module.css'
@@ -52,6 +51,7 @@ interface UserSchema {
     updates: Boolean,
 }
 export default function CheckoutForm(props:any){
+
     const context = useContext(CartContext);
     const [subscription,setSubscription]=useState(false);
     const [oneTimePurchase,setOneTimePurchase]=useState(true);
@@ -89,10 +89,11 @@ export default function CheckoutForm(props:any){
     const [processing,setProcessing] = useState(false)
     const [errorMessage,setErrorMessage] = useState('');
     const stripe = useStripe();
+    const setComponentLoading=props.setComponentLoading
     const elements:any=useElements();
     useEffect(()=>{
-        console.log('yeeeehawww')
-        console.log(context.state.cart)
+        console.log('twat')
+        setComponentLoading(true)
         const initiate = async()=>{
             const session = await getSession()
             if(session?.user){
@@ -104,6 +105,7 @@ export default function CheckoutForm(props:any){
                     return res.json()
                 })
                 .then((res)=>{
+                    console.log('yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeboiiiiiiiiiiiiiiiiiiiiiiiii')
                     if(res.error){
                         throw new Error('Unable to load user details')
                     }
@@ -145,23 +147,25 @@ export default function CheckoutForm(props:any){
                     if(res.user.bAddress.postcode&&res.user.bAddress.postcode>0){
                         setBPostcode(res.user.bAddress.postcode);
                     }
-                        setUpdates(res.user.updates)
+                    setUpdates(res.user.updates)
+                    setComponentLoading(false)
                 })
-                .catch((e)=>{
+                .catch((e:any)=>{
                     setErrorMessage('Unable to load user details.')
                     setTimeout(function(){
                         setErrorMessage('');
                     },2000)
+
+                    setComponentLoading(false)
                 })
             }
             
             
         }
         initiate()
-        console.log(context.state.cart)
     }
     
-,[context])
+,[setComponentLoading])
     const paymentElementHandler=(e:any)=>{
         if(e.complete){
             setCardDetailsValid(true)
@@ -200,6 +204,7 @@ export default function CheckoutForm(props:any){
         }
     }
     const placeOrder=async(e:FormEvent)=>{
+        props.setComponentLoading(true)
         e.preventDefault()
         try {
             setProcessing(true)
@@ -307,6 +312,7 @@ export default function CheckoutForm(props:any){
                     
                     context.saveCart?context.saveCart():null
                     setCheckoutSuccess('Payment Made')
+                    props.setComponentLoading(false)
                     router.push(`/thank-you/order_id=${'SKU'+order.id}date${order.date}`)
 
                 }
@@ -315,6 +321,7 @@ export default function CheckoutForm(props:any){
         catch(e:any){
             setProcessing(false)
             setCheckoutError(e.message)
+            props.setComponentLoading(false)
         }
 
     }
@@ -330,7 +337,7 @@ export default function CheckoutForm(props:any){
             <form className={styles["form"]}action="POST" onSubmit={(e)=>placeOrder(e)} autoComplete="complete">
                 <input autoComplete="new-password" name="hidden" type="text" style={{"display":"none"}}/>
                 {
-                    context.loaded&&user===null&&
+                    context.cartLoaded&&user===null&&
                         <>
                         <h2>Guest Checkout</h2>
                             <FormComponent user={user} labelName={"Email Address"}variable={guestEmailAddress}variableName={Object.keys({guestEmailAddress})[0]}  setVariable={setGuestEmailAddress} variableVal={guestEmailAddressVal} setVariableVal={setGuestEmailAddressVal} inputType={"email"}required={!props.user}alternative={'sign in'}/>
@@ -363,7 +370,7 @@ export default function CheckoutForm(props:any){
                 </div>
                 
                 {
-                    context.loaded&&
+                    context.cartLoaded&&
                         <div>
                             <p>Subtotal: <>{context.state.subTotal}</></p>
                             <p>Shipping: <>{context.state.shipping}</></p>

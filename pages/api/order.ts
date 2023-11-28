@@ -32,7 +32,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 if(!session?.user){
                     throw new Error('You need to be signed in to subscribe.')
                 }
-                var stripeCustomerId= session.user.stripeCustomerId
+                var stripeCustomerId= session.user.stripeCustomerId||undefined
                 console.log('yer')
                 var subscriptionObj = {...body}
                 var standardShippingPriceId = "prod_P32r7gtFljcJHc";
@@ -101,7 +101,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                         date:order.dateOfPurchase, 
                         id:order._id,
                         subscription_id:subscription_id?subscription_id:null,
-                        stripeCustomerId:stripeCustomerId?stripeCustomerId:null,
+                        stripeCustomerId:order.stripeCustomerId?order.stripeCustomerId:null,
                         client_secret:checkoutSession?checkoutSession.latest_invoice.payment_intent.client_secret:null
                     })
             }

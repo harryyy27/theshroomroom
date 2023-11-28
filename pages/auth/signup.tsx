@@ -6,7 +6,7 @@ import FormComponent from "../../components/form-component";
 import {Metadata} from '../../utils/metadata/metadata'
 
 import styles from '../../styles/Components/Form.module.css'
-export default function SignUp(){
+export default function SignUp({setComponentLoading}:any){
     const [name,setName]=useState('');
     const [nameVal,setNameVal]=useState('');
     const [username,setUsername]=useState('');
@@ -17,6 +17,7 @@ export default function SignUp(){
     const [user,setUser]=useState('');
     const signupUser=async(e:FormEvent)=>{
         try{
+            setComponentLoading(true)
             e.preventDefault();
             const csrftoken = await getCsrfToken()
             if(!csrftoken){
@@ -31,6 +32,7 @@ export default function SignUp(){
                 body: JSON.stringify({name,username,password})
             })
             let data=await res.json()
+            setComponentLoading(false)
             if(data.message){
                 setMessage(data.message)
             }
@@ -53,6 +55,7 @@ export default function SignUp(){
                     stack:error.stack
                 })
             })
+            setComponentLoading(false)
             setMessage('We\'re sorry something has gone wrong. Please try again later')
         }
         

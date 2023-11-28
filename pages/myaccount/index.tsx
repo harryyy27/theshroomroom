@@ -5,13 +5,14 @@ import { signOut,useSession,getCsrfToken } from 'next-auth/react';
 import authenticate from '../../utils/authenticationRequired';
 
 
-export default function MyAccount(){
+export default function MyAccount({setComponentLoading}:any){
     const {data:session,status} = useSession();
     const [sure,updateSure]=useState(false);
     const [deleted,updateDeleted]=useState("");
     const [message,setMessage]=useState('');
     const deleteAccount=async(e:FormEvent)=>{
         try{
+            setComponentLoading(true)
             if(session&&session.user&&session.user.email){
                 const res = await fetch('api/deleteaccount/',{
                     method:"DELETE",
@@ -34,6 +35,7 @@ export default function MyAccount(){
                   })
     
             }
+            setComponentLoading(false)
         }
         catch(error:any){
             await fetch('/api/clientSideError',{
@@ -47,6 +49,7 @@ export default function MyAccount(){
                     stack:error.stack
                 })
             })
+            setComponentLoading(false)
             setMessage('We\'re sorry something has gone wrong. Please try again later')
         }
        

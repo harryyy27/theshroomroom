@@ -3,7 +3,7 @@ import {useState,FormEvent,useEffect} from 'react';
 import authenticate from '../../utils/authenticationRequired';
 import FormComponent from '../../components/form-component';
 import styles from '../../styles/Components/Form.module.css'
-export default function ChangePassword(){
+export default function ChangePassword({setComponentLoading}:any){
     const [currentPassword,setCurrentPassword] = useState<string>('');
     const [currentPasswordVal,setCurrentPasswordVal]=useState<boolean|undefined>(undefined);
     const [newPassword,setNewPassword]=useState<string>('');
@@ -27,6 +27,7 @@ export default function ChangePassword(){
             setFormError('')
             e.preventDefault()
             if(formValidated()){
+                setComponentLoading(true)
                 const session = await getSession()
                 const res = await fetch('/api/change-password',{
                     method: "PUT",
@@ -41,14 +42,17 @@ export default function ChangePassword(){
     
                 })
                 const resJson = await res.json()
+                setComponentLoading(false)
                 if(resJson.error){    
                     throw new Error(resJson.error)
                 }
                 else {
+                    setComponentLoading(false)
                     setPasswordChanged('Password successfully changed')
                 }
             }
             else {
+                
                 setFormError('Please enter form details correctly')
             }
 
@@ -56,6 +60,7 @@ export default function ChangePassword(){
         catch(e:any){
             console.log(e);
             setFormError(e.message);
+            setComponentLoading(false)
         }
     }
     return(

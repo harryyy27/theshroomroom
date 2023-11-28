@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import connect from '../../utils/connection'
 import {Product} from '../../utils/schema';
-import errorHandler from '../../utils/errorHandler'
-import os from 'os'
+import errorHandler from '../../utils/errorHandler';
 type Data = {
     name: string;
     description: string;

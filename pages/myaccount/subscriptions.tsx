@@ -5,13 +5,41 @@ import { useEffect,useState,FormEvent } from "react";
 import authenticate from '../../utils/authenticationRequired';
 import Link from 'next/link';
 
-export default function MyAccountOrders(){
+export default function MyAccountOrders({setComponentLoading}:any){
     const [subscriptions,setSubscriptions]=useState([])
     const [cancelSubscriptionId,setCancelSubscriptionId]=useState('');
     const [cancelError, setCancelError]=useState<string|null>(null)
     const [error,setError]=useState<string|null>(null)
     const router = useRouter()
     useEffect(()=>{
+        async function getSubscriptions(sesh:Session){
+            try{
+                setComponentLoading(true)
+                const subscriptionData = await fetch(`/api/subscriptions/?id=${sesh.user.id}`,{
+                    method:"GET"
+                })
+                const subscriptionDataJson = await subscriptionData.json()
+                setSubscriptions(subscriptionDataJson.subscriptions)
+                setComponentLoading(false)
+            }
+            catch(e:any){
+                await fetch('/api/clientSideError',{
+                    method:"POST",
+                    headers: {
+                        "csrfToken": await getCsrfToken() as string,
+                        "client-error": "true"
+                    },
+                    body:JSON.stringify({
+                        error:e.message,
+                        stack:e.stack
+                    })
+                })
+                setError(e)
+                setComponentLoading(false)
+
+            }
+
+        }
         const initiate=async()=>{
             try{
                 const sesh = await getSession()
@@ -27,35 +55,11 @@ export default function MyAccountOrders(){
             }
         }
         initiate()
-    },[router])
-    async function getSubscriptions(sesh:Session){
-        try{
-            const subscriptionData = await fetch(`/api/subscriptions/?id=${sesh.user.id}`,{
-                method:"GET"
-            })
-            const subscriptionDataJson = await subscriptionData.json()
-            setSubscriptions(subscriptionDataJson.subscriptions)
-
-        }
-        catch(e:any){
-            await fetch('/api/clientSideError',{
-                method:"POST",
-                headers: {
-                    "csrfToken": await getCsrfToken() as string,
-                    "client-error": "true"
-                },
-                body:JSON.stringify({
-                    error:e.message,
-                    stack:e.stack
-                })
-            })
-            setError(e)
-
-        }
-
-    }
+    },[router,setComponentLoading])
+    
     async function cancelSubscription(e:FormEvent,idx:number){
-        try{
+        try{    
+                setComponentLoading(true)
                 e.preventDefault()
                 const csrftoken=await getCsrfToken()
                 if(!csrftoken){
@@ -79,6 +83,7 @@ export default function MyAccountOrders(){
                 else {
                     setCancelError('Cancellation failed')
                 }
+                setComponentLoading(false)
             
 
         }
@@ -95,6 +100,7 @@ export default function MyAccountOrders(){
                     stack:error.stack
                 })
             })
+            setComponentLoading(false)
             setError(error)
         }
 
@@ -161,9 +167,9 @@ export default function MyAccountOrders(){
                         <p>Subscription status: {el.status}</p>
                         <p>Date initiated: {el.dateOfPurchase}</p>
                         <ul>
-                            {el.products.items.map((el_product:any)=>{
+                            {el.products.items.map((el_product:any,idxPr:number)=>{
                                 return(
-                                    <li>
+                                    <li key={idxPr}>
                                         <p><span>{el_product.name}</span><span> - £{el_product.price}</span></p>
                                     </li>
         

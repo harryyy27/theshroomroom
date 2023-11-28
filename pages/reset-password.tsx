@@ -3,8 +3,8 @@ export default function ResetPassword(){
         <div className="static-container">
             <p>Reset password</p>
             <form action="/api/reset-password"method="POST">
-                <input placeholder="Type password" />
-                <input placeholder="Type password again" />
+                <input placeholder="Password" type="password"/>
+                <input placeholder="Confirm password" type="password" />
                 <button type="submit">Submit</button>
             </form>
         </div>

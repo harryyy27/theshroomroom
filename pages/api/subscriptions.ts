@@ -77,10 +77,19 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         if(e.message){
             errorMsg=e.message
         }
+        else {
+            errorMsg = ''
+        }
         if(e.stack){
             errorStk=e.stack
         }
-        // await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.error,e.stack,false)
+        else {
+            errorStk='Not available'
+        }
+        if(errorMsg &&errorStk){
+            await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.error,e.stack,false)
+        }
+        
 
         return res.status(500).json({success:false,error:e.message})
     }

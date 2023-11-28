@@ -1,82 +1,37 @@
-import React from 'react';
-import { render } from 'react-dom';
+import {useState,useEffect} from 'react'
+import {useRouter} from 'next/router'
 
-interface SpinnerProps {
-  width?: number;
-  diameter?: number;
-  duration?: number;
-  easing?: string;
-  color?: string;
+
+function Loading(props:any) {
+  const router = useRouter();
+  const [loading,setLoading] = useState(false)
+
+
+  useEffect(() => {
+      const handleStart = (url:string) => (url !== router.asPath) && setLoading(true);
+      const handleComplete = (url:string) => (url === router.asPath) && setTimeout(() =>{setLoading(false);console.log('FALLLLLLSE')},500);
+
+      router.events.on('routeChangeStart', handleStart)
+      router.events.on('routeChangeComplete', handleComplete)
+      router.events.on('routeChangeError',  handleComplete)
+
+      return () => {
+          router.events.off('routeChangeStart', handleStart)
+          router.events.off('routeChangeComplete', handleComplete)
+          router.events.off('routeChangeError', handleComplete)
+      }
+  })
+
+  return  (
+    <>
+    {
+      loading||props.componentLoading?
+      <>loading</>:
+      null
+    }
+    </>
+  )
 }
 
-type DivProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-const spinnerDefaultProps: Required<SpinnerProps> = {
-  width: 10,
-  diameter: 200,
-  duration: 1000,
-  easing: 'ease-out',
-  color: 'black',
-}
-
-const Spinner: React.FC<SpinnerProps & DivProps> = props => {
-  const { width, diameter, duration, easing, color, ...rest } = { ...spinnerDefaultProps, ...props }
-
-  const radius = diameter / 2;
-
-  const [deg, setDeg] = React.useState(0);
-
-  const arc = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    arc.current!.animate([
-      {
-        transform: `rotate(0deg)`,
-      },
-      {
-        transform: `rotate(360deg)`,
-      },
-    ], {
-      duration,
-      iterations: Infinity,
-      easing,
-    })
-  }, [])
-
-  return (
-    <div
-      ref={arc}
-      {...rest}
-      style={{
-        ...rest.style,
-        height: radius,
-        width: diameter,
-        overflow: 'hidden',
-        zIndex:20000000000,
-        textAlign:"center"
-      }}
-    >
-      <div
-        style={{
-          height: diameter,
-          width: diameter,
-          borderRadius: '50%',
-          border: `${width}px solid ${color}`,
-          position:"absolute",
-        }}
-      />
-<p>loading</p>
-<div
-        style={{
-          height: diameter*0.2,
-          width: diameter*0.2,
-          borderRadius: '50%',
-          border: `${width}px solid ${color}`,
-          margin:"auto"
-        }}
-      />
-    </div>
-  );
-}
-
-export default Spinner
+export default Loading

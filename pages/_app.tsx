@@ -4,6 +4,7 @@ import {useState,useEffect, useReducer} from 'react';
 import styles from '../styles/Pages/Home.module.css';
 import Header from '../components/header';
 import Footer from '../components/footer';
+import Loading from '../components/loadingIndicator'
 import Subscription from '../components/home_page/subscribe'
 import type { AppProps } from 'next/app'
 import { SessionProvider,getSession, getCsrfToken } from "next-auth/react"
@@ -77,7 +78,8 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
   // const [total,setTotal]=useState(0);
   // const [subTotal,setSubTotal]=useState(0);
   // const [shipping,setShipping]=useState(5);
-  const [loaded,setLoaded]=useState(false);
+  const [componentLoading,setComponentLoading]=useState(false);
+  const [cartLoaded,setCartLoaded]=useState(false);
     useEffect(()=>{
         const initializeCart=async()=>{
           try {
@@ -99,8 +101,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                     }))
                 }
             }
-            setLoaded(true)
-
+            setCartLoaded(true)
           }
           catch(e:any){
             await fetch('/api/clientSideError',{
@@ -119,7 +120,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
         }
         initializeCart()
     },[])
-    const saveCart=async(product:Product|undefined)=>{
+    const saveCart=async(product?:Product)=>{
         try{
           const session = await getSession()
           if(product){
@@ -237,10 +238,10 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
       `}</style>
       <CartContext.Provider value={{
                 state,
-                loaded,
                 dispatch,
-                setLoaded,
                 saveCart,
+                cartLoaded,
+                setCartLoaded,
             }}>
         <Header/>
           {/* <Head>
@@ -251,8 +252,13 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
           </Head> */}
 
         <main className="main">
+          <Loading componentLoading={componentLoading} />
           <div className={styles.container}>
-            <Component {...pageProps} />
+            <Component {
+              ...pageProps
+              }
+              componentLoading={componentLoading}
+              setComponentLoading={setComponentLoading} />
           </div>
           <Subscription/>
         </main>
