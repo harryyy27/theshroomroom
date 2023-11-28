@@ -68,14 +68,13 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
 
     }
     catch(e:any){
-        const error = new Error('eeeeee')
-        console.log(error)
+        const error = new Error('eeeeee') as any
+        console.log(error.stackmessage)
         // const eeee=Object.getPrototypeOf(error)
         var errorMsg;
         var errorStk;
-        const err2 =new Error(`${Object.getOwnPropertyNames(error).join('')}`)
-        console.log(err2)
-        console.log(err2)
+        const err2 =new Error(`${Object.getOwnPropertyNames(error).join('')}`) as any
+        console.log(err2.stackmessage)
         if(e.message){
             errorMsg=e.message
         }
