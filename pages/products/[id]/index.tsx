@@ -5,7 +5,8 @@ import {CartContext} from '../../../context/cart';
 import Head from 'next/head';
 import {Metadata} from '../../../utils/metadata/metadata';
 import Link from 'next/link'
-
+import Dropdown from '../../../components/dropdown'
+import {getSession,getCsrfToken}from 'next-auth/react'
 interface Product {
     _id:string,
     name:string,
@@ -19,7 +20,15 @@ interface Product {
     price_fresh_100g:number,
     price_fresh_250g:number,
     price_fresh_500g:number,
-    price_fresh_1kg:number}
+    price_fresh_1kg:number
+    stripe_product_id_dry_10g:string,
+    stripe_product_id_dry_25g:string,
+    stripe_product_id_dry_50g:string,
+    stripe_product_id_dry_100g:string,
+    stripe_product_id_fresh_100g:string,
+    stripe_product_id_fresh_250g:string,
+    stripe_product_id_fresh_500g:string,
+    stripe_product_id_fresh_1kg:string}
 export default function ProductDetails(){
     const context = useContext(CartContext);
     const [product,setProduct]=useState<Product>({
@@ -36,6 +45,15 @@ export default function ProductDetails(){
         price_fresh_250g:0,
         price_fresh_500g:0,
         price_fresh_1kg:0,
+        stripe_product_id_dry_10g:'',
+        stripe_product_id_dry_25g:'',
+        stripe_product_id_dry_50g:'',
+        stripe_product_id_dry_100g:'',
+        stripe_product_id_fresh_100g:'',
+        stripe_product_id_fresh_250g:'',
+        stripe_product_id_fresh_500g:'',
+        stripe_product_id_fresh_1kg:'',
+
 
     })
     const [name,setName]=useState('');
@@ -45,14 +63,23 @@ export default function ProductDetails(){
     const [price,setPrice]=useState('');
     const [id,setId]=useState('');
     const [fresh,setFresh]=useState(true);
-    const [size,setSize]=useState('')
+    const [size,setSize]=useState('');
     const [qty,setQty]=useState(1);
+    const [subscription,setSubscription]=useState(false);
+    const [oneTimePurchase,setOneTimePurchase]=useState(true);
+    const [subscriptionInterval,setSubscriptionInterval]=useState('');
+    const [user,setUser]=useState(false);
+    const [stripeProductId,setStripeProductId]=useState('');
 
     useEffect(()=>{
         const urlArr =window.location.href.split('/')
         const productName = urlArr[urlArr.length-1].replace(/[\-]/gi,' ').replace('\&apos','\'');
         setImageUrl(urlArr[urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
         const initiate = async()=>{
+            const session = await getSession()
+            if(session?.user){
+                setUser(true)
+            }
             const productDetailsJson = await fetch(`/api/products?product=${productName}`)
             const productDetails = await productDetailsJson.json()
             setProduct(productDetails)
@@ -60,6 +87,8 @@ export default function ProductDetails(){
             setDescription(productDetails.description);
             setType(productDetails.type)
             setId(productDetails._id)
+            setStripeProductId(productDetails.stripeProductId)
+
 
 
         }
@@ -102,6 +131,7 @@ export default function ProductDetails(){
                     setFresh(true);
                     setPrice('');
                     setSize('');
+                    setStripeProductId('');
                     toggleBackground(e.target as HTMLElement,"fresh-dry")
                     toggleBackground(null,"size-select")
                 }}>Fresh</button>
@@ -109,6 +139,7 @@ export default function ProductDetails(){
                     setFresh(false)
                     setPrice('');
                     setSize('');
+                    setStripeProductId('');
                     toggleBackground(e.target as HTMLElement,"fresh-dry")
                     toggleBackground(null,"size-select")
                     }}>Dry</button>
@@ -127,12 +158,16 @@ export default function ProductDetails(){
                                     if(fresh){
                 
                                         var index="price_fresh_"+text
+                                        var stripe_index="stripe_product_id_fresh_"+text
                                     }
                                     else {
                                         var index="price_dry_"+text
+                                        var stripe_index="stripe_product_id_dry_"+text
                                     }
                                     var productPrice = product[index as keyof Product]
+                                    var stripe_id=product[stripe_index as keyof Product] as string
                                     setPrice(productPrice.toString())
+                                    setStripeProductId(stripe_id)
                                     setSize(text)
                                     toggleBackground(e.target as HTMLElement,"size-select")
 
@@ -147,14 +182,20 @@ export default function ProductDetails(){
                                     var text=(e.target as HTMLInputElement).textContent as string;
                                     if(fresh){
                                         var index="price_fresh_"+text
+                                        var stripe_index="stripe_product_id_fresh_"+text
                                     }
                                     else {
 
                                         var index="price_dry_"+text
+                                        var stripe_index="stripe_product_id_dry_"+text
                 
                                     }
                                     var productPrice = product[index as keyof Product]
+                                    
+                                    var stripe_id=product[stripe_index as keyof Product] as string
+                                    console.log(stripe_id)
                                     setPrice(productPrice.toString())
+                                    setStripeProductId(stripe_id)
                                     setSize(text)
                                     toggleBackground(e.target as HTMLElement,"size-select")
 
@@ -169,28 +210,29 @@ export default function ProductDetails(){
                     <input id={`productQuantity`} className="form-input"name={"quantity"} type="number" value={qty} onChange={(e)=>setQty(Number(e.target.value))}/>
                                  
                 </div>
-                
+               
                 <button id="productAddToCart" className="cta"onClick={async(e)=>{
-                    try{
-                        const input = document.getElementById(`productQuantity`) as HTMLInputElement;
-                        if(size!==''&&input.value!==''){
-                            context.saveCart? context.saveCart({
-                                _id:id,
-                                name:name,
-                                fresh:fresh,
-                                size:size,
-                                quantity:Number(input.value),
-                                price: Number(price),
+                            try{
+                                const input = document.getElementById(`productQuantity`) as HTMLInputElement;
+                                if(size!==''&&input.value!==''){
+                                    console.log(context.state.cart)
+                                    context.saveCart? context.saveCart({
+                                        _id:id,
+                                        name:name,
+                                        fresh:fresh,
+                                        size:size,
+                                        quantity:Number(input.value),
+                                        price: Number(price),
+                                        stripeProductId:stripeProductId,
+                                    }):null}
+                                }
+                            
+                            catch(e){
         
-                            }):null}
+                            }
                         }
-                    
-                    catch(e){
-
-                    }
-                }
-                    
-                }>Add to basket</button>
+                            
+                        }>Add to basket</button>
             </section>
             
 

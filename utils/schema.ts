@@ -58,20 +58,49 @@ const ProductSchema = new Schema({
         type: Number,
         required:false
     },
+
+    stripe_product_id_dry_100g: {
+
+        type: String,
+        required:true
+    },
+    stripe_product_id_dry_10g:{
+
+        type: String,
+        required:true
+    },
+    stripe_product_id_dry_25g:{
+
+        type: String,
+        required:true
+    },
+    stripe_product_id_dry_50g:{
+
+        type: String,
+        required:true
+    },
+    stripe_product_id_fresh_100g:{
+        type: String,
+        required:true
+    },
+    stripe_product_id_fresh_1kg:{
+        type: String,
+        required:true
+    },
+    stripe_product_id_fresh_250g:{
+        type: String,
+        required:true
+    },
+    stripe_product_id_fresh_500g:{
+        type: String,
+        required:true
+    },
 })
 // OUR TODO MODEL
 const Product = function(){
     return models.Product || model("Product", ProductSchema)
 }
-const SubscriptionSchema= new Schema({
-    email: {
-        type:String,
-        required:true
-    }
-})
-const Subscription = function(){
-    return models.Subscription || model("Subscription", SubscriptionSchema)
-}
+
 const UserSchema=new Schema({
 
     name: {
@@ -113,6 +142,14 @@ const UserSchema=new Schema({
                 fresh:{
                     type:Boolean,
                     required:true
+                },
+                stripeProductId: {
+                    type:String,
+                    required:true
+                },
+                subscription: {
+                    type:String,
+                    required:false,
                 }
 
             }
@@ -185,6 +222,21 @@ const UserSchema=new Schema({
         type: Boolean,
         default:false,
         required: true
+    },
+    stripeCustomerId:{
+        type:String,
+        default:'',
+        required:false
+    },
+    subscriptionId: {
+        type:String,
+        default: '',
+        required:false
+    },
+    isActive: {
+        type:Boolean,
+        default:false,
+        required:false
     }
 })
 const User = function(){
@@ -280,6 +332,14 @@ const OrderSchema=new Schema({
             fresh:{
                 type:Boolean,
                 required:true
+            },
+            subscription: {
+                type:String,
+                required:false
+            },
+            stripeProductId: {
+                type:String,
+                required:true
             }
         }]
     },
@@ -314,10 +374,167 @@ const OrderSchema=new Schema({
     status:{
         type:String,
         required:true
+    },
+    subscriptionId:{
+        type:String,
+        required:false
+    },
+    stripeCustomerId:{
+        type:String,
+        required:false
     }
 })
 const Order = function(){
     return models.Order || model("Order", OrderSchema)
+}
+const SubscriptionSchema=new Schema({
+    userId: {
+        type:String,
+        required: false
+    },
+    email: {
+        type:String,
+        required:true
+    },
+    guestCheckout: {
+        type:Boolean,
+        required: false
+    },
+    dAddress: {
+        firstName: {
+            type:String,
+            required: true
+        },
+        surname: {
+            type:String,
+            required:true
+        },
+        firstLine: {
+            type:String,
+            required: true
+        },
+        secondLine: {
+            type:String,
+            required:false
+        },
+        city: {
+            type:String,
+            required:true
+        },
+        postcode: {
+            type:String,
+            required:true
+        }
+    },
+    bAddress: {
+        firstName: {
+            type:String,
+            required:true
+        },
+        surname: {
+            type:String,
+            required:true
+        },
+        firstLine: {
+            type:String,
+            required:true
+        },
+        secondLine: {
+            type:String,
+            required:false
+        },
+        city: {
+            type:String,
+            required:true
+        },
+        postcode: {
+            type:String,
+            required:true
+        }
+    },
+    products: {
+        items: [{
+            _id: {
+                type:String,
+                required:true
+            },
+            quantity: {
+                type:Number,
+                required:true
+            },
+            name: {
+                type:String,
+                required:true
+            },
+            price: {
+                type:Number,
+                required:true
+            },
+            size: {
+                type:String,
+                required:true
+            },
+            fresh:{
+                type:Boolean,
+                required:true
+            },
+            subscription: {
+                type:String,
+                required:false
+            },
+            stripeProductId: {
+                type:String,
+                required:true
+            }
+        }]
+    },
+    paymentIntentId: {
+        type:String,
+        required:true
+    },
+    dateOfPurchase: {
+        type:Date,
+        required:true
+    },
+    shippingMethod: {
+        type:String,
+        required:true
+    },
+    shippingCost: {
+        type:Number,
+        required:true
+    },
+    subtotal: {
+        type:Number,
+        required:true
+    },
+    total: {
+        type:Number,
+        required:true
+    },
+    error: {
+        type:String,
+        required: true
+    },
+    status:{
+        type:String,
+        required:true
+    },
+    subscriptionId:{
+        type:String,
+        required:true
+    },
+    stripeCustomerId:{
+        type:String,
+        required:true
+    },
+    interval:{
+        type:String,
+        required:true
+    }
+})
+const Subscription = function(){
+    return models.Subscription || model("Subscription", SubscriptionSchema)
 }
 const PasswordReset = new Schema({
     passwordResetToken: {

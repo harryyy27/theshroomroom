@@ -8,7 +8,7 @@ interface ContextInterface {
         total: Number,
         shipping: Number,
         shippingMethod:String,
-        totalQuantity:Number
+        totalQuantity:Number,
 
     },
     loaded: Boolean,
@@ -28,7 +28,7 @@ const defaultState={
         total:5,
         shipping:5,
         shippingMethod:"Standard",
-        totalQuantity:0
+        totalQuantity:0,
     },
     dispatch:undefined,
     loaded: false,

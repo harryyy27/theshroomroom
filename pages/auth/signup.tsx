@@ -69,9 +69,9 @@ export default function SignUp(){
             </Head>
         <h1 className="main-heading center">Sign Up</h1>
         <form className={styles["form"]} onSubmit={(e)=>signupUser(e)}>
-            <FormComponent user={user} labelName={"First Name"}variable={name} variableName={Object.keys({name})[0]} setVariable={setName} variableVal={nameVal} setVariableVal={setNameVal} inputType={"text"} required={true}/>
-            <FormComponent user={user} labelName={"Username"}variable={username} variableName={Object.keys({username})[0]} setVariable={setUsername} variableVal={usernameVal} setVariableVal={setUsernameVal} inputType={"text"} required={true}/>
-            <FormComponent user={user} labelName={"Password"}variable={password} variableName={Object.keys({password})[0]} setVariable={setPassword} variableVal={passwordVal} setVariableVal={setPasswordVal} inputType={"text"} required={true}/>
+            <FormComponent user={user} labelName={"Name"}variable={name} variableName={Object.keys({name})[0]} setVariable={setName} variableVal={nameVal} setVariableVal={setNameVal} inputType={"text"} required={true}/>
+            <FormComponent user={user} labelName={"Email"}variable={username} variableName={Object.keys({username})[0]} setVariable={setUsername} variableVal={usernameVal} setVariableVal={setUsernameVal} inputType={"email"} required={true}/>
+            <FormComponent user={user} labelName={"Password"}variable={password} variableName={Object.keys({password})[0]} setVariable={setPassword} variableVal={passwordVal} setVariableVal={setPasswordVal} inputType={"password"} required={true}/>
 
             <button id="submit" className="cta" type="submit" value="submit" >Submit</button>
             {/* <button id="googleSignUp">Sign up with Google</button> */}

@@ -1,5 +1,5 @@
 import {FormEvent,useState} from 'react';
-import Router from 'next/router';
+import Head from 'next/head';
 import Link from 'next/link';
 import { signOut,useSession,getCsrfToken } from 'next-auth/react';
 import authenticate from '../../utils/authenticationRequired';
@@ -15,6 +15,9 @@ export default function MyAccount(){
             if(session&&session.user&&session.user.email){
                 const res = await fetch('api/deleteaccount/',{
                     method:"DELETE",
+                    headers: {
+                        "csrfToken": await getCsrfToken() as string,
+                    },
                     body:JSON.stringify({
                         email:session.user.email
                     })
@@ -50,6 +53,13 @@ export default function MyAccount(){
     }
     return(
         <div className="static-container">
+
+            <Head>
+                <title>Mega Mushrooms - My Account</title>
+                <meta name="description" content="Update account details or orders here."/>
+                <meta property="og:title" content="Mega Mushrooms - buy our high quality lion's mane mushrooms here"/>
+                <meta property="og:description" content="Update account details or orders here."/>
+            </Head>
             <h1 className="main-heading center">My Account</h1>
             <ul>
                 <li className="account-list-element">
@@ -57,6 +67,9 @@ export default function MyAccount(){
                 </li>
                 <li className="account-list-element">
                     <Link href="/myaccount/orders">Orders</Link>
+                </li>
+                <li className="account-list-element">
+                    <Link href="/myaccount/subscriptions">Subscriptions</Link>
                 </li>
                 <li className="account-list-element">
                     <Link href="/myaccount/change-password">Change Password</Link>

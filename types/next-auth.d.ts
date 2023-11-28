@@ -30,7 +30,10 @@ declare module "next-auth" {
           city: String,
           postcode: String,
       },
-      updates:boolean
+      updates:boolean,
+      stripeCustomerId:String,
+      subscriptionId:String,
+      isActive:boolean
 
     }
   }

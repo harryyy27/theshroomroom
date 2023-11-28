@@ -10,12 +10,12 @@ const stripePromise = loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
   );
 // import {useEffect,useContext} from 'react';
-import {parseCookies, setCookie} from 'nookies'
+import {parseCookies, setCookie,destroyCookie} from 'nookies'
 import CheckoutForm from '../components/checkout-form'
 import { getSession, getCsrfToken } from 'next-auth/react';
 import { Product } from '../utils/types'
 import { v4 as uuidv4 } from 'uuid';
-import errorHandler from '../utils/errorHandler'
+import {logger} from '../utils/logger'
 
 export default function Checkout({paymentIntent}:any){
     
@@ -47,10 +47,12 @@ export const getServerSideProps =  async(ctx:any) => {
     const {req,res} = ctx;
     try {
         const secret_key = process.env.STRIPE_SECRET_KEY as string;
+        logger.info('yo')
         var stripe = new Stripe(secret_key,{
             apiVersion:"2022-08-01",
             maxNetworkRetries:3
         })
+        logger.info('yoyo')
         const sesh = await getSession(ctx)
         const {Cart}= parseCookies(ctx)
         let total;
@@ -66,6 +68,7 @@ export const getServerSideProps =  async(ctx:any) => {
             },0)
         }
 
+        logger.info('yoyoyo')
         if(!sesh&&!Cart){
             return {
                 redirect: {
@@ -75,15 +78,22 @@ export const getServerSideProps =  async(ctx:any) => {
                 props:{},
               };
         }
+        console.log('yoyoyoyoy')
         let paymentIntent;
         const {paymentIntentId} = parseCookies(ctx)
         if(paymentIntentId){
             paymentIntent=await stripe.paymentIntents.retrieve(paymentIntentId)
+            console.log(paymentIntent.status)
+            if(paymentIntent.status==="canceled"||paymentIntent.status==="succeeded"){
+                console.log('yee')
+                destroyCookie(ctx,"paymentIntentId")
+            }
+            console.log(paymentIntent.status)
             if(paymentIntent.amount!==total*100){
-                
                 paymentIntent=await stripe.paymentIntents.update(paymentIntentId,{
                     amount:total*100+500
                 })
+
             }
             return {
                 props: {
@@ -91,6 +101,10 @@ export const getServerSideProps =  async(ctx:any) => {
                 }
             }
         }
+        else {
+
+        }
+        console.log('where am i?')
         const idempotencyKey = uuidv4();
         paymentIntent = await stripe.paymentIntents.create({
             amount: total*100+500,
@@ -102,7 +116,9 @@ export const getServerSideProps =  async(ctx:any) => {
         },{
             idempotencyKey:idempotencyKey
         })
-        setCookie(ctx,'paymentIntentId',paymentIntent.id)
+        setCookie(ctx,'paymentIntentId',paymentIntent.id,{
+            path:'/checkout'
+        })
         return {
             props: {
                 paymentIntent:paymentIntent,
@@ -110,7 +126,16 @@ export const getServerSideProps =  async(ctx:any) => {
         }
     }
     catch(e:any){
-        await errorHandler(JSON.stringify(req.headers),req.body?JSON.stringify(req.body):'no body',req.method, e.message,e.stack,false)
+        console.log(e)
+        logger.info(e)
+        logger.error(e)
+        return {
+            redirect: {
+              permanent: false,
+              destination: "/",
+            },
+            props:{},
+          };
     }
     
 }

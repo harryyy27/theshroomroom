@@ -5,7 +5,9 @@ import {
     useStripe,
     useElements,
 } from '@stripe/react-stripe-js'
+import Spinner from '../components/loadingIndicator'
 
+import Dropdown from '../components/dropdown'
 import styles from '../styles/Components/Form.module.css'
 import {useRouter} from 'next/router'
 import {getCsrfToken} from 'next-auth/react'
@@ -16,7 +18,11 @@ export interface Product {
     _id: String,
     price: number,
     quantity: number,
-    name: string
+    name: string,
+    size:string,
+    fresh:boolean,
+    stripeProductId:string,
+    subscription:string,
   }
 interface UserSchema {
     id: string,
@@ -47,6 +53,9 @@ interface UserSchema {
 }
 export default function CheckoutForm(props:any){
     const context = useContext(CartContext);
+    const [subscription,setSubscription]=useState(false);
+    const [oneTimePurchase,setOneTimePurchase]=useState(true);
+    const [subscriptionInterval,setSubscriptionInterval]=useState('');
     const router = useRouter();
     const [dFirstName,setDFirstName]=useState('');
     const [dFirstNameVal,setDFirstNameVal]=useState<boolean|null>(null);
@@ -82,6 +91,8 @@ export default function CheckoutForm(props:any){
     const stripe = useStripe();
     const elements:any=useElements();
     useEffect(()=>{
+        console.log('yeeeehawww')
+        console.log(context.state.cart)
         const initiate = async()=>{
             const session = await getSession()
             if(session?.user){
@@ -147,9 +158,10 @@ export default function CheckoutForm(props:any){
             
         }
         initiate()
+        console.log(context.state.cart)
     }
     
-,[])
+,[context])
     const paymentElementHandler=(e:any)=>{
         if(e.complete){
             setCardDetailsValid(true)
@@ -191,9 +203,19 @@ export default function CheckoutForm(props:any){
         e.preventDefault()
         try {
             setProcessing(true)
-            const valid = validate_form()
+            let valid = validate_form()
+            let subValid=true;
+            console.log(subscription)
+            console.log(subscriptionInterval)
+            if(subscription&&subscriptionInterval===''){
+                subValid=false
+            }
+
             if(!valid){
                 throw new Error('Please enter form details correctly')
+            }
+            if(!subValid){
+                throw new Error('Please select a subscription interval');
             }
             var emailAddress;
             var userId=null;
@@ -238,20 +260,21 @@ export default function CheckoutForm(props:any){
                     total:context.state.total,
                     status:"INITIATED",
                     error: 'None',
-                    paymentIntentId:props.paymentIntent.id
+                    paymentIntentId:props.paymentIntent.id,
+                    updates:updates,
+                    subscription:subscriptionInterval
                 })
             })
-            const reachedDatabase = await eventInitiated.json()
-            if(reachedDatabase.success===false){
+            const order=await eventInitiated.json()
+            console.log('ERRRR WHAT NOW??')
+            if(order.success===false){
                 throw new Error("Order failed, no order received")
             }
-            const {error, paymentIntent: {status}}:any=await stripe?.confirmPayment({
+            var {error, paymentIntent: {status}}:any=await stripe?.confirmPayment({
                 elements,
-                confirmParams:{
-                    return_url:`${window.location.origin}/api/stripe_webhook`
-                },
                 redirect:"if_required"
             })
+            
             if(error){
                 await fetch('/api/order',{
                     method: "PUT",
@@ -267,8 +290,9 @@ export default function CheckoutForm(props:any){
                 throw new Error('Order failed stripe issue')
             }
             if( status==='succeeded'){
-                destroyCookie(null, "paymentIntentId")
-                destroyCookie(null,  "Cart")
+                destroyCookie({},"paymentIntentId",{
+                    path:'/checkout'
+                })
                 await fetch('/api/order',{
                     method: "PUT",
                     headers: {
@@ -280,13 +304,10 @@ export default function CheckoutForm(props:any){
                     })
                 })
                 if(context&&context.dispatch){
-                    context.dispatch({
-                        type:"UPDATE_CART",
-                        payload:{
-                            items:[]
-                        }
-                        })
+                    
+                    context.saveCart?context.saveCart():null
                     setCheckoutSuccess('Payment Made')
+                    router.push(`/thank-you/order_id=${'SKU'+order.id}date${order.date}`)
 
                 }
             }
@@ -300,13 +321,13 @@ export default function CheckoutForm(props:any){
     if (checkoutSuccess) return <p>{checkoutSuccess}</p>
     return (
         <div className="static-container">
-        <h1 className="main-heading center">CHECK ME OUT</h1>
+        <h1 className="main-heading center">Checkout</h1>
         {
             errorMessage!==''?
             <p>{errorMessage}</p>:
             null
         }
-            <form className={styles["form"]}action="POST" onSubmit={(e)=>placeOrder(e)} autoComplete="fuck-off">
+            <form className={styles["form"]}action="POST" onSubmit={(e)=>placeOrder(e)} autoComplete="complete">
                 <input autoComplete="new-password" name="hidden" type="text" style={{"display":"none"}}/>
                 {
                     context.loaded&&user===null&&
@@ -338,7 +359,7 @@ export default function CheckoutForm(props:any){
                 <PaymentElement onChange={(e)=>paymentElementHandler(e)}/>
                 <div className={styles["form-element-wrapper"]}>
                     <label className={styles["form-label"]} htmlFor="updates">Receive updates</label>
-                    <input className={styles["form-element"]} autoComplete="fuck-off" id="updates" type="checkbox" value={String(updates)} onChange={(e)=>setUpdates(e.target.checked)}/>
+                    <input className={styles["form-element"]} autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e)=>setUpdates(e.target.checked)}/>
                 </div>
                 
                 {
@@ -350,6 +371,39 @@ export default function CheckoutForm(props:any){
 
                         </div>
                 }
+                <fieldset>
+                    <div>
+                    <p>Would you like to receive these products regularly?{user?"Click below to pay a weekly or monthly subscription":"Log in to subscribe"} </p>
+                    <label htmlFor="oneTimePurchase">One time purchase</label>
+                    <input id="oneTimePurchase" type="radio" name="oneTimePurchase" checked={oneTimePurchase} onChange={(e)=>{
+                        setOneTimePurchase(!oneTimePurchase)
+                        setSubscription(!subscription)
+                        setSubscriptionInterval('')
+                    }}
+                        
+                        />
+                    
+                    </div>
+                     
+                {user?
+                    <div>
+                        
+                    <label htmlFor="subscription">Subscription</label>
+                    <input id="subscription" type="radio" checked={subscription} onChange={(e)=>{
+                        setOneTimePurchase(!oneTimePurchase)
+                        setSubscription(!subscription)
+                    }} />
+                    {
+                        subscription?
+                        <>
+                            <Dropdown selected={subscriptionInterval} setSelected={setSubscriptionInterval} dropList={["weekly","monthly"]}/>
+                            </>
+                            :null
+                    }
+                    
+                    </div>:
+                    <p>Log in for subscriptions</p>}
+                </fieldset>
                 <button id="placeOrder" className="cta" type="submit" disabled={processing} onClick={(e)=>placeOrder(e)}>Submit</button>
             </form>
             {checkoutError&& <p className="form-error"style={{color:"red"}}>{checkoutError}</p>}

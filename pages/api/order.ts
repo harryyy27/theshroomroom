@@ -1,8 +1,11 @@
 import connect from '../../utils/connection';
-import {Order, User} from '../../utils/schema';
+import {Order, User,Subscription} from '../../utils/schema';
 import {NextApiRequest,NextApiResponse} from 'next'
 import {getCsrfToken} from 'next-auth/react';
 import errorHandler from '../../utils/errorHandler'
+import {getServerSession} from 'next-auth'
+import {authOptions} from './auth/[...nextauth]'
+
 
 async function handler(req:NextApiRequest,res:NextApiResponse){
     try {
@@ -21,11 +24,86 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         if(req.method==='POST'){
             var body = JSON.parse(req.body);
-            var order = new (Order())(body)
-            order.dateOfPurchase= Date.now();
-            var validated = await order.save()
+            var order = new (Order())(body);
+            var date = Date.now();
+            order.dateOfPurchase= date;
+            if(body.subscription){
+                var session = await getServerSession(req,res,authOptions);
+                if(!session?.user){
+                    throw new Error('You need to be signed in to subscribe.')
+                }
+                var stripeCustomerId= session.user.stripeCustomerId
+                console.log('yer')
+                var subscriptionObj = {...body}
+                var standardShippingPriceId = "prod_P32r7gtFljcJHc";
+                console.log('yeeeeeee')
+                var subscriptionDetails = new (Subscription())(
+                    {
+                        ...subscriptionObj,
+                        status:"SUBSCRIPTION_INITIATED",
+                        subscriptionId:'PENDING',
+                        interval:body.subscription,
+                        stripeCustomerId:session?.user.stripeCustomerId
+                    })
+                subscriptionDetails.dateOfPurchase=date
+                var subValidated=await subscriptionDetails.save()
+                var items = subscriptionObj.products.items.map((el:any)=>{
+                    return {
+                        price_data:{
+                            product: "prod_MbjrXeSU0a3Ii0",
+                            currency:"GBP",
+                            recurring:{
+                                interval: body.subscription==="weekly"?"week":"month",
+                                interval_count:1,
+                            },
+                            unit_amount:Math.round(el.price*100)
+                        },
+                        quantity:el.quantity
+                    }
+                })
+                items.push({
+                    price_data:{
+                        product: standardShippingPriceId,
+                        currency:"GBP",
+                        recurring:{
+                            interval: body.subscription==="weekly"?"week":"month",
+                            interval_count:1,
+                        },
+                        unit_amount:500
+                    },
+                    quantity:1,
+                })
+                const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
+    
+                });
+                var checkoutSession = await stripe.subscriptions.create({
+                    customer: session.user.stripeCustomerId,
+                    items: items,
+                    payment_behavior:"default_incomplete",
+                    payment_settings:{
+                        payment_method_types:["card"],
+                        save_default_payment_method:"on_subscription"
+                    },
+                    expand:["latest_invoice.payment_intent"]
+                })
+                var subscription_id=checkoutSession.id;
+                const subscription=await Subscription().findOneAndUpdate({_id:subValidated._id},{status:"SUBSCRIPTION_CREATED",subscriptionId:subscription_id,stripeCustomerId:stripeCustomerId,interval:items[0].subscription==="weekly"?"week":"month"})
+                order.subscriptionId=subscription_id
+                order.stripeCustomerId=stripeCustomerId
+                console.log(subscription)
+            }
+            var validated=order.save()
             if(validated){
-                return res.status(200).json({success:true})
+                console.log('yoooo')
+                return res.status(200).json(
+                    {
+                        success:true, 
+                        date:order.dateOfPurchase, 
+                        id:order._id,
+                        subscription_id:subscription_id?subscription_id:null,
+                        stripeCustomerId:stripeCustomerId?stripeCustomerId:null,
+                        client_secret:checkoutSession?checkoutSession.latest_invoice.payment_intent.client_secret:null
+                    })
             }
             else {
                 throw new Error('Missing fields')

@@ -6,8 +6,8 @@ import authenticate from '../../utils/authenticationRequired';
 import Link from 'next/link';
 
 export default function MyAccountOrders(){
-    const [orders,setOrders]=useState([])
-    const [cancelOrderId,setCancelOrderId]=useState('');
+    const [subscriptions,setSubscriptions]=useState([])
+    const [cancelSubscriptionId,setCancelSubscriptionId]=useState('');
     const [cancelError, setCancelError]=useState<string|null>(null)
     const [error,setError]=useState<string|null>(null)
     const router = useRouter()
@@ -18,7 +18,7 @@ export default function MyAccountOrders(){
                 if(!sesh){
                     throw new Error("You should be logged in to view this page")
                 }
-                await getOrders(sesh)
+                await getSubscriptions(sesh)
 
             }
             catch(e:any){
@@ -28,13 +28,13 @@ export default function MyAccountOrders(){
         }
         initiate()
     },[router])
-    async function getOrders(sesh:Session){
+    async function getSubscriptions(sesh:Session){
         try{
-            const orderData = await fetch(`/api/order/?id=${sesh.user.id}`,{
+            const subscriptionData = await fetch(`/api/subscriptions/?id=${sesh.user.id}`,{
                 method:"GET"
             })
-            const orderDataJson = await orderData.json()
-            setOrders(orderDataJson.orders)
+            const subscriptionDataJson = await subscriptionData.json()
+            setSubscriptions(subscriptionDataJson.subscriptions)
 
         }
         catch(e:any){
@@ -54,29 +54,32 @@ export default function MyAccountOrders(){
         }
 
     }
-    async function cancelOrder(e:FormEvent,idx:number){
+    async function cancelSubscription(e:FormEvent,idx:number){
         try{
-            e.preventDefault()
-            const csrftoken=await getCsrfToken()
-            if(!csrftoken){
-                throw new Error("No csrfin here")
-            }
-            const res = await fetch('/api/order',{
-                method:"DELETE",
-                headers: {
-                    csrftoken: csrftoken
-                },
-                body: JSON.stringify({
-                    _id: cancelOrderId
+                e.preventDefault()
+                const csrftoken=await getCsrfToken()
+                if(!csrftoken){
+                    throw new Error("No csrfin here")
+                }
+                const res = await fetch('/api/subscriptions',{
+                    method:"DELETE",
+                    headers: {
+                        csrftoken: csrftoken
+                    },
+                    body: JSON.stringify({
+                        subscription_id: cancelSubscriptionId
+                    })
                 })
-            })
-            const json = await res.json()
-            if(json.success){
-                showCancelledModal(true,idx)
-            }
-            else {
-                setCancelError('Cancel fucked')
-            }
+                const json = await res.json()
+                console.log(json)
+                if(json.success){
+                    console.log('subscriptions here')
+                    showCancelledModal(true,idx)
+                }
+                else {
+                    setCancelError('Cancellation failed')
+                }
+            
 
         }
         catch(error:any){
@@ -98,7 +101,10 @@ export default function MyAccountOrders(){
     }
     function showModal(open:boolean,id:string,idx:number){
         try{
-            let modal = document.querySelectorAll(`.ORDER_RECEIVED${idx} .cancel-modal`)[0]
+            console.log(`.SUBSCRIPTION_ACTIVE${idx}`)
+            let modal = document.querySelectorAll(`.SUBSCRIPTION_ACTIVE${idx} .cancel-modal`)[0]
+
+            console.log(modal)
             if(open){
                 modal?.classList.remove("hidden")
                 
@@ -106,7 +112,7 @@ export default function MyAccountOrders(){
             else {
                 modal?.classList.add("hidden")
             }
-            setCancelOrderId(id)
+            setCancelSubscriptionId(id)
 
         }
         catch(e:any){
@@ -116,14 +122,18 @@ export default function MyAccountOrders(){
     }
     function showCancelledModal(open:boolean,idx:number){
         try{
-            let modal = document.querySelectorAll(`.ORDER_RECEIVED${idx} .cancelled-modal`)[0]
-            let cancelbtn= document.querySelectorAll(`.ORDER_RECEIVED${idx} .cta`)[0]
+            let modal = document.querySelectorAll(`.SUBSCRIPTION_ACTIVE${idx} .cancelled-modal`)[0]
+            let cancelbtn= document.querySelectorAll(`.SUBSCRIPTION_ACTIVE${idx} .cta`)[0]
+            console.log(modal)
             if(open){
+                console.log('true')
+                console.log(modal)
                 modal?.classList.remove("hidden")
                 cancelbtn?.classList.add("hidden")
                 
             }
             else {
+                console.log('false')
                 modal?.classList.add("hidden")
             }
 
@@ -142,12 +152,12 @@ export default function MyAccountOrders(){
             null    
         }
         {
-            orders.length?
-            orders.map((el:any,idx:number)=>{
+            subscriptions.length?
+            subscriptions.map((el:any,idx)=>{
                 return(
                     <div key={idx}>
                         
-                        <p>Subscription ID: {el._id}</p>
+                        <p>Subscription ID: {el.subscriptionId}</p>
                         <p>Subscription status: {el.status}</p>
                         <p>Date initiated: {el.dateOfPurchase}</p>
                         <ul>
@@ -164,15 +174,15 @@ export default function MyAccountOrders(){
                         <p>Shipping cost: {el.shippingCost}</p>
                         <p>Total: {el.total}</p>
                         {
-                            el.status === "ORDER_RECEIVED"?
+                            el.status === "SUBSCRIPTION_ACTIVE"?
                         <div className={el.status+idx}>
                             <button className="cta left" onClick={(e)=>{
-                                showModal(true,el._id,idx)
+                                showModal(true,el.subscriptionId,idx)
                             }}>Cancel</button>
                             <div className={`cancel-modal hidden`}>
-                                <p>Are you sure you&apos;d like to cancel this order?</p>
+                                <p>Are you sure you&apos;d like to cancel this subscription? If you would also like to cancel any orders generated by this subscription, please <Link className={"link"}href="/myaccount/orders">go to orders</Link>.</p>
                                 <button onClick={(e)=>{
-                                    cancelOrder(e,idx)
+                                    cancelSubscription(e,idx)
                                     showModal(false,'',idx)
                                 }}>Yes</button>
                                 <button onClick={(e)=>{
@@ -186,7 +196,7 @@ export default function MyAccountOrders(){
                             </div> 
                             
                             <div className={'cancelled-modal hidden'}>
-                                <p>Your order has been cancelled</p>
+                                <p>Your subscription has been cancelled</p>
                                 <button onClick={(e)=>{
                                     showCancelledModal(false,idx)
                                     router.reload()
@@ -201,7 +211,7 @@ export default function MyAccountOrders(){
                     </div>
                 )
             }):
-            <p>You do not currently have any orders. Would you like to <button style={{"display":"inline-block"}}className="cta"><Link href="/products">SHOP</Link></button></p>
+            <p>You do not currently have any subscriptions. Would you like to <button style={{"display":"inline-block"}}className="cta"><Link href="/products">SHOP</Link></button></p>
         }
 
         </div>

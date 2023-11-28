@@ -4,14 +4,15 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
 });
 import {buffer } from '../../utils/stripe_webhook'
 import connect from "../../utils/connection" 
-import errorHandler from '../../utils/errorHandler'
+import {logger} from '../../utils/logger'
 
-import {getCsrfToken} from 'next-auth/react';
+import {Order,Subscription} from '../../utils/schema';
+
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
     try{
-        console.log('wait')
+        logger.info('wait')
         await connect()
         if(req.method==="POST"){
             if(!req.headers["stripe-signature"]){
@@ -23,53 +24,127 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
             const event = stripe.webhooks.constructEvent(payload,signature,endpointSecret)
             var success;
-            const csrfToken = await getCsrfToken({req:{headers:req.headers}})
-            console.log(csrfToken)
-            const newCsrf = await getCsrfToken({req:{headers:req.headers}})
-            console.log(newCsrf)
             switch (event.type){
                 case "payment_intent.succeeded":
-                    const update_success= await fetch(`http://${req.headers.host}/api/order`,{
-                        method:"PUT",
-                        headers: {
+                    console.log("payment_intent.succeeded")
+                    console.log(JSON.parse(payload).data.object)
+                    var body={
 
-                            csrftoken:csrfToken as string
-                        },
-                        body: JSON.stringify({
                             paymentIntentId: JSON.parse(payload).data.object.id,
                             status:"ORDER_RECEIVED",
-                        })
-                    })
-                    const json_resp = await update_success.json()
-                    success=json_resp.success
+                    }
+                        
+                    var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId},{...body})
+                    
+
+                    if(order){
+                        success=true
+                    }
+                    else {
+                        throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                    }
+                    
                 break;
                 case "payment_intent.failed":
-                    const update_failure= await fetch(`http://${req.headers.host}/api/order`,{
-                        method:"PUT",
-                        headers: {
+                    console.log("payment_intent.failed")
+                    console.log(JSON.parse(payload).data.object)
+                    var body= {
+                        paymentIntentId: JSON.parse(payload).data.object.id,
+                        status:"ORDER_FAILED",
+                    }
+                    var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId},{...body})
+                    
 
-                            csrftoken:csrfToken as string
-                        },
-                        body: JSON.stringify({
-                            paymentIntentId: JSON.parse(payload).data.object.id,
-                            status:"ORDER_FAILED",
-                        })
-                    })
-                    const json_resp_fail = await update_failure.json()
-                    success=json_resp_fail.success
+                    if(order){
+                        success=true
+                    }
+                    else {
+                        throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                    }
                 break;
                 
                 case "payment_intent.canceled":
-                    const update_cancel= await fetch(`http://${req.headers.host}/api/order`,{
-                        method:"PUT",
-                        body: JSON.stringify({
+                    console.log("payment_intent.canceled")
+                    console.log(JSON.parse(payload).data.object)
+                    var body= {
                             paymentIntentId: JSON.parse(payload).data.object.id,
                             status:"ORDER_CANCELLED"
-                        })
-                    })
-                    const json_resp_cancel = await update_cancel.json()
-                    success=json_resp_cancel.success
+                        }
+
+                    var orderExists = await Order().findOne({paymentIntentId:body.paymentIntentId})
+                    if(orderExists&&orderExists.status!=="ORDER_DISPATCHED"&&orderExists.status!=="ORDER_DELIVERED"){
+                        var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId},{...body})
+                        if(order){
+                            success=true
+                        }
+                        else {
+                            throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                        }
+                        
+                    }
+                    else {
+                        success=true
+                    }
+                    
+                    
+
+                        
                 break;
+                case "customer.subscription.created":
+                    console.log("customer.subscription.created")
+                    console.log(JSON.parse(payload).data.object)
+                    var body={
+                        stripeCustomerId:JSON.parse(payload).data.object.customer,
+                        isActive:true,
+                        subscriptionId: JSON.parse(payload).data.object.id,
+                        status:"SUBSCRIPTION_ACTIVE"
+                    }
+
+                    var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId},{...body})
+
+                    if(subscription){
+                        success=true
+                    }
+                    else {
+                        throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                    }
+                break;
+                case "customer.subscription.updated":
+                    console.log("customer.subscription.updated")
+                    console.log(JSON.parse(payload).data.object)
+                    var body={
+                        stripeCustomerId:JSON.parse(payload).data.object.customer,
+                        isActive:true,
+                        subscriptionId: JSON.parse(payload).data.object.id,
+                        status:"SUBSCRIPTION_CANCELLED"
+                    }
+                    if(JSON.parse(payload).data.object.canceled_at!==null){
+                        var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId},{status:body.status})
+                    }
+                    if(subscription){
+                        success=true
+                    }
+                    else {
+                        throw new Error(`Subscription cancellation failed for subscription: ${body.subscriptionId}`)
+                    }
+                break;
+                case "customer.subscription.deleted":
+                    console.log(JSON.parse(payload).data.object.id)
+
+                    var body={
+                        stripeCustomerId:JSON.parse(payload).data.object.customer,
+                        isActive:false,
+                        subscriptionId: JSON.parse(payload).data.object.id,
+                    }
+                    var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId},{status:"SUBSCRIPTION_CANCELLED"})
+                    
+                    if(subscription){
+                        success=true
+                    }
+                    else {
+                        throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                    }
+                    break;
                 default:
                     success=true
 
@@ -91,8 +166,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
     }
     catch(e:any){
-        console.log(e)
-        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.errorMessage,e.stack,false)
+        logger.info(e)
+        logger.error(e)
 
         res.status(500).json({success:false,error:e.message})
     }

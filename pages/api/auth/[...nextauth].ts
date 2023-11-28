@@ -5,6 +5,7 @@ import {User} from "../../../utils/schema";
 import signInUser from "../../../utils/nextAuthUtils";
 import {UserSchema} from '../../../utils/types'
 import {Session} from 'next-auth';
+import {logger} from '../../../utils/logger'
 import ErrorHandler from '../../../utils/errorHandler';
 export async function findUser(credentials:Record<string,string>|undefined):Promise<{user?:UserSchema,message?:any,stack?:any,password?:string}|undefined>{
     try{
@@ -49,11 +50,15 @@ export async function setupSession(session: Session){
             session.user.dAddress=data.dAddress
             session.user.bAddress=data.bAddress
             session.user.updates=data.updates
+            session.user.stripeCustomerId=data.stripeCustomerId
+            session.user.isActive=data.isActive
+            session.user.subscriptionId=data.subscriptionId
         }
 
     }
     catch(e:any){
-        await ErrorHandler('next-auth-callback-headers',JSON.stringify(session),'GET',e.error,e.stack,false)
+        logger.info()
+        logger.error(e)
 
 
         session.user.cart = {
@@ -102,7 +107,7 @@ export async function getUser(creds:{user?:UserSchema,error?:any,stack?:any,pass
         }
     }
 }
-export default NextAuth({
+export const authOptions={
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -145,11 +150,12 @@ export default NextAuth({
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-        async session({session,user,token}){
+        async session({session,user,token}:any){
             const sesh = await setupSession(session)
             return sesh
         }
     }
     
-})
+}
+export default NextAuth(authOptions)
 

@@ -9,7 +9,7 @@ import type { AppProps } from 'next/app'
 import { SessionProvider,getSession, getCsrfToken } from "next-auth/react"
 import {CartContext} from '../context/cart'
 import {Product} from '../utils/types';
-import { parseCookies,setCookie } from 'nookies';
+import { parseCookies,setCookie,destroyCookie } from 'nookies';
 
 const signika = Signika({
   subsets: ["latin"],
@@ -119,52 +119,96 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
         }
         initializeCart()
     },[])
-    const saveCart=async(product:Product)=>{
+    const saveCart=async(product:Product|undefined)=>{
         try{
-            const session = await getSession()
+          const session = await getSession()
+          if(product){
             const newCart:{
               items: Product[]
             } = {...state.cart}
-            if(newCart.items){
-              if(product.quantity!==0){
-                newCart.items=[...newCart.items.filter(el=>{
-                  return el._id!==product._id||el.fresh!==product.fresh&&el.size!==product.size
-                }),product]
-              }
-              else {
-                newCart.items=[...newCart.items.filter(el=>el._id!==product._id)]
-              }
-              if(session&&session.user){
-                  const csrftoken:string|undefined=await getCsrfToken()
-                  if(!csrftoken){
-                    throw new Error('No csurfin')
-                  }
-                  const res = await fetch('http://localhost:3000/api/editUser',{
-                      method:"PUT",
-                      headers:{
-                        csrftoken:csrftoken
-                      },
-                      body: JSON.stringify({
-                        username:session.user.email,
-                        cart:newCart
-                      })
-                  })
-                  if(!res){
-                    throw new Error('Unable to update cart')
-                  }
-                  dispatch({
-                    type:"UPDATE_CART",
-                    payload:newCart
-                  })
-              }
-              else{
-                  setCookie(null,"Cart",JSON.stringify(newCart))
-                  dispatch({
-                    type:"UPDATE_CART",
-                    payload:newCart
-                  })
+              if(newCart.items){
+                if(product.quantity!==0){
+                  newCart.items=[...newCart.items.filter(el=>{
+                    return el._id!==product._id||el.fresh!==product.fresh||el.size!==product.size
+                  }),product]
+                }
+                
+                else {
+                  newCart.items=[...newCart.items.filter(el=>el._id!==product._id)]
+                }
+                if(session&&session.user){
+                    const csrftoken:string|undefined=await getCsrfToken()
+                    if(!csrftoken){
+                      throw new Error('No csurfin')
+                    }
+                    const res = await fetch('http://localhost:3000/api/editUser',{
+                        method:"PUT",
+                        headers:{
+                          csrftoken:csrftoken
+                        },
+                        body: JSON.stringify({
+                          username:session.user.email,
+                          cart:newCart
+                        })
+                    })
+                    if(!res){
+                      throw new Error('Unable to update cart')
+                    }
+                    dispatch({
+                      type:"UPDATE_CART",
+                      payload:newCart
+                    })
+                }
+                else{
+                    setCookie(null,"Cart",JSON.stringify(newCart),{
+                      path: '/cart'
+                    })
+                    dispatch({
+                      type:"UPDATE_CART",
+                      payload:newCart
+                    })
+                }
               }
             }
+            else {
+              let newCart:{
+                items: Product[]
+              }={
+                items:[]
+              };
+              console.log(newCart)
+              if(session&&session.user){
+                const csrftoken:string|undefined=await getCsrfToken()
+                if(!csrftoken){
+                  throw new Error('No csurfin')
+                }
+                console.log('errr hello?')
+                const res = await fetch('http://localhost:3000/api/editUser',{
+                    method:"PUT",
+                    headers:{
+                      csrftoken:csrftoken
+                    },
+                    body: JSON.stringify({
+                      username:session.user.email,
+                      cart:newCart
+                    })
+                })
+                console.log(res)
+                if(!res){
+                  throw new Error('Unable to update cart')
+                }
+
+            }
+            destroyCookie({},"Cart",{
+              path: '/cart'
+            })
+            dispatch({
+              type:"UPDATE_CART",
+              payload:newCart
+            })
+            
+            }
+            
             
         }
         catch(e:any){

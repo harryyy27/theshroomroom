@@ -56,7 +56,7 @@ export default function SignIn(){
                     <form className={styles["form"]} method="POST">
                         <FormComponent user={user} labelName={"Username"}variable={username} variableName={Object.keys({username})[0]} setVariable={setUsername} variableVal={usernameVal} setVariableVal={setUsernameVal} inputType={"text"} required={true}/>
         
-                        <FormComponent user={user} labelName={"Password"}variable={password} variableName={Object.keys({password})[0]} setVariable={setPassword} variableVal={passwordVal} setVariableVal={setPasswordVal} inputType={"text"} required={true}/>
+                        <FormComponent user={user} labelName={"Password"}variable={password} variableName={Object.keys({password})[0]} setVariable={setPassword} variableVal={passwordVal} setVariableVal={setPasswordVal} inputType={"password"} required={true}/>
                         
                         
                         <button className="cta" onClick={async(e)=>await signInUser(e)}type="submit">Sign In</button>

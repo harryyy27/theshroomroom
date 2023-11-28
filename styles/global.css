@@ -1,6 +1,24 @@
 /* 
 colour scheme - turkey tail
 */
+#dropdown-selected {
+  border:1px solid var(--pri);
+  height:2rem;
+  line-height:2rem;
+  text-align:center;
+}
+.dropdown-wrapper {
+  display: none;
+  border:1px solid var(--pri);
+  margin:0;
+  padding:0
+}
+.dropdown-open {
+  display:block
+}
+.dropdown-elements {
+  border: 1px solid var(--pri)
+}
 .total-text {
   text-align:center;
 }
@@ -10,7 +28,6 @@ colour scheme - turkey tail
 
 .cart-btn{
   background-color:var(--sec);
-  margin:0.5rem;
   color:var(--ter2);
 }
 .plp-image-wrapper {
@@ -22,7 +39,7 @@ colour scheme - turkey tail
 .cart-left {
   margin-right:2rem;
   position:relative;
-  width:334px;
+  width:100%;
   aspect-ratio:334/151;
   margin:auto;
 }
@@ -310,9 +327,6 @@ h1,h2,h3 {
   font-family: var(--signika-font)
 }
 
-.hidden {
-  display: none
-}
 @media(min-width:768px){
   .hidden-desktop{
     display:none;
@@ -359,6 +373,9 @@ ul {
   margin:0.25rem auto;
   display:block;
   text-transform:uppercase;
+}
+.left { 
+  margin-left:0;
 }
 .cta:hover {
   background-color:var(--pri);
@@ -437,6 +454,64 @@ html {
   }
 }
 @media(min-width: 1025px){
+  .cart-wrapper {
+    display:grid;
+    grid-template-columns:30% 70%;
+  }
+  .col-1 {
+    grid-column-start:1
+  }
+  .col-2 {
+    grid-column-start:2
+  }
+  .col-3{
+    grid-column-start:3
+  }
+  .col-4{
+    grid-column-start: 4;
+  }
+  .col-5 {
+    grid-column-start:5
+  }
+  .cart-header {
+    width:60%;
+    margin:auto;
+
+  }
+  .cart-header-wrapper {
+    display:grid;
+    grid-template-columns:30% 28% 14% 14% 14%;
+    margin:0;
+    width:100%;
+    padding:0;
+  }
+  .cart-header-element {
+    font-weight:600;
+    width:100%;
+    text-align:center;
+
+
+  }
+  .cart-product-name {
+    font-size:1rem;
+    text-align:center;
+  }
+  .quantity-wrapper {
+    margin:0rem 1rem;
+    text-align:center;
+  }
+  .product-price {
+    margin:0;
+    text-align:center;
+  }
+  .cart-left { 
+    grid-column-start:1;
+  }
+  .cart-right {
+    display:grid;
+    grid-column-start: 2;
+    grid-template-columns:40% 20% 20% 20%;
+  }
   html {
     font-size: 24px;
   }
@@ -451,4 +526,8 @@ html {
     margin:auto;
 
   }
+}
+
+.hidden {
+  display: none
 }

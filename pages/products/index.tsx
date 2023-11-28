@@ -102,6 +102,7 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
 }
 export async function getServerSideProps(ctx:any){
     const {req,res} = ctx
+    
     try {
         const data= await fetch(`http://${req.headers.host}/api/products/`)
         var response = await data.json()

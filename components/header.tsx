@@ -115,7 +115,7 @@ export default function Header(){
                                         signOut()
                                         menuOpen()
                                     }}>Sign Out</span></Link>
-                                    <Link id="myAccount"href="/myaccount" passHref replace onClick={(()=>{menuOpen()})}><span className={router.pathname.includes("myaccount")?styles["acc-link"]+ " "+styles["active-link"]:styles["acc-link"]}>My Account</span></Link>
+                                    <Link id="myAccountMobile"href="/myaccount" passHref replace onClick={(()=>{menuOpen()})}><span className={router.pathname.includes("myaccount")?styles["acc-link"]+ " "+styles["active-link"]:styles["acc-link"]}>My Account</span></Link>
                                 </div>
                             }
                         </div>

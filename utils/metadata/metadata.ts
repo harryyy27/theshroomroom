@@ -61,6 +61,10 @@ const Metadata:WholeMeta = {
     forgottenpassword:{
         title:"Mega Mushrooms - forgotten password",
         description:"Regain access to your account"
+    },
+    thankyou:{
+        title: "Mega Mushrooms - thank you",
+        description: "Thank you for your purchasing our lion's mane mushrooms.",
     }
 
 

@@ -44,11 +44,17 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             }
         }
         else{
+            console.log('yeeeeeeee')
+            console.log('uhhhhhhh')
+            console.log(body.cart.items)
             const messageToClient=await User().findOneAndUpdate({username:body.username},{...body})
-            
+            console.log(messageToClient.cart.items)
+            let userExists = await User().findOne({username:body.username})
+            console.log(userExists.cart.items)
+
 
         }
-        res.status(200).json({message:"User successfully updated"})
+        return res.status(200).json({message:"User successfully updated"})
         
 
     }

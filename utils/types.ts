@@ -22,7 +22,8 @@ export interface Product {
   fresh: boolean,
   size: string,
   quantity: number,
-  name: string
+  name: string,
+  stripeProductId:string,
 }
 
 export interface UserSchema {
