@@ -69,14 +69,24 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
     }
     catch(e:any){
         const error = new Error('eeeeee') as any
-        console.log(error.stackmessage)
         // const eeee=Object.getPrototypeOf(error)
         var errorMsg;
         var errorStk;
+        const errPrototype = Object.getOwnPropertyNames(error)
+        errPrototype.forEach(el=>{
+            console.log(new Error(el))
+        })
         const err2 =new Error(`${Object.getOwnPropertyNames(error).join('')}`) as any
         console.log(err2)
-        console.log(err2.name?err2.name:'errrrrr')
-        console.log(err2.stackmessage)
+        if(err2.message){
+            console.log(new Error(`${err2.message}`))
+        }
+        if(err2.name){
+            console.log(new Error(`${err2.name}`))
+        }
+        if(err2.stackmessage){
+            console.log(new Error(err2.stackmessage))
+        }
         if(e.message){
             errorMsg=e.message
         }
