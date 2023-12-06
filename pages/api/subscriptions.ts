@@ -2,13 +2,11 @@ import connect from '../../utils/connection';
 import {Order, User,Subscription} from '../../utils/schema';
 import {NextApiRequest,NextApiResponse} from 'next'
 import {getCsrfToken} from 'next-auth/react';
-import errorHandler from '../../utils/errorHandler'
+import {errorHandler} from '../../utils/emailHandlers'
 
 async function handler(req:NextApiRequest,res:NextApiResponse){
     try {
-        throw Error('yes')
         await connect()
-        console.log('yeeeeh?')
         if(req.method!=='GET'){
             if(!req.headers.csrftoken){
                 throw new Error('No csrf header found.')
@@ -50,9 +48,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             }
         }
         else if(req.method==='DELETE'){
-            console.log('innnn?')
             var body=JSON.parse(req.body);
-            console.log(body)
             const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
     
             });            
@@ -68,43 +64,10 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
 
     }
     catch(e:any){
-        const error = new Error('eeeeee') as any
-        // const eeee=Object.getPrototypeOf(error)
-        var errorMsg;
-        var errorStk;
-        const errPrototype = Object.getOwnPropertyNames(error)
-        errPrototype.forEach(el=>{
-            console.log(new Error(el))
-        })
-        const err2 =new Error(`${Object.getOwnPropertyNames(error).join('')}`) as any
-        console.log(err2)
-        if(err2.message){
-            console.log(new Error(`${err2.message}`))
-        }
-        if(err2.name){
-            console.log(new Error(`${err2.name}`))
-        }
-        if(err2.stackmessage){
-            console.log(new Error(err2.stackmessage))
-        }
-        if(e.message){
-            errorMsg=e.message
-        }
-        else {
-            errorMsg = ''
-        }
-        if(e.stack){
-            errorStk=e.stack
-        }
-        else {
-            errorStk='Not available'
-        }
-        if(errorMsg &&errorStk){
-            await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.error,e.stack,false)
-        }
         
-
-        return res.status(500).json({success:false,error:e.message})
+        console.error(e)
+        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.toString(),false)
+        return res.status(500).json({success:false,error:e.toString()})
     }
 
 }

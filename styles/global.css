@@ -1,6 +1,63 @@
 /* 
 colour scheme - turkey tail
 */
+.loader {
+  border-top: 6px solid var(--pri);
+  border-right: 6px solid var(--pri);
+  border-bottom: 6px solid var(--pri);
+  border-radius:50%;
+  width:100px;
+  height:100px;
+  position:fixed;
+  top:50vh;
+  left:50vw;
+  transform:translate(-50%,-50%);
+  z-index:100000000000000;
+  -webkit-animation:spin 4s linear infinite;
+  -moz-animation:spin 4s linear infinite;
+  animation:spin 4s linear infinite;
+}
+.mini-loader {
+
+  border-top: 4px solid var(--pri);
+  border-right: 4px solid var(--pri);
+  border-bottom: 4px solid var(--pri);
+  border-radius: 50%;
+  width:50px;
+  height:50px;
+  position:relative;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  -webkit-animation:minispin 2s linear infinite;
+  -moz-animation:minispin 2s linear infinite;
+  animation:minispin 2s linear infinite;
+
+}
+@-moz-keyframes spin { 
+  100% { -moz-transform: translate(-50%,-50%) rotate(360deg); } 
+}
+@-webkit-keyframes spin { 
+  100% { -webkit-transform: translate(-50%,-50%) rotate(360deg); } 
+}
+@keyframes spin { 
+  100% { 
+      -webkit-transform: rotate(360deg); 
+      transform:translate(-50%,-50%) rotate(360deg); 
+  } 
+}
+@-moz-keyframes minispin { 
+  100% { -moz-transform: translate(-50%,-50%) rotate(-360deg); } 
+}
+@-webkit-keyframes minispin { 
+  100% { -webkit-transform: translate(-50%,-50%) rotate(-360deg); } 
+}
+@keyframes minispin { 
+  100% { 
+      -webkit-transform: rotate(360deg); 
+      transform:translate(-50%,-50%) rotate(-360deg); 
+  } 
+}
 #dropdown-selected {
   border:1px solid var(--pri);
   height:2rem;
@@ -437,6 +494,20 @@ html {
   }
 }
 @media(max-width:1024px){
+  .loader {
+    border-top: 5px solid var(--pri);
+    border-right: 5px solid var(--pri);
+    border-bottom: 5px solid var(--pri);
+    width:70px;
+    height:70px;
+  }
+  .mini-loader {
+    border-top: 3px solid var(--pri);
+    border-right: 3px solid var(--pri);
+    border-bottom: 3px solid var(--pri);
+    width:35px;
+    height:35px;
+  }
   .product {
     width:40%;
   }
@@ -525,6 +596,23 @@ html {
     width:80%;
     margin:auto;
 
+  }
+}
+@media(max-width:480px){
+
+  .loader {
+    border-top: 4px solid var(--pri);
+    border-right: 4px solid var(--pri);
+    border-bottom: 4px solid var(--pri);
+    width:50px;
+    height:50px;
+  }
+  .mini-loader {
+    border-top: 3px solid var(--pri);
+    border-right: 3px solid var(--pri);
+    border-bottom: 3px solid var(--pri);
+    width:25px;
+    height:25px;
   }
 }
 

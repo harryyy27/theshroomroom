@@ -146,10 +146,6 @@ const UserSchema=new Schema({
                 stripeProductId: {
                     type:String,
                     required:true
-                },
-                subscription: {
-                    type:String,
-                    required:false,
                 }
 
             }
@@ -228,11 +224,13 @@ const UserSchema=new Schema({
         default:'',
         required:false
     },
-    subscriptionId: {
-        type:String,
-        default: '',
-        required:false
-    },
+    subscriptions: [
+        {
+        subscriptionId: {
+            type:String,
+            required:true
+        }
+    }],
     isActive: {
         type:Boolean,
         default:false,
@@ -333,10 +331,6 @@ const OrderSchema=new Schema({
                 type:Boolean,
                 required:true
             },
-            subscription: {
-                type:String,
-                required:false
-            },
             stripeProductId: {
                 type:String,
                 required:true
@@ -382,6 +376,10 @@ const OrderSchema=new Schema({
     stripeCustomerId:{
         type:String,
         required:false
+    },
+    invoiceId:{
+        type:String,
+        required:false
     }
 })
 const Order = function(){
@@ -395,10 +393,6 @@ const SubscriptionSchema=new Schema({
     email: {
         type:String,
         required:true
-    },
-    guestCheckout: {
-        type:Boolean,
-        required: false
     },
     dAddress: {
         firstName: {
@@ -478,10 +472,6 @@ const SubscriptionSchema=new Schema({
                 type:Boolean,
                 required:true
             },
-            subscription: {
-                type:String,
-                required:false
-            },
             stripeProductId: {
                 type:String,
                 required:true
@@ -495,6 +485,14 @@ const SubscriptionSchema=new Schema({
     dateOfPurchase: {
         type:Date,
         required:true
+    },
+    dateLastPaid:{
+        type:Date,
+        required:true
+    },
+    dateCancelled:{
+        type:Date,
+        required:false
     },
     shippingMethod: {
         type:String,
@@ -536,6 +534,17 @@ const SubscriptionSchema=new Schema({
 const Subscription = function(){
     return models.Subscription || model("Subscription", SubscriptionSchema)
 }
+const ReceiveUpdatesSchema=new Schema({
+    
+    email: {
+        type:String,
+        required:true
+    },
+    
+})
+const ReceiveUpdates = function(){
+    return models.ReceiveUpdates || model("ReceiveUpdates", ReceiveUpdatesSchema)
+}
 const PasswordReset = new Schema({
     passwordResetToken: {
         type: String,
@@ -572,10 +581,6 @@ const ErrorSchema= new Schema({
         type:String,
         required:true
     },
-    callStack: {
-        type:String,
-        required: true
-    },
     timestamp: {
         type:Date,
         required: true
@@ -584,4 +589,29 @@ const ErrorSchema= new Schema({
 const Errors = function(){
     return models.Errors || model("Errors",ErrorSchema)
 }
-export {User,Order,Product,Subscription,Errors,PasswordResetToken}
+const DisputeSchema= new Schema({
+    disputeId:{
+        type:String,
+        required:true
+    },
+    paymentIntentId:{
+        type:String,
+        required:true
+    },
+    dateReceived:{
+        type:Date,
+        required:true
+    },
+    reason: {
+        type:String,
+        required:true
+    },
+    status: {
+        type:String,
+        required:true
+    }
+})
+const Dispute = function(){
+    return models.Disputes || model("Disputes",DisputeSchema)
+}
+export {User,Order,Product,Subscription,Errors,PasswordResetToken,ReceiveUpdates,Dispute}

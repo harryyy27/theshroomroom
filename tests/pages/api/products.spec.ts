@@ -3,7 +3,7 @@ import {Product} from '../../../utils/schema';
 import {createMocks} from 'node-mocks-http';
 import connect from '../../../utils/connection';
 import { expect } from '@jest/globals';
-import errorHandler from '../../../utils/errorHandler';
+import {errorHandler} from '../../../utils/errorHandler';
 jest.mock('../../../utils/errorHandler')
 jest.mock('../../../utils/connection');
 jest.mock('../../../utils/schema');

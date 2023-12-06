@@ -5,9 +5,8 @@ import {User} from "../../../utils/schema";
 import signInUser from "../../../utils/nextAuthUtils";
 import {UserSchema} from '../../../utils/types'
 import {Session} from 'next-auth';
-import {logger} from '../../../utils/logger'
-import ErrorHandler from '../../../utils/errorHandler';
-export async function findUser(credentials:Record<string,string>|undefined):Promise<{user?:UserSchema,message?:any,stack?:any,password?:string}|undefined>{
+import {errorHandler} from '../../../utils/emailHandlers';
+export async function findUser(credentials:Record<string,string>|undefined):Promise<{user?:UserSchema,error?:string,password?:string}|undefined>{
     try{
         if(!credentials){
             throw new Error('Credentials not provided.')
@@ -32,8 +31,7 @@ export async function findUser(credentials:Record<string,string>|undefined):Prom
     }
     catch(e:any){
         return {
-            message:e.message,
-            stack:e.stack
+            error: e.toString()
         }
     }
 }
@@ -52,15 +50,14 @@ export async function setupSession(session: Session){
             session.user.updates=data.updates
             session.user.stripeCustomerId=data.stripeCustomerId
             session.user.isActive=data.isActive
-            session.user.subscriptionId=data.subscriptionId
+            session.user.subscriptions=data.subscriptions
         }
 
     }
     catch(e:any){
-        logger.info()
-        logger.error(e)
+        console.error(e)
 
-
+        await errorHandler('setupSession - next auth callbacks',JSON.stringify(session),'whatever session is',e.toString(),false)
         session.user.cart = {
             items:[]
         }
@@ -71,7 +68,7 @@ export async function setupSession(session: Session){
 
 }
 
-export async function getUser(creds:{user?:UserSchema,error?:any,stack?:any,password?:string}|undefined){
+export async function getUser(creds:{user?:UserSchema,error?:any,password?:string}|undefined){
     try{
         if(creds?.error){
             throw new Error(creds.error)
@@ -102,8 +99,7 @@ export async function getUser(creds:{user?:UserSchema,error?:any,stack?:any,pass
     }
     catch(e:any){
         return {
-            message:e.message,
-            stack:e.stack
+            error:e.toString()
         }
     }
 }
@@ -114,10 +110,13 @@ export const authOptions={
             authorize: async(credentials, req)=>{
                     await connect();
                     const creds = await findUser(credentials)
-                    
+                    if(creds?.error){
+                        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,creds.error,false)
+                        throw new Error(creds.error)
+                    }
                     const user = await (getUser(creds) as any)
                     if(user.error){
-                        await ErrorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,user.error,user.stack,false)
+                        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,user.error,false)
                         throw new Error(user.error)
                     }
                     else {

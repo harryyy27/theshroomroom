@@ -32,7 +32,9 @@ declare module "next-auth" {
       },
       updates:boolean,
       stripeCustomerId:String,
-      subscriptionId:String,
+      subscriptions:{
+        subscriptionId:String
+      }[],
       isActive:boolean
 
     }

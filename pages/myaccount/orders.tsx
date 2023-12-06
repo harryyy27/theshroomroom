@@ -80,7 +80,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
                 showCancelledModal(true,idx)
             }
             else {
-                setCancelError('Cancel fucked')
+                setCancelError('Cancel went wrong')
             }
             setComponentLoading(false)
         }
@@ -98,11 +98,12 @@ export default function MyAccountOrders({setComponentLoading}:any){
                 })
             })
             setComponentLoading(false)
-            setError(error)
+            setCancelError(error)
         }
 
     }
     function showModal(open:boolean,id:string,idx:number){
+        console.log(id)
         try{
             let modal = document.querySelectorAll(`.ORDER_RECEIVED${idx} .cancel-modal`)[0]
             if(open){

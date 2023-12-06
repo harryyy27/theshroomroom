@@ -6,10 +6,17 @@ function Loading(props:any) {
   const router = useRouter();
   const [loading,setLoading] = useState(false)
 
-
   useEffect(() => {
-      const handleStart = (url:string) => (url !== router.asPath) && setLoading(true);
-      const handleComplete = (url:string) => (url === router.asPath) && setTimeout(() =>{setLoading(false);console.log('FALLLLLLSE')},500);
+      const handleStart = (url:string) => {
+        console.log('start')
+        return setLoading(true);
+      }
+      const handleComplete = (url:string) => {
+        console.log('finish')
+        console.log(url)
+        console.log()
+       return setLoading(false);
+      }
 
       router.events.on('routeChangeStart', handleStart)
       router.events.on('routeChangeComplete', handleComplete)
@@ -20,13 +27,17 @@ function Loading(props:any) {
           router.events.off('routeChangeComplete', handleComplete)
           router.events.off('routeChangeError', handleComplete)
       }
-  })
+  },[router])
 
   return  (
     <>
     {
       loading||props.componentLoading?
-      <>loading</>:
+      <div className="loader">
+        <div className="mini-loader">
+
+        </div>
+      </div>:
       null
     }
     </>

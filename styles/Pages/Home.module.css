@@ -182,6 +182,7 @@
     margin:0.25rem 0rem 0rem 0rem;
   }
   .card-wrapper {
+    padding:0;
     display:block;
   }
   .card {

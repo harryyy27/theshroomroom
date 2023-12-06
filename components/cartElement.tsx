@@ -2,6 +2,7 @@ import Image from 'next/image'
 import {useContext,useState,useEffect} from 'react';
 import {CartContext} from '../context/cart'
 import {imageMap} from '../utils/imageMap/imageMap';
+import Link from 'next/link'
 interface Product{
     _id:String,
     idx:number,
@@ -22,7 +23,7 @@ export default function CartElement({_id,idx,name,quantity,price,fresh,size,stri
                 
                 {
                     name?
-                    <Image className="cart-product-image"  fill sizes={`(max-width:767px) 50vw,(min-width:767px) ${imageMap[name].width}px`} src={`${imageMap[name].path}.${imageMap[name].fileType}`} priority alt={name}/>
+                    <Link  href={`/products/${name.replace(/[\s]/gi,'-')}`} ><Image className="cart-product-image"  fill sizes={`(max-width:767px) 50vw,(min-width:767px) ${imageMap[name].width}px`} src={`${imageMap[name].path}.${imageMap[name].fileType}`} priority alt={name}/></Link>
                     :
                     null
                 }

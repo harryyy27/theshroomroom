@@ -92,7 +92,10 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                
             }
             else {
-                const {Cart} = parseCookies()
+                const {Cart} = parseCookies({},{
+                  path:"/",
+                  secure:false
+                })
                 if(Cart){
                     const cartItems = JSON.parse(Cart)
                     dispatch(({
@@ -122,6 +125,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
     },[])
     const saveCart=async(product?:Product)=>{
         try{
+          setComponentLoading(true)
           const session = await getSession()
           if(product){
             const newCart:{
@@ -133,10 +137,10 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                     return el._id!==product._id||el.fresh!==product.fresh||el.size!==product.size
                   }),product]
                 }
-                
                 else {
                   newCart.items=[...newCart.items.filter(el=>el._id!==product._id)]
                 }
+                console.log(newCart)
                 if(session&&session.user){
                     const csrftoken:string|undefined=await getCsrfToken()
                     if(!csrftoken){
@@ -161,9 +165,8 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                     })
                 }
                 else{
-                    setCookie(null,"Cart",JSON.stringify(newCart),{
-                      path: '/cart'
-                    })
+                  console.log('OIII',newCart)
+                    setCookie({},"Cart",JSON.stringify(newCart))
                     dispatch({
                       type:"UPDATE_CART",
                       payload:newCart
@@ -201,7 +204,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
 
             }
             destroyCookie({},"Cart",{
-              path: '/cart'
+              path:'/'
             })
             dispatch({
               type:"UPDATE_CART",
@@ -210,6 +213,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
             
             }
             
+            setComponentLoading(false)
             
         }
         catch(e:any){
@@ -225,6 +229,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                 stack:e.stack
             })
         })
+        setComponentLoading(false)
             console.log(e)
         }
     }
@@ -243,6 +248,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                 cartLoaded,
                 setCartLoaded,
             }}>
+        <Loading componentLoading={componentLoading} />
         <Header/>
           {/* <Head>
             <title>Mega Mushrooms</title>
@@ -252,7 +258,6 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
           </Head> */}
 
         <main className="main">
-          <Loading componentLoading={componentLoading} />
           <div className={styles.container}>
             <Component {
               ...pageProps

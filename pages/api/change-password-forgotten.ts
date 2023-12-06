@@ -2,7 +2,7 @@ import {User,PasswordResetToken} from '../../utils/schema'
 import connect from '../../utils/connection'
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {getCsrfToken} from 'next-auth/react';
-import errorHandler from '../../utils/errorHandler';
+import {errorHandler} from '../../utils/emailHandlers';
 import bcrypt from 'bcrypt';
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
     try{
@@ -42,8 +42,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
     }
     catch(e:any){
-        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.message,e.stack,false)
-
-        res.status(500).json({error:e.message})
+        
+        console.error(e)
+        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.toString(),false)
+        return res.status(500).json({success:false,error:e.toString()})
     }
 }

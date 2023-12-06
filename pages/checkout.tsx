@@ -15,7 +15,6 @@ import CheckoutForm from '../components/checkout-form'
 import { getSession, getCsrfToken } from 'next-auth/react';
 import { Product } from '../utils/types'
 import { v4 as uuidv4 } from 'uuid';
-import {logger} from '../utils/logger'
 
 export default function Checkout({paymentIntent,setComponentLoading}:any){
     
@@ -47,14 +46,14 @@ export const getServerSideProps =  async(ctx:any) => {
     const {req,res} = ctx;
     try {
         const secret_key = process.env.STRIPE_SECRET_KEY as string;
-        logger.info('yo')
         var stripe = new Stripe(secret_key,{
             apiVersion:"2022-08-01",
             maxNetworkRetries:3
         })
-        logger.info('yoyo')
         const sesh = await getSession(ctx)
-        const {Cart}= parseCookies(ctx)
+        const {Cart}= parseCookies(ctx,{
+            path:"/"
+        })
         let total;
         if(sesh&&sesh.user&&sesh.user.cart){
             total = sesh.user.cart.items.reduce((a:number,b:Product)=>{
@@ -67,8 +66,8 @@ export const getServerSideProps =  async(ctx:any) => {
                 return a+b.price
             },0)
         }
-
-        logger.info('yoyoyo')
+        console.log(sesh)
+        console.log(Cart)
         if(!sesh&&!Cart){
             return {
                 redirect: {
@@ -127,8 +126,6 @@ export const getServerSideProps =  async(ctx:any) => {
     }
     catch(e:any){
         console.log(e)
-        logger.info(e)
-        logger.error(e)
         return {
             redirect: {
               permanent: false,

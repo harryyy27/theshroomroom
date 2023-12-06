@@ -2,9 +2,10 @@ import connect from '../../utils/connection';
 import {Order, User,Subscription} from '../../utils/schema';
 import {NextApiRequest,NextApiResponse} from 'next'
 import {getCsrfToken} from 'next-auth/react';
-import errorHandler from '../../utils/errorHandler'
+import {errorHandler} from '../../utils/emailHandlers'
 import {getServerSession} from 'next-auth'
 import {authOptions} from './auth/[...nextauth]'
+import {Query} from 'mongoose'
 
 
 async function handler(req:NextApiRequest,res:NextApiResponse){
@@ -24,7 +25,14 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         if(req.method==='POST'){
             var body = JSON.parse(req.body);
-            var order = new (Order())(body);
+            var checkOrderExists = await Order().findOne({paymentIntentId:body.paymentIntentId})
+            if(checkOrderExists){
+                var order = checkOrderExists
+            }
+            else{
+                var order = new (Order())(body);
+            }
+                
             var date = Date.now();
             order.dateOfPurchase= date;
             if(body.subscription){
@@ -37,16 +45,23 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 var subscriptionObj = {...body}
                 var standardShippingPriceId = "prod_P32r7gtFljcJHc";
                 console.log('yeeeeeee')
-                var subscriptionDetails = new (Subscription())(
-                    {
-                        ...subscriptionObj,
-                        status:"SUBSCRIPTION_INITIATED",
-                        subscriptionId:'PENDING',
-                        interval:body.subscription,
-                        stripeCustomerId:session?.user.stripeCustomerId
-                    })
-                subscriptionDetails.dateOfPurchase=date
-                var subValidated=await subscriptionDetails.save()
+                if(order.subscriptionId){
+                    var subValidated= await Subscription().findOneAndUpdate({subscriptionId:order.subscriptionId},{dateOfPurchase:date,dateLastPaid:date})
+                }
+                else {
+                    var subscriptionNew = new (Subscription())(
+                        {
+                            ...subscriptionObj,
+                            status:"SUBSCRIPTION_INITIATED",
+                            subscriptionId:'PENDING',
+                            interval:body.subscription,
+                            stripeCustomerId:session?.user.stripeCustomerId
+                        })
+                    subscriptionNew.dateOfPurchase=date
+                    subscriptionNew.dateLastPaid=date
+                    var subValidated=await subscriptionNew.save()
+                }
+                
                 var items = subscriptionObj.products.items.map((el:any)=>{
                     return {
                         price_data:{
@@ -92,6 +107,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 order.stripeCustomerId=stripeCustomerId
                 console.log(subscription)
             }
+            console.log(order)
             var validated=order.save()
             if(validated){
                 console.log('yoooo')
@@ -138,9 +154,20 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         else if(req.method==='DELETE'){
             var body=JSON.parse(req.body);
-            order = await Order().findOneAndUpdate({_id:body._id,status:!"ORDER_DISPATCHED"},{status:"REFUND_PENDING"})
+            console.log(body)
+            order = await Order().findOneAndUpdate({_id:body._id},{status:"REFUND_PENDING"})
             if(order){
+
+                const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
+    
+                });
+                const paymentIntent = await stripe.refunds.create({
+                    payment_intent: order.paymentIntentId,
+                });
+              if(paymentIntent){
                 return res.status(200).json({success:true})
+              }
+                
             }
 
             else {
@@ -150,10 +177,10 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
 
     }
     catch(e:any){
-        console.log(e)
-        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.error,e.stack,false)
-
-        res.status(500).json({success:false,error:e.message})
+        
+        console.error(e)
+        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.toString(),false)
+        return res.status(500).json({success:false,error:e.toString()})
     }
 
 }

@@ -5,7 +5,6 @@ import {CartContext} from '../../../context/cart';
 import Head from 'next/head';
 import {Metadata} from '../../../utils/metadata/metadata';
 import Link from 'next/link'
-import Dropdown from '../../../components/dropdown'
 import {getSession,getCsrfToken}from 'next-auth/react'
 interface Product {
     _id:string,
@@ -89,7 +88,7 @@ export default function ProductDetails({setComponentLoading}:any){
             setType(productDetails.type)
             setId(productDetails._id)
             setStripeProductId(productDetails.stripeProductId)
-
+            setComponentLoading(false)
 
 
         }

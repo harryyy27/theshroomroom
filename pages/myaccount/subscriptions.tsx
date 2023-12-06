@@ -158,7 +158,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
             null    
         }
         {
-            subscriptions.length?
+            subscriptions&&subscriptions.length?
             subscriptions.map((el:any,idx)=>{
                 return(
                     <div key={idx}>

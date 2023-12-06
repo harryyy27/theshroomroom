@@ -4,7 +4,7 @@ import * as nextauth from 'next-auth/react'
 import connect from '../../../utils/connection'
 import {Order} from '../../../utils/schema';
 import { expect } from '@jest/globals';
-import errorHandler from '../../../utils/errorHandler';
+import {errorHandler} from '../../../utils/errorHandler';
 jest.mock('../../../utils/errorHandler')
 jest.mock('next-auth/react');
 jest.mock('../../../utils/schema')
