@@ -24,6 +24,7 @@ export interface Product {
   quantity: number,
   name: string,
   stripeProductId:string,
+  stockAvailable:number
 }
 
 export interface UserSchema {

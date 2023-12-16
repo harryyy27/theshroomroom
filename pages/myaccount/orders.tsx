@@ -152,11 +152,11 @@ export default function MyAccountOrders({setComponentLoading}:any){
             orders.length?
             orders.map((el:any,idx:number)=>{
                 return(
-                    <div key={idx}>
+                    <div className={"order-sub-wrapper"}key={idx}>
                         
-                        <p>Subscription ID: {el._id}</p>
-                        <p>Subscription status: {el.status}</p>
-                        <p>Date initiated: {el.dateOfPurchase}</p>
+                        <p>Order ID: {el._id}</p>
+                        <p>Order status: {el.status}</p>
+                        <p>Date of purchase: {el.dateOfPurchase}</p>
                         <ul>
                             {el.products.items.map((el_product:any,idxPr:number)=>{
                                 return(
@@ -178,11 +178,11 @@ export default function MyAccountOrders({setComponentLoading}:any){
                             }}>Cancel</button>
                             <div className={`cancel-modal hidden`}>
                                 <p>Are you sure you&apos;d like to cancel this order?</p>
-                                <button onClick={(e)=>{
+                                <button className="cta-sec-btn" onClick={(e)=>{
                                     cancelOrder(e,idx)
                                     showModal(false,'',idx)
                                 }}>Yes</button>
-                                <button onClick={(e)=>{
+                                <button className="cta-sec-btn" onClick={(e)=>{
                                     showModal(false,'',idx)
                                 }}>No</button>
                                 {
@@ -194,7 +194,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
                             
                             <div className={'cancelled-modal hidden'}>
                                 <p>Your order has been cancelled</p>
-                                <button onClick={(e)=>{
+                                <button className="cta-sec-btn"onClick={(e)=>{
                                     showCancelledModal(false,idx)
                                     router.reload()
                                 }}>ok</button>

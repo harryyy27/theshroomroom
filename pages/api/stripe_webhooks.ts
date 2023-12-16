@@ -27,7 +27,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             switch (event.type){
                 case "payment_intent.succeeded":
                     console.log("payment_intent.succeeded")
-                    console.log(JSON.parse(payload).data.object)
                     if(JSON.parse(payload).data.object.description==="Subscription update"){
                         var sub_body={
                             paymentIntentId: JSON.parse(payload).data.object.id,
@@ -36,9 +35,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
                         }
                         var order = await Order().findOneAndUpdate({invoiceId:sub_body.invoiceId},{...sub_body})
-                        console.log(order)
+                        
                         var subscription = await Subscription().findOneAndUpdate({subscriptionId:order.subscriptionId},{dateLastPaid:Date.now()})
-                        console.log(subscription)
+                        
                     }
                     else {
                         body={
@@ -46,12 +45,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                             paymentIntentId: JSON.parse(payload).data.object.id,
                             status:"ORDER_RECEIVED",
                         }
-                        console.log("BODY",body)
                         var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId},{...body})
 
                     }
-                    console.log(order)
-                    console.log("ORDEEEEEEEEEEER")
                     if(order){
                         success=true
                         await orderHandler(order)
@@ -66,7 +62,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     // console.log(JSON.parse(payload).data.object)
                     
                     
-                break;
+                    break;
                 case "payment_intent.failed":
                     console.log("payment_intent.failed")
                     // console.log(JSON.parse(payload).data.object)
@@ -83,7 +79,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     else {
                         throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
                     }
-                break;
+                    break;
                 
                 case "payment_intent.canceled":
                     console.log("payment_intent.canceled")
@@ -111,7 +107,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     
 
                         
-                break;
+                    break;
                 case "customer.subscription.created":
                     console.log("customer.subscription.created")
                     // console.log(JSON.parse(payload).data.object)
@@ -134,7 +130,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     else {
                         throw new Error(`Subscription update failed Subscription ID: ${subBody.subscriptionId}`)
                     }
-                break;
+                    break;
                 case "customer.subscription.updated":
                     console.log("customer.subscription.updated")
                     // console.log(JSON.parse(payload).data.object)
@@ -166,10 +162,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     else {
                         throw new Error(`Subscription cancellation failed for subscription id: ${subBody.subscriptionId}`)
                     }
-                break;
+                    break;
                 case "customer.subscription.deleted":
                     console.log("customer.subscription.deleted")
-                    console.log(JSON.parse(payload).data.object.id)
 
                     subBody={
                         stripeCustomerId:JSON.parse(payload).data.object.customer,
@@ -187,6 +182,15 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     else {
                         throw new Error(`Could not cancel subscription. Subscription Id: ${subBody.subscriptionId}`)
                     }
+                    break;
+                case "invoice.finalized":
+                    console.log("invoice.finalized")
+                    var sub = JSON.parse(payload).data.object.subscription
+                    var subscription = await stripe.subscriptions.retrieve(
+                        sub
+                    )
+                    var updateSubscription = await Subscription().findOneAndUpdate({subscriptionId:sub},{dateRenewal:subscription.current_period_end})
+                    success=true
                     break;
                 case "invoice.finalization_failed":
                     var object = JSON.parse(payload).data.object
@@ -207,7 +211,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 case "invoice.created":
                     
                     console.log("invoice created")
-                    console.log(JSON.parse(payload).data.object)
                     if(JSON.parse(payload).data.object.status==="draft"&&JSON.parse(payload).data.object.billing_reason==="subscription_cycle"){
                         var sub_fields={
                             stripeCustomerId:JSON.parse(payload).data.object.customer,
@@ -277,20 +280,22 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     var object = JSON.parse(payload).data.object
                     await payoutHandler(false,object)
                     success=true
+                    break;
                 case "charge.refunded":
                     var object = JSON.parse(payload).data.object
                     await Order().findOneAndUpdate({paymentIntentId:object.payment_intent},{status:"ORDER_REFUNDED"})
                     success=true
+                    break;
                 case "charge.refund.updated":
                     
                     var object = JSON.parse(payload).data.object
                     if(object.status==="failed"){
-                        console.log(object)
                         await refundHandler(object)
 
 
                     }
                     success=true
+                    break;
                 default:
                     success=true
 

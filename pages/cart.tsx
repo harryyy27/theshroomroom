@@ -10,15 +10,31 @@ import CartElement from '../components/cartElement'
 export default function Cart({setComponentLoading}:any){
     let context=useContext(CartContext)
     const [user,setUser]=useState(false);
-    
+    const [itemsUnavailable,setItemsUnavailable]=useState(true);
+    function handleItemsAvailable(){
+        console.log(console.log(context.state.cart.items))
+        if(context.state.cart.items.every((el:any)=>{
+            console.log(el.stockAvailable)
+            console.log(el.quantity)
+            return el.stockAvailable>=el.quantity
+        })){
+            console.log('set false')
+            setItemsUnavailable(false)
+        }
+        else{
+            console.log('set true')
+            setItemsUnavailable(true)
+        }
+    }
     useEffect(()=>{
         setComponentLoading(true)
-        console.log('yooo')
         async function initiate(){
             const session = await getSession()
             if(session?.user){
                 setUser(true)
             }
+            handleItemsAvailable()
+            
             setComponentLoading(false)
         }
         initiate()
@@ -39,8 +55,10 @@ export default function Cart({setComponentLoading}:any){
                         <div >
                         <div className="cart-summary">
                             <p><b>Sub-total: </b>{"£"+String(context.state.subTotal)}</p>
-                            <button className="cta"><Link  href="/checkout"><span id="checkoutSide">Checkout</span></Link></button>
-                            
+                            <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkoutSide">Checkout</span></Link></button>
+                            {
+                                !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?<p>Please delete the unavailable items from your cart</p>:null
+                            }
                 
                         </div>
                         <div className="cart-header">
@@ -53,17 +71,19 @@ export default function Cart({setComponentLoading}:any){
                         <div className="cart-container">
                             { 
                             context&&context.state.cart&&context.state.cart.items?
-                                context.state.cart.items.map(({_id,name,quantity,price,fresh,size,stripeProductId},idx:number)=>{
+                                context.state.cart.items.map(({_id,name,quantity,price,fresh,size,stripeProductId,stockAvailable},idx:number)=>{
                                     return(
-                                        <CartElement key={idx} _id={_id} idx={idx} name={name}quantity={quantity} price={price} fresh={fresh} size={size} stripeProductId={stripeProductId} />
+                                        <CartElement key={idx} _id={_id} idx={idx} name={name}quantity={quantity} price={price} fresh={fresh} size={size} stripeProductId={stripeProductId} stockAvailable={stockAvailable} handleItemsAvailable={handleItemsAvailable} />
                                     )}
                                 )
                                 :null
                             }
                         </div>
                         <p className="total-text"><b>Sub-total: </b>{"£"+String(context.state.subTotal)}</p>
-                        <button className="cta"><Link  href="/checkout"><span id="checkout">Checkout</span></Link></button>
-                        
+                        <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkout">Checkout</span></Link></button>
+                        {
+                                !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?<p className="items-unavailable-cart">Please delete the unavailable items from your cart</p>:null
+                        }
                             </div>
                             </div>
                         :

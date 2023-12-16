@@ -9,6 +9,7 @@ import BreadCrumbs from './breadcrumbs'
 export default function Header(){
     const {data:session,status} = useSession()
     const [mobileMenuOpen,setMobileMenuOpen]=useState(false);
+    const [itemsNotAvailable, setItemsNotAvailable] = useState(false);
     const context = useContext(CartContext)
     const [width,setWidth]=useState(0);
 
@@ -26,7 +27,7 @@ export default function Header(){
     }
     useEffect(()=>{
         setWidth(window.innerWidth)
-    },[])
+    },[context])
     return (
         <header id="header" className={styles.header}>
         {
@@ -95,7 +96,28 @@ export default function Header(){
                     <span className={styles["title-bar-element"]+ " " + styles["hidden-mobile"]+ " " + styles["cart-container"]} aria-hidden={width>1024?true:false}>
                         <Link href="/cart" passHref replace><p id="cart" className={router.pathname.includes("cart")?styles["cart-writing"]+ " "+styles["active-link"]:styles["cart-writing"]}>{`You have ${context.state.totalQuantity} item${context.state.totalQuantity===1?'' :'s'} in your basket.`}</p></Link>
                     </span>
-                    
+                    {
+                        !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?
+                        <div className={styles["header-stock-message"]}>
+                        <p className={styles["header-stock-lines"]}>Items in your cart are no longer in stock. Delete items?</p>
+                        <button className={styles["header-delete-stock-btn"]} onClick={(e)=>{
+                            context.state.cart.items.forEach((el)=>{
+                                if(el.stockAvailable<el.quantity&&context.saveCart){
+                                    context.saveCart({
+                                        ...el,
+                                        quantity:0
+
+                                    })
+                                }
+                            })
+                            console.log('oi twat')
+                            console.log(document.querySelector(`.${styles["header-stock-message"]}`))
+                            document.querySelector(`.${styles["header-stock-message"]}`)?.classList.add("hidden")
+                        }}>Delete</button>
+                        </div>
+                        :
+                        null
+                    }
                 </div>
                 <ul className={`${styles["nav-list"]} ${mobileMenuOpen?"":styles["mobile-menu-visibility"]}`}>
                         <div className={styles["title-bar-element"]+' '+styles["sign-in-up-desktop"]}aria-hidden={width>1025?true:false}>

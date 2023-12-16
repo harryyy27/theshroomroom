@@ -85,6 +85,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
           try {
             const data=await getSession()
             if(data&&data.user&&data.user.cart){
+              console.log(data.user.cart)
                 dispatch({
                   type:"UPDATE_CART",
                   payload:data.user.cart
@@ -96,12 +97,22 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                   path:"/",
                   secure:false
                 })
+                console.log('aaarrrrr')
                 if(Cart){
-                    const cartItems = JSON.parse(Cart)
-                    dispatch(({
-                      type:"UPDATE_CART",
-                      payload: cartItems
-                    }))
+                    var cartItems = JSON.parse(Cart) as {items:Product[]}|undefined;
+                    console.log(cartItems)
+                    if(cartItems!==undefined){
+                      for(var i:number=0;i<cartItems.items.length;i++){
+                        var product=await fetch(`/api/products?stripe_product_id=${cartItems.items[i].stripeProductId}`)
+                        var productDetails = await product.json();
+                        cartItems.items[i].stockAvailable = productDetails[`stock_available`]
+                      }
+                      dispatch(({
+                        type:"UPDATE_CART",
+                        payload: cartItems
+                      }))
+                    }
+                    
                 }
             }
             setCartLoaded(true)

@@ -10,65 +10,31 @@ interface Product {
     _id:string,
     name:string,
     description:string,
-    stripe_id:string,
-    productType:string,
-    price_dry_10g:number,
-    price_dry_25g:number,
-    price_dry_50g:number,
-    price_dry_100g:number,
-    price_fresh_100g:number,
-    price_fresh_250g:number,
-    price_fresh_500g:number,
-    price_fresh_1kg:number
-    stripe_product_id_dry_10g:string,
-    stripe_product_id_dry_25g:string,
-    stripe_product_id_dry_50g:string,
-    stripe_product_id_dry_100g:string,
-    stripe_product_id_fresh_100g:string,
-    stripe_product_id_fresh_250g:string,
-    stripe_product_id_fresh_500g:string,
-    stripe_product_id_fresh_1kg:string}
+    product_type:string,
+    stock_available:number,
+    mass:string,
+    price:number,
+    stripe_product_id:string,
+    fresh:boolean,
+}
 export default function ProductDetails({setComponentLoading}:any){
     const context = useContext(CartContext);
-    const [product,setProduct]=useState<Product>({
-        _id:'',
-        name:'',
-        description:'',
-        stripe_id:'',
-        productType:'',
-        price_dry_10g:0,
-        price_dry_25g:0,
-        price_dry_50g:0,
-        price_dry_100g:0,
-        price_fresh_100g:0,
-        price_fresh_250g:0,
-        price_fresh_500g:0,
-        price_fresh_1kg:0,
-        stripe_product_id_dry_10g:'',
-        stripe_product_id_dry_25g:'',
-        stripe_product_id_dry_50g:'',
-        stripe_product_id_dry_100g:'',
-        stripe_product_id_fresh_100g:'',
-        stripe_product_id_fresh_250g:'',
-        stripe_product_id_fresh_500g:'',
-        stripe_product_id_fresh_1kg:'',
-
-
-    })
+    const [product,setProduct]=useState<Product[]>([])
     const [name,setName]=useState('');
     const [description,setDescription]=useState('');
     const [imageUrl,setImageUrl]=useState('');
     const [type,setType]=useState('');
+    const [stockAvailable,setStockAvailable]=useState(1);
     const [price,setPrice]=useState('');
+    const [productAvailable,setProductAvailable]=useState(true)
     const [id,setId]=useState('');
     const [fresh,setFresh]=useState(true);
     const [size,setSize]=useState('');
     const [qty,setQty]=useState(1);
-    const [subscription,setSubscription]=useState(false);
-    const [oneTimePurchase,setOneTimePurchase]=useState(true);
-    const [subscriptionInterval,setSubscriptionInterval]=useState('');
     const [user,setUser]=useState(false);
     const [stripeProductId,setStripeProductId]=useState('');
+    const [itemsAvailable,setItemsAvailable]=useState(false);
+    const [err,setErr]=useState('');
 
     useEffect(()=>{
         setComponentLoading(true)
@@ -82,13 +48,21 @@ export default function ProductDetails({setComponentLoading}:any){
             }
             const productDetailsJson = await fetch(`/api/products?product=${productName}`)
             const productDetails = await productDetailsJson.json()
+            console.log(productDetails)
+            const stock=["stock_available_dry_100g","stock_available_dry_10g","stock_available_dry_25g","stock_available_dry_50g","stock_available_fresh_100g","stock_available_fresh_1kg"]
+            if(productDetails.every((el:string)=>productDetails.stock_available===0)){
+                setItemsAvailable(false)
+                setProductAvailable(false)
+            }
+            else{
+                setItemsAvailable(true)
+            }
             setProduct(productDetails)
-            setName(productDetails.name);
-            setDescription(productDetails.description);
-            setType(productDetails.type)
-            setId(productDetails._id)
-            setStripeProductId(productDetails.stripeProductId)
+            setName(productDetails[0].name);
+            setDescription(productDetails[0].description);
+            setType(productDetails[0].type)
             setComponentLoading(false)
+
 
 
         }
@@ -126,12 +100,17 @@ export default function ProductDetails({setComponentLoading}:any){
             <section className="text-section">
                 <h1 className="main-heading product-heading" id="productName">{name?name:null} </h1>
                 <p id="productDescription">{description?description:null} Learn more about <Link className="link"href="/what-we-grow">{name}</Link>.</p>
+                {
+                    itemsAvailable?
+
+                    <>
                 <div role="listbox" aria-label="select fresh or dry">
                 <button role="option"className="select-custom fresh-dry select-active" aria-selected={true}onClick={(e)=>{
                     setFresh(true);
                     setPrice('');
                     setSize('');
                     setStripeProductId('');
+                    setProductAvailable(true);
                     toggleBackground(e.target as HTMLElement,"fresh-dry")
                     toggleBackground(null,"size-select")
                 }}>Fresh</button>
@@ -140,6 +119,7 @@ export default function ProductDetails({setComponentLoading}:any){
                     setPrice('');
                     setSize('');
                     setStripeProductId('');
+                    setProductAvailable(true);
                     toggleBackground(e.target as HTMLElement,"fresh-dry")
                     toggleBackground(null,"size-select")
                     }}>Dry</button>
@@ -152,54 +132,53 @@ export default function ProductDetails({setComponentLoading}:any){
                     {
                         fresh?["100g","250g","500g","1kg"].map((el:string)=>{
                             return(
-                                <button key={el} className="select-custom size-select" role="option" aria-selected={false}
+                                <div className={"size-button-wrapper"}>
+                                <button key={el} className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0?'button-disabled':''}`} role="option" aria-selected={false}
                                 onClick={(e)=>{
                                     var text=(e.target as HTMLInputElement).textContent as string;
-                                    if(fresh){
-                
-                                        var index="price_fresh_"+text
-                                        var stripe_index="stripe_product_id_fresh_"+text
+                                    const chosenProduct:Product=product.filter((prod:any)=>{
+                                        return prod.fresh===true&&prod.mass===el
+                                    })[0]
+                                    if(chosenProduct.stock_available as number>=qty){
+                                        setProductAvailable(true)
                                     }
                                     else {
-                                        var index="price_dry_"+text
-                                        var stripe_index="stripe_product_id_dry_"+text
+                                        setProductAvailable(false)
+
                                     }
-                                    var productPrice = product[index as keyof Product]
-                                    var stripe_id=product[stripe_index as keyof Product] as string
-                                    setPrice(productPrice.toString())
-                                    setStripeProductId(stripe_id)
-                                    setSize(text)
+                                    setId(chosenProduct._id)
+                                    setStockAvailable(chosenProduct.stock_available)
+                                    setPrice(chosenProduct.price.toString())
+                                    setStripeProductId(chosenProduct.stripe_product_id)
+                                    setSize(el)
                                     toggleBackground(e.target as HTMLElement,"size-select")
 
-                                }}>{el}</button>
+                                }}>{el}</button>{product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0?<span className="size-btn-message">Out of stock</span>:null}</div>
                             )
                         })
                         :
                         ["10g","25g","50g","100g"].map((el:string)=>{
                             return(
-                                <button key={el} className="select-custom size-select" role="option"aria-selected={false}
+                            <div className={"size-button-wrapper"}>
+                                <button key={el} disabled={product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0}className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0?'button-disabled':''}`} role="option"aria-selected={false}
                                 onClick={(e)=>{
-                                    var text=(e.target as HTMLInputElement).textContent as string;
-                                    if(fresh){
-                                        var index="price_fresh_"+text
-                                        var stripe_index="stripe_product_id_fresh_"+text
+                                    const chosenProduct:Product=product.filter((prod:any)=>{
+                                        return prod.fresh===false&&prod.mass===el
+                                    })[0]
+                                    if(chosenProduct.stock_available as number>=qty){
+                                        setProductAvailable(true)
                                     }
                                     else {
-
-                                        var index="price_dry_"+text
-                                        var stripe_index="stripe_product_id_dry_"+text
-                
+                                        setProductAvailable(false)
                                     }
-                                    var productPrice = product[index as keyof Product]
-                                    
-                                    var stripe_id=product[stripe_index as keyof Product] as string
-                                    console.log(stripe_id)
-                                    setPrice(productPrice.toString())
-                                    setStripeProductId(stripe_id)
-                                    setSize(text)
+                                    setId(chosenProduct._id)
+                                    setStockAvailable(chosenProduct.stock_available)
+                                    setPrice(chosenProduct.price.toString())
+                                    setStripeProductId(chosenProduct.stripe_product_id)
+                                    setSize(el)
                                     toggleBackground(e.target as HTMLElement,"size-select")
 
-                                }}>{el}</button>
+                                }}>{el}</button>{product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0?<span>Out of stock</span>:null}</div>
                             )
                         })
                     }
@@ -207,11 +186,44 @@ export default function ProductDetails({setComponentLoading}:any){
                 <p id="productPrice"> Price: £{price?qty*Number(price):null}</p>
                 <div>
                     <label htmlFor={"productQuantity"}>Qty: </label>
-                    <input id={`productQuantity`} className="form-input"name={"quantity"} type="number" value={qty} onChange={(e)=>setQty(Number(e.target.value))}/>
+                    <input id={`productQuantity`} className="form-input"name={"quantity"} type="number" value={qty} onChange={(e)=>{
+                        setQty(Number(e.target.value))
+                        var freshLabel = fresh?true:false
+                        if(size!==''){
+
+                            const chosenProduct:Product=product.filter((prod:any)=>{
+                                return freshLabel===true&&prod.mass===size
+                            })[0]
+                            if(chosenProduct.stock_available>=Number(e.target.value)){
+                                setProductAvailable(true)
+                                setErr('');
+                                console.log('yoo')
+                            }
+                            else {
+                                setProductAvailable(false)
+                                if(chosenProduct.stock_available==0){
+                                    setErr('This item is out of stock :(')
+
+                                }
+                                else {
+                                    setErr('We do not have this many items available. Please select a lower quantity')
+                                }
+
+                            }
+                        }
+                        
+                    }
+                    }/>
                                  
-                </div>
-               
-                <button id="productAddToCart" className="cta"onClick={async(e)=>{
+                </div></>:
+                    <p>This product is currently unavailable. We will have more available in the coming days :).</p>
+                }
+               {
+                    err?
+                    <p>{err}</p>:
+                    null
+               }
+                <button id="productAddToCart" disabled={!productAvailable}className="cta"onClick={async(e)=>{
                             try{
                                 setComponentLoading(true)
                                 const input = document.getElementById(`productQuantity`) as HTMLInputElement;
@@ -225,6 +237,7 @@ export default function ProductDetails({setComponentLoading}:any){
                                         quantity:Number(input.value),
                                         price: Number(price),
                                         stripeProductId:stripeProductId,
+                                        stockAvailable:stockAvailable
                                     }):null}
                                     setComponentLoading(false)
                                 }

@@ -5,7 +5,7 @@ import {
     useStripe,
     useElements,
 } from '@stripe/react-stripe-js'
-
+import Link from 'next/link'
 import Dropdown from '../components/dropdown'
 import styles from '../styles/Components/Form.module.css'
 import { useRouter } from 'next/router'
@@ -98,6 +98,7 @@ export default function CheckoutForm(props: any) {
             if (session?.user) {
                 setUser(session.user as any)
             }
+            
             if (session) {
                 fetch(`http://localhost:3000/api/getUser/${session.user.email}`)
                     .then((res) => {
@@ -243,6 +244,18 @@ export default function CheckoutForm(props: any) {
 
         }
     }
+    const handleUnavailableItems = () => {
+        context.state.cart.items.forEach((el)=>{
+            if(el.stockAvailable<el.quantity &&context.saveCart){
+                context.saveCart(
+                    {
+                        ...el,
+                        quantity:0
+                    }
+                )
+            }
+        })
+    }
     const placeOrder = async (e: FormEvent) => {
         props.setComponentLoading(true)
         e.preventDefault()
@@ -337,6 +350,13 @@ export default function CheckoutForm(props: any) {
                         error: errMsg
                     })
                 })
+                await fetch('/api/products',{
+                    method:"PUT",
+                    headers:{
+                        csrftoken: await getCsrfToken() as string
+                    },
+                    body: JSON.stringify({products: context.state.cart})
+                })
                 throw new Error(errMsg)
             }
             else {
@@ -359,7 +379,10 @@ export default function CheckoutForm(props: any) {
                     context.saveCart ? context.saveCart() : null
                     setCheckoutSuccess('Payment Made')
                     props.setComponentLoading(false)
-                    router.push(`/thank-you/order_id=${'SKU' + order.id}date${order.date}`)
+                    router.push({
+                    pathname:`   /thank-you/[id]`,
+                    query:{id:`order_id=${'SKU' + order.id}date${order.date}`}
+                })
 
                 }
             }
@@ -380,6 +403,22 @@ export default function CheckoutForm(props: any) {
                 errorMessage !== '' ?
                     <p>{errorMessage}</p> :
                     null
+            }
+            {
+                !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?
+                <div className="checkout-stock-message">
+                <p className="checkout-stock-lines">Please delete the unavailable items from your <Link className="link" href="/cart">cart</Link> to continue checking out</p>
+                <button className="checkout-delete-stock-btn"onClick={(e)=>handleUnavailableItems()}>DELETE</button>
+                </div>
+                :null
+            }
+
+{
+                context.state.cart.items.length<=0?
+                <div className="checkout-stock-message">
+                <p className="checkout-stock-lines">You have no items in your basket, please select some products from our <Link className="link" href="/products">store</Link> to make a purchase.</p>
+                </div>
+                :null
             }
             <form className={styles["form"]} action="POST" onSubmit={(e) => placeOrder(e)} autoComplete="complete">
                 <input autoComplete="new-password" name="hidden" type="text" style={{ "display": "none" }} />
@@ -458,7 +497,23 @@ export default function CheckoutForm(props: any) {
                         </div> :
                         <p>Log in for subscriptions</p>}
                 </fieldset>
-                <button id="placeOrder" className="cta" type="submit" disabled={processing} onClick={(e) => placeOrder(e)}>Submit</button>
+                <button id="placeOrder"  className="cta" type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e) => placeOrder(e)}>Submit</button>
+
+            {
+                !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?
+                <div className="checkout-stock-message">
+                <p className="checkout-stock-lines">Please delete the unavailable items from your <Link className="link" href="/cart">cart</Link> to continue checking out.</p>
+                <button className="cta-sec-btn"onClick={(e)=>handleUnavailableItems()}>DELETE</button>
+                </div>
+                :null
+            }
+            {
+                context.state.cart.items.length<=0?
+                <div className="checkout-stock-message">
+                <p className="checkout-stock-lines">You have no items in your basket, please select some products from our <Link className="link" href="/products">store</Link> to make a purchase.</p>
+                </div>
+                :null
+            }
             </form>
             {checkoutError && <p className="form-error" style={{ color: "red" }}>{checkoutError}</p>}
         </div>

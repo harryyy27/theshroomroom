@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import connect from "../../../utils/connection";
-import {User} from "../../../utils/schema";
+import {User,Product} from "../../../utils/schema";
 import signInUser from "../../../utils/nextAuthUtils";
 import {UserSchema} from '../../../utils/types'
 import {Session} from 'next-auth';
@@ -41,9 +41,27 @@ export async function setupSession(session: Session){
         if(session&&session.user){
             await connect()
             var email=session.user.email
-            var data = await User().findOne({username:email})
+            var data = await User().findOne({username:email}).lean()
             session.user.name=data.name
-            session.user.cart= data.cart
+            let stock_level_change=false;
+            let newCart={
+                items:[] as any
+            }
+            for(var i =0;i<data.cart.items.length;i++){
+                let product = await Product().findOne({stripe_product_id:data.cart.items[i].stripeProductId})
+                if(data.cart.items[i].stockAvailable!==product['stock_available']){
+                    var newObj={...data.cart.items[i],stockAvailable:product['stock_available']}
+                    stock_level_change=true
+                    newCart.items.push(newObj)
+                }
+                else {
+                    newCart.items.push({...data.cart.items[i]})
+                }
+            }
+            if(stock_level_change){
+                await User().findOneAndUpdate({username:email},{cart:newCart})
+            }
+            session.user.cart= newCart;
             session.user.id=data._id
             session.user.dAddress=data.dAddress
             session.user.bAddress=data.bAddress

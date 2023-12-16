@@ -43,7 +43,7 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
             <>
         <ul className="product-list">
         {
-            products.length?products.map(({_id,name,price_fresh_100g}:any,idx)=>{
+            products.length?products.map(({_id,name,price}:any,idx)=>{
                 return(
                     <li className="product" key={name}>
                         <Link  href={`/products/${name.replace(/[\s]/gi,'-')}`} >
@@ -61,7 +61,7 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
 
                             </span>
                         </Link>
-                            <p className="product-price">£{price_fresh_100g}</p>
+                            <p className="product-price">£{price}</p>
                         {/* <select className="product-quantity" id={`quantity${idx}`}name={"quantity"} >
                             {
                                 [1,2,3,4,5,6,7,8,9,10].map((el:Number,idxSelect)=>{
@@ -106,13 +106,34 @@ export async function getServerSideProps(ctx:any){
     try {
         const data= await fetch(`http://${req.headers.host}/api/products/`)
         var response = await data.json()
+        console.log('OI')
+        if(response){
+            var resp = response.reduce((acc:any,b:any)=>{
+                for(var i = 0;i<acc.length;i++){
+                    if(acc[i].name===b.name){
+                        if(acc[i].price>b.price){
+                            return [...acc.slice(0,i),b,...acc.slice(i+1,acc.length)]
+                        }
+                        else{
+                            return acc
+                        }
+                    }
+                }
+                return [...acc,b]
+            },[])
     }
+        
+        else {
+            var resp = response
+        }
+    }
+
     catch(e:any){
         console.log('error yo',e)
     }
     return {
         props:{
-            mushrooms:[...response]
+            mushrooms:[...resp]
         }
     }
 }

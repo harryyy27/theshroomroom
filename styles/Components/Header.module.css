@@ -5,6 +5,24 @@
     width:100vw;
     
 }
+.header-stock-message {
+    position:absolute;
+    right:3rem;
+    top:1rem;
+  }
+  .header-stock-lines {
+    color:red;
+    margin:0;
+    padding:0;
+    font-size:0.8rem;
+    display:inline;
+  
+  }
+  .header-delete-stock-btn {
+    background-color:var(--pri);
+    color:var(--ter2);
+    margin-left:0.5rem;
+  }
 .breadcrumb-container {
     width:50%;
     position:absolute;
@@ -109,6 +127,9 @@
      }
 }
 @media(max-width:1024px){
+    .header-stock-message {
+        top:5rem;
+    }
     .active-link {
         color:var(--ter2);
         font-weight:600;

@@ -9,92 +9,36 @@ const ProductSchema = new Schema({
         type: String,
         required: true
     },
+    product_type: {
+        type: String,
+        required:false
+    },
+    stock_available: {
+
+        type: String,
+        required:true,
+        min:0
+    },
+    
+    mass: {
+        type:String,
+        required:true,
+    },
     price: {
+
         type: Number,
         required:true
     },
-    productType: {
-        type: String,
-        required:false
+    fresh: {
+        type:Boolean,
+        required:true
     },
-
-    price_dry_100g: {
-
-        type: Number,
-        required:false
-    },
-    price_dry_10g:{
-
-        type: Number,
-        required:false
-    },
-    price_dry_25g:{
-
-        type: Number,
-        required:false
-    },
-    price_dry_50g:{
-
-        type: Number,
-        required:false
-    },
-    price_fresh_100g:{
-
-        type: Number,
-        required:false
-    },
-    price_fresh_1kg:{
-
-        type: Number,
-        required:false
-    },
-    price_fresh_250g:{
-
-        type: Number,
-        required:false
-    },
-    price_fresh_500g:{
-
-        type: Number,
-        required:false
-    },
-
-    stripe_product_id_dry_100g: {
+    stripe_product_id: {
 
         type: String,
         required:true
     },
-    stripe_product_id_dry_10g:{
-
-        type: String,
-        required:true
-    },
-    stripe_product_id_dry_25g:{
-
-        type: String,
-        required:true
-    },
-    stripe_product_id_dry_50g:{
-
-        type: String,
-        required:true
-    },
-    stripe_product_id_fresh_100g:{
-        type: String,
-        required:true
-    },
-    stripe_product_id_fresh_1kg:{
-        type: String,
-        required:true
-    },
-    stripe_product_id_fresh_250g:{
-        type: String,
-        required:true
-    },
-    stripe_product_id_fresh_500g:{
-        type: String,
-        required:true
-    },
+    
 })
 // OUR TODO MODEL
 const Product = function(){
@@ -145,6 +89,10 @@ const UserSchema=new Schema({
                 },
                 stripeProductId: {
                     type:String,
+                    required:true
+                },
+                stockAvailable: {
+                    type:Number,
                     required:true
                 }
 
@@ -493,6 +441,11 @@ const SubscriptionSchema=new Schema({
     dateCancelled:{
         type:Date,
         required:false
+    },
+    dateRenewal:{
+        type:Date,
+        required:false
+
     },
     shippingMethod: {
         type:String,

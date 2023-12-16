@@ -1,6 +1,64 @@
 /* 
-colour scheme - turkey tail
-*/
+colour scheme - turkey tail */
+.order-sub-wrapper {
+  margin-bottom:1rem;
+}
+.checkout-stock-message {
+  margin:auto;
+  }
+  .checkout-stock-lines {
+    color:red;
+    font-size:1rem;
+    display:block;
+    text-align:center;
+  
+  }
+  .checkout-delete-stock-btn {
+    background-color:var(--pri);
+    color:var(--ter2);
+    display:block;
+    margin:auto;
+    margin-bottom:0.5rem;
+    font-size:1rem;
+    padding:0.5rem 0.5rem;
+  }
+  .cta-sec-btn {
+    background-color:var(--pri);
+    color:var(--ter2);
+    display:inline-block;
+    margin-right:0.5rem;
+    margin-bottom:0.5rem;
+    font-size:1rem;
+    padding:0.5rem 0.5rem;
+  }
+.cart-out-of-stock {
+  border:1px solid red;
+}
+.items-unavailable-cart {
+  color:red;
+}
+.button-disabled {
+  pointer-events:none;
+  opacity:0.7;
+}
+.size-button-wrapper {
+  position:relative;
+  margin:0;
+  padding:0;
+  display:inline;
+}
+.size-btn-message {
+  position:absolute;
+  color:red;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,60%);
+  width:100%;
+  text-align:center;
+}
+.stock-error {
+  color:red;
+}
 .loader {
   border-top: 6px solid var(--pri);
   border-right: 6px solid var(--pri);
@@ -514,6 +572,8 @@ html {
   .fixed-mobile {
     overflow:hidden;
   }
+  
+  
   .cart-summary {
     position:static;
     text-align:center;

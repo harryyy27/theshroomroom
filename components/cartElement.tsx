@@ -11,14 +11,15 @@ interface Product{
     price: number,
     fresh:boolean,
     size:string,
-    stripeProductId:string
+    stripeProductId:string,
+    stockAvailable:number
 }
-export default function CartElement({_id,idx,name,quantity,price,fresh,size,stripeProductId}:Product){
+export default function CartElement({_id,idx,name,quantity,price,fresh,size,stripeProductId,stockAvailable,handleItemsAvailable}:any){
     let context=useContext(CartContext)
     
     
     return(
-        <div className="cart-wrapper">
+        <div className={`cart-wrapper ${stockAvailable<quantity?"cart-out-of-stock":""}`}>
             <div className="cart-left">
                 
                 {
@@ -33,16 +34,19 @@ export default function CartElement({_id,idx,name,quantity,price,fresh,size,stri
                 <h2 className="cart-product-name col-1">{fresh?"Fresh ":"Dry "}{name}{` ${size}`}</h2>
                 <div className="quantity-wrapper col-2">
                 <select className="product-quantity col-3"id={`quantity${idx}`}name={"quantity"} defaultValue={String(quantity)} onChange={(e)=>{
-                    context.saveCart?
-                    context.saveCart({
-                        _id:_id,
-                        name:name,
-                        fresh:fresh,
-                        size:size,
-                        quantity:Number(e.target.value),
-                        price: Number(price),
-                        stripeProductId:stripeProductId
-                    }):null
+                    if(context.saveCart){
+                        context.saveCart({
+                            _id:_id,
+                            name:name,
+                            fresh:fresh,
+                            size:size,
+                            quantity:Number(e.target.value),
+                            price: Number(price),
+                            stripeProductId:stripeProductId,
+                            stockAvailable:stockAvailable
+                        })
+                        handleItemsAvailable()
+                    }
                 }}>
                 {
                     [1,2,3,4,5,6,7,8,9,10].map((el:number)=>{
@@ -59,18 +63,32 @@ export default function CartElement({_id,idx,name,quantity,price,fresh,size,stri
 
             <div className="col-4">
             <button className="cart-btn"onClick={async(e)=>{
-                context.saveCart?
-                context.saveCart({
-                    _id:_id,
-                    name:name,
-                    fresh:fresh,
-                    size:size,
-                    quantity:0,
-                    price: Number(price),
-                    stripeProductId:stripeProductId
-                }):null}
+                if(context.saveCart){
+                    context.saveCart({
+                        _id:_id,
+                        name:name,
+                        fresh:fresh,
+                        size:size,
+                        quantity:0,
+                        price: Number(price),
+                        stripeProductId:stripeProductId,
+                        stockAvailable:stockAvailable
+                    })
+                    handleItemsAvailable()
+                }
+                
+            }
             }>Delete</button>
             </div>
+            {
+                stockAvailable===0?
+                <p>This product is currently unavailable.</p>
+                :
+                stockAvailable<quantity
+                ?
+                <p>This product is not available in the quantity you desire</p>
+                :null
+            }
             </div>
         </div>
     )

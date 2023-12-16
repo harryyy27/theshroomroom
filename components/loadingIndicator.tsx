@@ -14,8 +14,7 @@ function Loading(props:any) {
       const handleComplete = (url:string) => {
         console.log('finish')
         console.log(url)
-        console.log()
-       return setLoading(false);
+       return setTimeout(()=>setLoading(false),250);
       }
 
       router.events.on('routeChangeStart', handleStart)
