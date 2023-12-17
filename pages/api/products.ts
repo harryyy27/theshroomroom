@@ -49,9 +49,10 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         throw new Error('CSRF authentication failed.')
     }
     var body = JSON.parse(req.body);
-    body.products.items.map(async(el:any)=>{
-      await Product().findOneAndUpdate({stripe_product_id:el.stripeProductId},{$inc:{stock_available:el.quantity}})
-    })
+    for(var i=0;i<body.products.items.length; i++){
+      await Product().findOneAndUpdate({stripe_product_id:body.products.items[i].stripeProductId},{$inc:{stock_available:body.products.items[i].quantity}})
+    }
+    return res.status(200).json({success:true})
   }
   else {
     throw Error('Unhandled method')

@@ -1,5 +1,8 @@
 /* 
 colour scheme - turkey tail */
+.add-vertical-margin {
+  margin: 1rem 0;
+}
 .order-sub-wrapper {
   margin-bottom:1rem;
 }

@@ -132,7 +132,7 @@ export default function ProductDetails({setComponentLoading}:any){
                     {
                         fresh?["100g","250g","500g","1kg"].map((el:string)=>{
                             return(
-                                <div className={"size-button-wrapper"}>
+                                <div key={el}className={"size-button-wrapper"}>
                                 <button key={el} className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0?'button-disabled':''}`} role="option" aria-selected={false}
                                 onClick={(e)=>{
                                     var text=(e.target as HTMLInputElement).textContent as string;
@@ -159,7 +159,7 @@ export default function ProductDetails({setComponentLoading}:any){
                         :
                         ["10g","25g","50g","100g"].map((el:string)=>{
                             return(
-                            <div className={"size-button-wrapper"}>
+                            <div key={el}className={"size-button-wrapper"}>
                                 <button key={el} disabled={product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0}className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0?'button-disabled':''}`} role="option"aria-selected={false}
                                 onClick={(e)=>{
                                     const chosenProduct:Product=product.filter((prod:any)=>{
@@ -178,7 +178,7 @@ export default function ProductDetails({setComponentLoading}:any){
                                     setSize(el)
                                     toggleBackground(e.target as HTMLElement,"size-select")
 
-                                }}>{el}</button>{product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0?<span>Out of stock</span>:null}</div>
+                                }}>{el}</button>{product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0?<span className="size-btn-message">Out of stock</span>:null}</div>
                             )
                         })
                     }

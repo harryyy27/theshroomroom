@@ -330,6 +330,15 @@ export default function CheckoutForm(props: any) {
             console.log('ERRRR WHAT NOW??')
             console.log(order)
             if (order.success === false) {
+                if(order.transactionFailure===false){
+                    await fetch('/api/products',{
+                        method:"PUT",
+                        headers:{
+                            csrftoken: await getCsrfToken() as string
+                        },
+                        body: JSON.stringify({products: context.state.cart})
+                    })
+                }
                 throw new Error("Order failed, no order received")
             }
             var { error}: any = await stripe?.confirmPayment({
@@ -357,6 +366,7 @@ export default function CheckoutForm(props: any) {
                     },
                     body: JSON.stringify({products: context.state.cart})
                 })
+                console.log('errrr mssgg')
                 throw new Error(errMsg)
             }
             else {
@@ -450,10 +460,6 @@ export default function CheckoutForm(props: any) {
                 <FormComponent user={user} labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
                 <h2>Card Details</h2>
                 <PaymentElement onChange={(e) => paymentElementHandler(e)} />
-                <div className={styles["form-element-wrapper"]}>
-                    <label className={styles["form-label"]} htmlFor="updates">Receive updates</label>
-                    <input className={styles["form-element"]} autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e) => setUpdates(e.target.checked)} />
-                </div>
 
                 {
                     context.cartLoaded &&
@@ -497,6 +503,11 @@ export default function CheckoutForm(props: any) {
                         </div> :
                         <p>Log in for subscriptions</p>}
                 </fieldset>
+
+                <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
+                    <label htmlFor="updates">Receive updates</label>
+                    <input  autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e) => setUpdates(e.target.checked)} />
+                </div>
                 <button id="placeOrder"  className="cta" type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e) => placeOrder(e)}>Submit</button>
 
             {

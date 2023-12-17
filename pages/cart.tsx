@@ -10,22 +10,6 @@ import CartElement from '../components/cartElement'
 export default function Cart({setComponentLoading}:any){
     let context=useContext(CartContext)
     const [user,setUser]=useState(false);
-    const [itemsUnavailable,setItemsUnavailable]=useState(true);
-    function handleItemsAvailable(){
-        console.log(console.log(context.state.cart.items))
-        if(context.state.cart.items.every((el:any)=>{
-            console.log(el.stockAvailable)
-            console.log(el.quantity)
-            return el.stockAvailable>=el.quantity
-        })){
-            console.log('set false')
-            setItemsUnavailable(false)
-        }
-        else{
-            console.log('set true')
-            setItemsUnavailable(true)
-        }
-    }
     useEffect(()=>{
         setComponentLoading(true)
         async function initiate(){
@@ -33,7 +17,6 @@ export default function Cart({setComponentLoading}:any){
             if(session?.user){
                 setUser(true)
             }
-            handleItemsAvailable()
             
             setComponentLoading(false)
         }
@@ -73,7 +56,7 @@ export default function Cart({setComponentLoading}:any){
                             context&&context.state.cart&&context.state.cart.items?
                                 context.state.cart.items.map(({_id,name,quantity,price,fresh,size,stripeProductId,stockAvailable},idx:number)=>{
                                     return(
-                                        <CartElement key={idx} _id={_id} idx={idx} name={name}quantity={quantity} price={price} fresh={fresh} size={size} stripeProductId={stripeProductId} stockAvailable={stockAvailable} handleItemsAvailable={handleItemsAvailable} />
+                                        <CartElement key={idx} _id={_id} idx={idx} name={name}quantity={quantity} price={price} fresh={fresh} size={size} stripeProductId={stripeProductId} stockAvailable={stockAvailable}  />
                                     )}
                                 )
                                 :null

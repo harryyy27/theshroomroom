@@ -14,7 +14,7 @@ interface Product{
     stripeProductId:string,
     stockAvailable:number
 }
-export default function CartElement({_id,idx,name,quantity,price,fresh,size,stripeProductId,stockAvailable,handleItemsAvailable}:any){
+export default function CartElement({_id,idx,name,quantity,price,fresh,size,stripeProductId,stockAvailable}:any){
     let context=useContext(CartContext)
     
     
@@ -45,7 +45,6 @@ export default function CartElement({_id,idx,name,quantity,price,fresh,size,stri
                             stripeProductId:stripeProductId,
                             stockAvailable:stockAvailable
                         })
-                        handleItemsAvailable()
                     }
                 }}>
                 {
@@ -74,7 +73,6 @@ export default function CartElement({_id,idx,name,quantity,price,fresh,size,stri
                         stripeProductId:stripeProductId,
                         stockAvailable:stockAvailable
                     })
-                    handleItemsAvailable()
                 }
                 
             }

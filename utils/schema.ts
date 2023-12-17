@@ -15,7 +15,7 @@ const ProductSchema = new Schema({
     },
     stock_available: {
 
-        type: String,
+        type: Number,
         required:true,
         min:0
     },

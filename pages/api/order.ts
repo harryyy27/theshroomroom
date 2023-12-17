@@ -24,23 +24,51 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             }
         }
         if(req.method==='POST'){
-            var body = JSON.parse(req.body);
-            var dbSession = await mongoose.startSession()
-            dbSession.startTransaction()
+            var dbSession:mongoose.ClientSession|null=null;
+            try{
+                dbSession = await mongoose.startSession();
+                var body = JSON.parse(req.body);
+                await dbSession?.withTransaction(async()=>{
+                for(var i =0;i<body.products.items.length;i++){
+                    let prod=await Product().findOne({stripe_product_id:body.products.items[i].stripeProductId}).session(dbSession)
+                    if(prod.stock_available>=body.products.items[i].quantity){
+                        console.log('oi')
+                        prod.stock_available=await prod.stock_available - body.products.items[i].quantity;
+                        const produuuuce = await prod.save();
+                        console.log(produuuuce)
+                    }
+                    else {
+                        await dbSession?.abortTransaction()
+                        if(prod.stock_available===0){
+                            var error= new Error(`Product: ${body.products.items[i].fresh?"fresh":"dry"} ${body.products.items[i].name} ${body.products.items[i].size} is no longer available.`)
+                        }
+                        else {
+                            var error = new Error(`Product: ${body.products.items[i].fresh?"fresh":"dry"} ${body.products.items[i].name} ${body.products.items[i].size} is out of stock in these quantities.`)
+                        }
+                        
+                        error.cause="transaction"
+                        throw(error)
+                    }
+                }
+                return true
+                })
+            }
+            catch(e:any){
+                e.cause="transaction"
+                throw(e)
+            }
+            finally{
+                if(dbSession!==null){
+                    await dbSession?.endSession()
+
+                }
+            }
                 
-            for(var i =0;i<body.products.items.length;i++){
-                let prod=await Product().findOne({stripe_product_id:body.products.items[i].stripeProductId}).session(dbSession)
-                if(prod.stock_available>=body.products.items[i].quantity){
-                    prod.stock_available-=body.products.items[i].quantity;
-                    await prod.save();
-                }
-                else {
-                    await dbSession.abortTransaction()
-                    throw new Error(`Product: ${body.products.items[i].fresh?"fresh":"dry"} ${body.products.items[i].name} ${body.products.items[i].size} is out of stock in these quantities.`)
-                }
-            } 
-                await dbSession.commitTransaction()
-                await dbSession.endSession()
+            
+                
+                
+
+            
                 var checkOrderExists = await Order().findOne({paymentIntentId:body.paymentIntentId})
                 if(checkOrderExists){
                     var order = checkOrderExists
@@ -56,7 +84,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                     if(!session?.user){
                         throw new Error('You need to be signed in to subscribe.')
                     }
-                    var stripeCustomerId= session.user.stripeCustomerId||undefined
+                    var stripeCustomerId= session?.user.stripeCustomerId||undefined
                     var subscriptionObj = {...body}
                     var standardShippingPriceId = "prod_P32r7gtFljcJHc";
                     if(order.subscriptionId){
@@ -106,7 +134,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         
                     });
                     var checkoutSession = await stripe.subscriptions.create({
-                        customer: session.user.stripeCustomerId,
+                        customer: session?.user.stripeCustomerId,
                         items: items,
                         payment_behavior:"default_incomplete",
                         payment_settings:{
@@ -115,11 +143,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                         },
                         expand:["latest_invoice.payment_intent"]
                     })
-                    console.log('ooiiiiiiii')
-                    console.log(checkoutSession)
-                    console.log(Date.now())
-                    console.log(checkoutSession.current_period_start)
-                    console.log(checkoutSession.current_period_end)
                     var subscription_id=checkoutSession.id;
                     const subscription=await Subscription().findOneAndUpdate({_id:subValidated._id},{status:"SUBSCRIPTION_CREATED",subscriptionId:subscription_id,stripeCustomerId:stripeCustomerId,interval:items[0].subscription==="weekly"?"week":"month"})
                     order.subscriptionId=subscription_id
@@ -143,7 +166,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 }
                     
                
-            
 
             
         }
@@ -201,7 +223,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         
         console.error(e)
         await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.toString(),false)
-        return res.status(500).json({success:false,error:e.toString()})
+        return res.status(500).json({success:false,error:e.toString(),transactionFailure:e.cause==="transaction"?true:false})
     }
 
 }

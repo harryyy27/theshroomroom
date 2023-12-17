@@ -15,16 +15,14 @@ export default function Unsubscribe(){
     const [unsubscribed,setUnsubscribed]=useState(false);
     const searchParam = useSearchParams().get('email')
 
-    console.log(searchParam)
     useEffect(()=>{
         if(searchParam!==null){
             setEmailParamPresent(true)
             setEmail(searchParam)
             setEmailVal(true)
-            console.log('went there')
         }
         
-    },[])
+    },[searchParam])
     async function handleUnsubscribe(event:FormEvent,email:string){
         event.preventDefault()
         try{
