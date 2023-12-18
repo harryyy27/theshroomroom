@@ -97,7 +97,7 @@ export default function Header(){
                         <Link href="/cart" passHref replace><p id="cart" className={router.pathname.includes("cart")?styles["cart-writing"]+ " "+styles["active-link"]:styles["cart-writing"]}>{`You have ${context.state.totalQuantity} item${context.state.totalQuantity===1?'' :'s'} in your basket.`}</p></Link>
                     </span>
                     {
-                        !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)? 
+                        !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?
                         <div className={styles["header-stock-message"]}>
                         <p className={styles["header-stock-lines"]}>Items in your cart are no longer in stock. Delete items?</p>
                         <button className={styles["header-delete-stock-btn"]} onClick={(e)=>{
