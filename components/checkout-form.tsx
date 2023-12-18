@@ -100,7 +100,7 @@ export default function CheckoutForm(props: any) {
             }
             
             if (session) {
-                fetch(`http://localhost:3000/api/getUser/${session.user.email}`)
+                fetch(`${process.env.WEBSITE_NAME}/api/getUser/${session.user.email}`)
                     .then((res) => {
                         return res.json()
                     })
