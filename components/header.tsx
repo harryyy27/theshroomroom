@@ -141,7 +141,7 @@ export default function Header(){
                                 </div>
                             }
                         </div>
-                    
+                    <span>ffs vercel</span>
                     {/* <li className={styles["nav-element"]+" "+ styles["hello"] +" hidden-desktop"}>Hello{session?` ${session.user.name}`:null}</li> */}
                     <li className={router.pathname.includes("products")?styles["nav-element"]+" "+styles["first-child"]+" "+styles["active-link-pri"]:styles["nav-element"]+" "+styles["first-child"]}><Link href="/products" onClick={()=>{
                         menuOpen()
