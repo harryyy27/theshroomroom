@@ -64,7 +64,7 @@ export default function Edit({setComponentLoading}:any){
                 signIn()
             }
             else {
-                fetch(`${process.env.WEBSITE_NAME}/api/getUser/${session.user.email}`)
+                fetch(`/api/getUser/${session.user.email}`)
                 .then((res)=>{
                     return res.json()
                 })
@@ -187,7 +187,7 @@ export default function Edit({setComponentLoading}:any){
             if(!csrftoken){
                 throw new Error('Csrf token failure, no csrfin')
             }
-            const res = await fetch(`${process.env.WEBSITE_NAME}/api/editUser`,{
+            const res = await fetch(`/api/editUser`,{
                 method:"POST",
                 headers: {
                     csrftoken: csrftoken

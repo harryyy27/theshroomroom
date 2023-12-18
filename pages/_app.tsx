@@ -157,7 +157,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                     if(!csrftoken){
                       throw new Error('No csurfin')
                     }
-                    const res = await fetch(`${process.env.WEBSITE_NAME}/api/editUser`,{
+                    const res = await fetch(`/api/editUser`,{
                         method:"PUT",
                         headers:{
                           csrftoken:csrftoken
@@ -198,7 +198,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                   throw new Error('No csurfin')
                 }
                 console.log('errr hello?')
-                const res = await fetch(`${process.env.WEBSITE_NAME}/api/editUser`,{
+                const res = await fetch(`/api/editUser`,{
                     method:"PUT",
                     headers:{
                       csrftoken:csrftoken
