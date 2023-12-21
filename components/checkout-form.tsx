@@ -105,9 +105,6 @@ export default function CheckoutForm(props: any) {
                         return res.json()
                     })
                     .then((res) => {
-                        console.log('yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeboiiiiiiiiiiiiiiiiiiiiiiiii')
-                        console.log(res.user.dAddress)
-                        console.log(res.user.bAddress)
                         if (res.error) {
                             throw new Error('Unable to load user details')
                         }
@@ -327,8 +324,6 @@ export default function CheckoutForm(props: any) {
                 })
             })
             const order = await eventInitiated.json()
-            console.log('ERRRR WHAT NOW??')
-            console.log(order)
             if (order.success === false) {
                 if(order.transactionFailure===false){
                     await fetch('/api/products',{
@@ -345,7 +340,6 @@ export default function CheckoutForm(props: any) {
                 elements,
                 redirect: "if_required"
             })
-            console.log(error)
             if (error) {
                 var errMsg = error.message
                 await fetch('/api/order', {
@@ -366,7 +360,6 @@ export default function CheckoutForm(props: any) {
                     },
                     body: JSON.stringify({products: context.state.cart})
                 })
-                console.log('errrr mssgg')
                 throw new Error(errMsg)
             }
             else {
@@ -464,9 +457,9 @@ export default function CheckoutForm(props: any) {
                 {
                     context.cartLoaded &&
                     <div>
-                        <p>Subtotal: <>{context.state.subTotal}</></p>
-                        <p>Shipping: <>{context.state.shipping}</></p>
-                        <p>Total: <>{context.state.total}</></p>
+                        <p>Subtotal: <>£{context.state.subTotal}</></p>
+                        <p>Shipping: <>£{context.state.shipping}</></p>
+                        <p>Total: <>£{context.state.total}</></p>
 
                     </div>
                 }

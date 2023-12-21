@@ -555,6 +555,10 @@ const DisputeSchema= new Schema({
         type:Date,
         required:true
     },
+    dateUpdated:{
+        type:Date,
+        required:false
+    },
     reason: {
         type:String,
         required:true

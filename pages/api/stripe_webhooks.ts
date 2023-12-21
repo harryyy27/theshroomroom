@@ -233,7 +233,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                                 order.invoiceId=sub_fields.invoiceId
                                 order.subscriptionId=sub_fields.subscriptionId
                                 order.status="ORDER_PENDING";
-                                order.save()
+                                await order.save()
                                 success=true
                             }
                             else{
@@ -251,22 +251,23 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     
                 case "charge.dispute.created":
                     var object = JSON.parse(payload).data.object
-
-                    var dispute = new (Dispute())({reason:object.reason,paymentIntentId:object.payment_intent,disputeId:object.id, status:"OPEN"});
-                    dispute.save()
+                    var date = Date.now()
+                    var dispute = new (Dispute())({reason:object.reason,paymentIntentId:object.payment_intent,disputeId:object.id, status:"OPEN",dateReceived:date,dateUpdated:date});
+                    await dispute.save()
                     await disputeHandler(object,"created")
                     
                     success=true
                     break;
                 case "charge.dispute.updated":
                     var object = JSON.parse(payload).data.object
-                    await Dispute().findOneAndUpdate({disputeID:object.id},{status:object.status})
+                    await Dispute().findOneAndUpdate({disputeID:object.id},{status:object.status,dateUpdated:Date.now()})
                     await disputeHandler(object,"updated")
                     success=true
                     break;
                 case "charge.dispute.closed":
+                    var object = JSON.parse(payload).data.object
 
-                    await Dispute().findOneAndUpdate({disputeID:object.id},{status:"CLOSED"})
+                    await Dispute().findOneAndUpdate({disputeID:object.id},{status:"CLOSED",dateUpdated:Date.now()})
                     await disputeHandler(object,"closed")
                     success=true
                     break;
