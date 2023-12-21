@@ -10,6 +10,7 @@ import {Order,Subscription,User,Dispute} from '../../utils/schema';
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
+    var payload:string|undefined;
     try{
         await connect()
         if(req.method==="POST"){
@@ -17,7 +18,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 throw new Error('No stripe signature')
             }
             var rawBody =  await buffer(req);
-            var payload = rawBody.toString('utf8');
+            payload = rawBody.toString('utf8');
             var signature= req.headers['stripe-signature']
 
             const event = stripe.webhooks.constructEvent(payload,signature,endpointSecret)
@@ -193,6 +194,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     success=true
                     break;
                 case "invoice.finalization_failed":
+                    console.log("invoice.finaliazation_failed")
                     var object = JSON.parse(payload).data.object
                     var attemptCount=object.attemptCount
                     var order = await Order().findOneAndUpdate({paymentIntentId:object.payment_intent},{status:"PAYMENT_NOT_RECEIVED"})
@@ -222,19 +224,15 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                         }
 
                             var subscription = await Subscription().findOne({subscriptionId:sub_fields.subscriptionId}).lean();
-                            console.log(subscription)
                             if(subscription){
                                 delete subscription._id
-                                console.log({...subscription})
                                 var order = new (Order())({...subscription});
-                                console.log(order)
                                 var date = Date.now();
                                 order.dateOfPurchase= date;
                                 order.paymentIntentId=sub_fields.paymentIntentId
                                 order.invoiceId=sub_fields.invoiceId
                                 order.subscriptionId=sub_fields.subscriptionId
                                 order.status="ORDER_PENDING";
-                                console.log(order)
                                 order.save()
                                 success=true
                             }
@@ -317,7 +315,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     catch(e:any){
         
         console.error(e)
-        // await errorHandler(JSON.stringify(req.headers),payload,req.method as string,e.toString(),false)
+        await errorHandler(JSON.stringify(req.headers),payload,req.method as string,e.toString(),false)
         return res.status(500).json({success:false,error:e.toString()})
     }
 }

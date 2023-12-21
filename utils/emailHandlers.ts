@@ -72,13 +72,8 @@ function template(content:string){
     </body>
     </html>`
 }
-export async function errorHandler(headers:string,body:string,method:string,message:string,client:boolean){
+export async function errorHandler(headers:string,body:string|undefined,method:string,message:string,client:boolean){
     await connect()
-    console.log(headers)
-    console.log(body)
-    console.log(method)
-    console.log(message)
-    console.log(client)
     const error =  new (Errors() as any)({
         reqHeaders: headers,
         reqBody: body,
@@ -89,18 +84,17 @@ export async function errorHandler(headers:string,body:string,method:string,mess
     // console.log(error)
     error.save()
     try{
-        // sendEmail({
-            // subject: client?"Client Side Error":"Server Side Error",
-            // text:"New error mate",
-            // to:"theshroomroomdev@gmail.com",
-            // from: "ServerSideError@theshroomroomdev.com"
-        // })
+        sendEmail({
+            subject: client?"Client Side Error":"Server Side Error",
+            text:"New error mate",
+            to:"theshroomroomdev@gmail.com",
+            from: "ServerSideError@theshroomroomdev.com"
+        })
 
     }
     catch(e){
         console.log(e)
     }
-    console.log('yepppp')
 
 }
 export async function receiveUpdatesHandler(email:string,user:boolean){
