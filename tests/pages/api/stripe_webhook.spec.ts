@@ -2,7 +2,7 @@ import handler from '../../../pages/api/stripe_webhook';
 import * as fns from '../../../utils/stripe_webhook'
 import {createMocks} from 'node-mocks-http'
 import { expect } from '@jest/globals';
-import errorHandler from '../../../utils/errorHandler';
+import {errorHandler} from '../../../utils/errorHandler';
 jest.mock('../../../utils/errorHandler')
 const fetch = require("node-fetch");
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{

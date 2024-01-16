@@ -3,7 +3,7 @@ import {createMocks} from 'node-mocks-http'
 import * as nextauth from 'next-auth/react'
 import connect from '../../../utils/connection'
 import {User} from '../../../utils/schema';
-import errorHandler from '../../../utils/errorHandler';
+import {errorHandler} from '../../../utils/errorHandler';
 import { expect } from '@jest/globals';
 jest.mock('next-auth/react');
 jest.mock('../../../utils/schema')

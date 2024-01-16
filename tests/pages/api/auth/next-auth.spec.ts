@@ -2,7 +2,7 @@ import {findUser,setupSession,getUser} from '../../../../pages/api/auth/[...next
 import signInUser from '../../../../utils/nextAuthUtils'
 import bcrypt from 'bcrypt';
 import {User} from '../../../../utils/schema'
-import errorHandler from '../../../../utils/errorHandler'
+import {errorHandler} from '../../../../utils/errorHandler'
 
 jest.mock('../../../../utils/schema')
 jest.mock('bcrypt')

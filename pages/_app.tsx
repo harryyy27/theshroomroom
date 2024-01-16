@@ -4,12 +4,13 @@ import {useState,useEffect, useReducer} from 'react';
 import styles from '../styles/Pages/Home.module.css';
 import Header from '../components/header';
 import Footer from '../components/footer';
+import Loading from '../components/loadingIndicator'
 import Subscription from '../components/home_page/subscribe'
 import type { AppProps } from 'next/app'
 import { SessionProvider,getSession, getCsrfToken } from "next-auth/react"
 import {CartContext} from '../context/cart'
 import {Product} from '../utils/types';
-import { parseCookies,setCookie } from 'nookies';
+import { parseCookies,setCookie,destroyCookie } from 'nookies';
 
 const signika = Signika({
   subsets: ["latin"],
@@ -77,12 +78,14 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
   // const [total,setTotal]=useState(0);
   // const [subTotal,setSubTotal]=useState(0);
   // const [shipping,setShipping]=useState(5);
-  const [loaded,setLoaded]=useState(false);
+  const [componentLoading,setComponentLoading]=useState(false);
+  const [cartLoaded,setCartLoaded]=useState(false);
     useEffect(()=>{
         const initializeCart=async()=>{
           try {
             const data=await getSession()
             if(data&&data.user&&data.user.cart){
+              console.log(data.user.cart)
                 dispatch({
                   type:"UPDATE_CART",
                   payload:data.user.cart
@@ -90,17 +93,29 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                
             }
             else {
-                const {Cart} = parseCookies()
+                const {Cart} = parseCookies({},{
+                  path:"/",
+                  secure:false
+                })
+                console.log('aaarrrrr')
                 if(Cart){
-                    const cartItems = JSON.parse(Cart)
-                    dispatch(({
-                      type:"UPDATE_CART",
-                      payload: cartItems
-                    }))
+                    var cartItems = JSON.parse(Cart) as {items:Product[]}|undefined;
+                    console.log(cartItems)
+                    if(cartItems!==undefined){
+                      for(var i:number=0;i<cartItems.items.length;i++){
+                        var product=await fetch(`/api/products?stripe_product_id=${cartItems.items[i].stripeProductId}`)
+                        var productDetails = await product.json();
+                        cartItems.items[i].stockAvailable = productDetails[`stock_available`]
+                      }
+                      dispatch(({
+                        type:"UPDATE_CART",
+                        payload: cartItems
+                      }))
+                    }
+                    
                 }
             }
-            setLoaded(true)
-
+            setCartLoaded(true)
           }
           catch(e:any){
             await fetch('/api/clientSideError',{
@@ -119,52 +134,97 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
         }
         initializeCart()
     },[])
-    const saveCart=async(product:Product)=>{
+    const saveCart=async(product?:Product)=>{
         try{
-            const session = await getSession()
+          setComponentLoading(true)
+          const session = await getSession()
+          if(product){
             const newCart:{
               items: Product[]
             } = {...state.cart}
-            if(newCart.items){
-              if(product.quantity!==0){
-                newCart.items=[...newCart.items.filter(el=>{
-                  return el._id!==product._id||el.fresh!==product.fresh&&el.size!==product.size
-                }),product]
-              }
-              else {
-                newCart.items=[...newCart.items.filter(el=>el._id!==product._id)]
-              }
-              if(session&&session.user){
-                  const csrftoken:string|undefined=await getCsrfToken()
-                  if(!csrftoken){
-                    throw new Error('No csurfin')
-                  }
-                  const res = await fetch('http://localhost:3000/api/editUser',{
-                      method:"PUT",
-                      headers:{
-                        csrftoken:csrftoken
-                      },
-                      body: JSON.stringify({
-                        username:session.user.email,
-                        cart:newCart
-                      })
-                  })
-                  if(!res){
-                    throw new Error('Unable to update cart')
-                  }
-                  dispatch({
-                    type:"UPDATE_CART",
-                    payload:newCart
-                  })
-              }
-              else{
-                  setCookie(null,"Cart",JSON.stringify(newCart))
-                  dispatch({
-                    type:"UPDATE_CART",
-                    payload:newCart
-                  })
+              if(newCart.items){
+                if(product.quantity!==0){
+                  newCart.items=[...newCart.items.filter(el=>{
+                    return el._id!==product._id||el.fresh!==product.fresh||el.size!==product.size
+                  }),product]
+                }
+                else {
+                  newCart.items=[...newCart.items.filter(el=>el._id!==product._id)]
+                }
+                console.log(newCart)
+                if(session&&session.user){
+                    const csrftoken:string|undefined=await getCsrfToken()
+                    if(!csrftoken){
+                      throw new Error('No csurfin')
+                    }
+                    const res = await fetch(`/api/editUser`,{
+                        method:"PUT",
+                        headers:{
+                          csrftoken:csrftoken
+                        },
+                        body: JSON.stringify({
+                          username:session.user.email,
+                          cart:newCart
+                        })
+                    })
+                    if(!res){
+                      throw new Error('Unable to update cart')
+                    }
+                    dispatch({
+                      type:"UPDATE_CART",
+                      payload:newCart
+                    })
+                }
+                else{
+                  console.log('OIII',newCart)
+                    setCookie({},"Cart",JSON.stringify(newCart))
+                    dispatch({
+                      type:"UPDATE_CART",
+                      payload:newCart
+                    })
+                }
               }
             }
+            else {
+              let newCart:{
+                items: Product[]
+              }={
+                items:[]
+              };
+              console.log(newCart)
+              if(session&&session.user){
+                const csrftoken:string|undefined=await getCsrfToken()
+                if(!csrftoken){
+                  throw new Error('No csurfin')
+                }
+                console.log('errr hello?')
+                const res = await fetch(`/api/editUser`,{
+                    method:"PUT",
+                    headers:{
+                      csrftoken:csrftoken
+                    },
+                    body: JSON.stringify({
+                      username:session.user.email,
+                      cart:newCart
+                    })
+                })
+                console.log(res)
+                if(!res){
+                  throw new Error('Unable to update cart')
+                }
+
+            }
+            destroyCookie({},"Cart",{
+              path:'/'
+            })
+            dispatch({
+              type:"UPDATE_CART",
+              payload:newCart
+            })
+            
+            }
+            
+            setComponentLoading(false)
             
         }
         catch(e:any){
@@ -180,6 +240,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                 stack:e.stack
             })
         })
+        setComponentLoading(false)
             console.log(e)
         }
     }
@@ -193,11 +254,12 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
       `}</style>
       <CartContext.Provider value={{
                 state,
-                loaded,
                 dispatch,
-                setLoaded,
                 saveCart,
+                cartLoaded,
+                setCartLoaded,
             }}>
+        <Loading componentLoading={componentLoading} />
         <Header/>
           {/* <Head>
             <title>Mega Mushrooms</title>
@@ -208,7 +270,11 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
 
         <main className="main">
           <div className={styles.container}>
-            <Component {...pageProps} />
+            <Component {
+              ...pageProps
+              }
+              componentLoading={componentLoading}
+              setComponentLoading={setComponentLoading} />
           </div>
           <Subscription/>
         </main>

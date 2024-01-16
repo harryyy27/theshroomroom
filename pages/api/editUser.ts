@@ -1,10 +1,10 @@
 
-import {User} from '../../utils/schema'
-import {Subscription} from '../../utils/schema'
-import connect from '../../utils/connection'
+import {User} from '../../utils/schema';
+import {ReceiveUpdates} from '../../utils/schema';
+import connect from '../../utils/connection';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {getCsrfToken} from 'next-auth/react';
-import errorHandler from '../../utils/errorHandler'
+import {errorHandler,receiveUpdatesHandler} from '../../utils/emailHandlers';
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
     
     try{
@@ -24,44 +24,47 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         if(body.subscription){
             if(body.user){
                     const user =await User().findOne({username:body.email})
-                    const use = await User().findOneAndUpdate({username:body.email},{updates:body.subscribe})
+                    if(!user){
+                        throw new Error('This user was not found')
+                    }
+                    await User().findOneAndUpdate({username:body.email},{updates:body.subscribe})
+                    await receiveUpdatesHandler(body.email,true)
             }
             else {
                 let userExists = await User().findOne({username:body.email})
                 if(userExists){
                     var error= new Error('A user with this email already exists, log in to subscribe')
-                    error.cause="user_error"
                     throw error;
                 }
-                const existsSubscribe = await Subscription().findOne({email:body.email})
+                const existsSubscribe = await ReceiveUpdates().findOne({email:body.email})
                 if(existsSubscribe){
                     var error= new Error('A user with this email is already subscribed')
-                    error.cause="user_error"
                     throw error
                 }
-                var subscription = new (Subscription() as any)(body);
+                var subscription = new (ReceiveUpdates() as any)(body);
                 subscription.save()
+
+                await receiveUpdatesHandler(body.email,false)
             }
         }
         else{
+            console.log('yeeeeeeee')
+            console.log('uhhhhhhh')
+            console.log(body.cart.items)
             const messageToClient=await User().findOneAndUpdate({username:body.username},{...body})
-            
+            console.log(messageToClient.cart.items)
+            let userExists = await User().findOne({username:body.username})
+            console.log(userExists.cart.items)
+
 
         }
-        res.status(200).json({message:"User successfully updated"})
+        return res.status(200).json({message:"User successfully updated"})
         
 
     }
     catch(e:any){
-        if(e.cause){
-            res.status(500).json({error:e.message})
-
-        }
-        else{
-            await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.errorMessage,e.stack,false)
-            res.status(500).json({error:"Something has gone wrong and we are working to fix this. Sorry for any inconvenience caused."})
-        }
-        
-
+        console.error(e)
+        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.toString(),false)
+        return res.status(500).json({success:false,error:e.toString()})
     }
 }

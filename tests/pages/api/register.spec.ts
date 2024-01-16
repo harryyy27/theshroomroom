@@ -9,7 +9,7 @@ import connect from '../../../utils/connection'
 import {User} from '../../../utils/schema'
 import bcrypt from 'bcrypt'
 import { expect } from '@jest/globals';
-import errorHandler from '../../../utils/errorHandler';
+import {errorHandler} from '../../../utils/errorHandler';
 jest.mock('../../../utils/errorHandler')
 jest.mock('next-auth/react');
 jest.mock('../../../utils/schema')

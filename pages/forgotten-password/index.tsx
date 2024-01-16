@@ -6,12 +6,13 @@ import Head from 'next/head';
 
 import {Metadata} from '../../utils/metadata/metadata';
 
-export default function ForgottenPassword(){
+export default function ForgottenPassword({setComponentLoading}:any){
     const [email,setEmail]=useState('');
     const [validateEmail,setValidateEmail]=useState('');
     const [formSubmitted,setFormSubmitted]=useState(false);
     const handleForgotten=async(e:FormEvent)=>{
         try{
+            setComponentLoading(true)
             e.preventDefault();
             if(email!==''){
                 setValidateEmail('');
@@ -38,6 +39,7 @@ export default function ForgottenPassword(){
             else {
                 setValidateEmail('Enter an email to continue')
             }
+            setComponentLoading(false)
 
         }
         catch(e:any){
@@ -52,6 +54,7 @@ export default function ForgottenPassword(){
                   stack:e.stack
               })
           })
+          setComponentLoading(false)
             
         }
     }

@@ -5,7 +5,7 @@ import Head from 'next/head';
 import {Metadata} from '../../utils/metadata/metadata'
 import styles from '../../styles/Components/Form.module.css'
 import FormComponent from '../../components/form-component';
-export default function SignIn(){
+export default function SignIn({setComponentLoading}:any){
     const [username,setUsername] =useState('');
     const [usernameVal,setUsernameVal] =useState<boolean|null>(null);
     const [password,setPassword]= useState('');
@@ -14,11 +14,13 @@ export default function SignIn(){
     const [user,setUser]=useState('');
     const signInUser=async(e:FormEvent) => {
         try {
+            setComponentLoading(true)
             e.preventDefault();
             let options = {redirect:false,username,password}
     
             const res= await signIn("credentials",options);
             setMessage(null);
+            setComponentLoading(false)
             if(res?.error) {
                 setMessage(res.error)
             }
@@ -40,6 +42,7 @@ export default function SignIn(){
                     stack:error.stack
                 })
             })
+            setComponentLoading(false)
             setMessage('We\'re sorry something has gone wrong. Please try again later')
             
         }
@@ -56,7 +59,7 @@ export default function SignIn(){
                     <form className={styles["form"]} method="POST">
                         <FormComponent user={user} labelName={"Username"}variable={username} variableName={Object.keys({username})[0]} setVariable={setUsername} variableVal={usernameVal} setVariableVal={setUsernameVal} inputType={"text"} required={true}/>
         
-                        <FormComponent user={user} labelName={"Password"}variable={password} variableName={Object.keys({password})[0]} setVariable={setPassword} variableVal={passwordVal} setVariableVal={setPasswordVal} inputType={"text"} required={true}/>
+                        <FormComponent user={user} labelName={"Password"}variable={password} variableName={Object.keys({password})[0]} setVariable={setPassword} variableVal={passwordVal} setVariableVal={setPasswordVal} inputType={"password"} required={true}/>
                         
                         
                         <button className="cta" onClick={async(e)=>await signInUser(e)}type="submit">Sign In</button>

@@ -22,7 +22,7 @@ export default function Subscribe(){
         initiate()
     },[])
     function validate(){
-        if(email!==''){
+        if(emailVal){
             return true
         }
         else {
@@ -48,7 +48,7 @@ export default function Subscribe(){
                 })
             }
             else {
-                setErr('')
+                setErr('Please enter a valid email address')
             }
         }
         catch(e){
@@ -68,7 +68,7 @@ export default function Subscribe(){
                     :
                     null
                 }
-                <FormComponent user={user} labelName={"Email"}variable={email} variableName={Object.keys({email})[0]} setVariable={setEmail} variableVal={emailVal} setVariableVal={setEmailVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"Email"}variable={email} variableName={Object.keys({email})[0]} setVariable={setEmail} variableVal={emailVal} setVariableVal={setEmailVal} inputType={"email"} required={true}/>
                 
                 {
                     err!==''?

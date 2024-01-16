@@ -1,12 +1,10 @@
 import {useState, useEffect, FormEvent} from 'react';
 import {getCsrfToken, getSession,signIn} from 'next-auth/react';
-import LoadingIndicator from '../../components/loadingIndicator';
 import authenticate from '../../utils/authenticationRequired';
 import FormComponent from '../../components/form-component';
 import styles from '../../styles/Components/Form.module.css'
 
-export default function Edit(){
-    const [loading, setLoading]=useState(true);
+export default function Edit({setComponentLoading}:any){
     const [dFirstName,setDFirstName]=useState('');
     const [dFirstNameVal,setDFirstNameVal]=useState<boolean|null>(null);
     const [dSurname,setDSurname]=useState('');
@@ -16,7 +14,7 @@ export default function Edit(){
     const [dSecondLine,setDSecondLine]=useState('');
     const [dCity,setDCity]=useState('');
     const [dCityVal,setDCityVal]=useState<boolean|null>(null);
-    const [dPostcode,setBPostcode]=useState('');
+    const [dPostcode,setDPostcode]=useState('');
     const [dPostcodeVal,setDPostcodeVal]=useState<boolean|null>(null);
     const [bFirstName,setBFirstName]=useState('');
     const [bFirstNameVal,setBFirstNameVal]=useState<boolean|null>(null);
@@ -27,7 +25,7 @@ export default function Edit(){
     const [bSecondLine,setBSecondLine]=useState('');
     const [bCity,setBCity]=useState('');
     const [bCityVal,setBCityVal]=useState<boolean|null>(null);
-    const [bPostcode,setDPostcode]=useState('');
+    const [bPostcode,setBPostcode]=useState('');
     const [bPostcodeVal,setBPostcodeVal]=useState<boolean|null>(null);
     const [updates,setUpdates]=useState(false);
     const [user,setUser]=useState({
@@ -59,32 +57,72 @@ export default function Edit(){
     const [message,setMessage]=useState('');
     useEffect(()=>{
         const securePage=async()=>{
+            setComponentLoading(true)||''
             const session = await getSession()
             if(!session){
+                setComponentLoading(false)
                 signIn()
             }
             else {
-                fetch(`http://localhost:3000/api/getUser/${session.user.email}`)
+                fetch(`/api/getUser/${session.user.email}`)
                 .then((res)=>{
                     return res.json()
                 })
                 .then((res)=>{
                         setUser(res.user)
-                        setDFirstName(res.user.dAddress.surname);
-                        setDSurname(res.user.dAddress.surname);
-                        setDFirstLine(res.user.dAddress.firstLine);
+                        if(res.user.dAddress.firstName){
+                            setDFirstName(res.user.dAddress.firstName);
+                            setDFirstNameVal(true)
+                        }
+                        if(res.user.dAddress.surname){
+                            setDSurname(res.user.dAddress.surname);
+                            setDSurnameVal(true)
+                        }
+                        if(res.user.dAddress.firstLine){
+                            setDFirstLine(res.user.dAddress.firstLine);
+                            setDFirstLineVal(true)
+                        }
+                        if(res.user.dAddress.city){
+                            setDCity(res.user.dAddress.city);
+                            setDCityVal(true)
+                        }
+                        if(res.user.dAddress.postcode){
+                            setDPostcode(res.user.dAddress.postcode);
+                            setDPostcodeVal(true)
+                            
+                        }
+                        if(res.user.bAddress.firstName){
+                            setBFirstName(res.user.bAddress.firstName);
+                            setBFirstNameVal(true)
+                            
+                        }
+                        if(res.user.bAddress.surname){
+                            setBSurname(res.user.bAddress.surname);
+                            setBSurnameVal(true)
+                            
+                        }
+                        if(res.user.bAddress.firstLine){
+                            
+                            setBFirstLine(res.user.bAddress.firstLine);
+                            setBFirstLineVal(true)
+                        }
+                        if(res.user.bAddress.city){
+                            
+                            setBCity(res.user.bAddress.city);
+                            setBCityVal(true)
+                        }
+                        if(res.user.bAddress.postcode){
+                            setBPostcode(res.user.bAddress.postcode);
+                            setBPostcodeVal(true)
+                        }
                         setDSecondLine(res.user.dAddress.secondLine);
-                        setDCity(res.user.dAddress.city);
-                        setDPostcode(res.user.dAddress.postcode);
-                        setBFirstName(res.user.bAddress.surname);
-                        setBSurname(res.user.bAddress.surname);
-                        setBFirstLine(res.user.bAddress.firstLine);
                         setBSecondLine(res.user.bAddress.secondLine);
-                        setBCity(res.user.bAddress.city);
-                        setBPostcode(res.user.bAddress.postcode);
                         setUpdates(res.user.updates)
                 })
-                setLoading(false)
+                .catch((e)=>{
+                    console.log(e)
+                })
+                setComponentLoading(false)
             }
         }
         securePage()
@@ -92,7 +130,7 @@ export default function Edit(){
 
         
 
-    },[])
+    },[setComponentLoading])
     const validate_form=()=>{
         if(dFirstNameVal&&dSurnameVal&&dFirstLineVal&&dCityVal&&dPostcodeVal&&bFirstNameVal&&bSurnameVal&&bFirstLineVal&&bCityVal&&bPostcodeVal){
             return true
@@ -116,7 +154,7 @@ export default function Edit(){
     }
     async function editUser(e:FormEvent){
         try{
-            setLoading(true)
+            setComponentLoading(true)
             const valid = validate_form()
             if(!valid){
                 throw new Error('Please enter form details correctly')
@@ -149,7 +187,7 @@ export default function Edit(){
             if(!csrftoken){
                 throw new Error('Csrf token failure, no csrfin')
             }
-            const res = await fetch('http://localhost:3000/api/editUser',{
+            const res = await fetch(`/api/editUser`,{
                 method:"POST",
                 headers: {
                     csrftoken: csrftoken
@@ -160,6 +198,7 @@ export default function Edit(){
             setTimeout(()=>{
                 setMessage('')
             },1500)
+            setComponentLoading(false)
 
         }
         catch(e:any){
@@ -175,34 +214,30 @@ export default function Edit(){
                 })
             })
             setErrorMessage(e.message)
+            setComponentLoading(false)
         }
     }
 
     return(
         <div className="static-container">
-        {
-            loading?
-            <LoadingIndicator />
-            :
-            <>
             <h2>Edit details</h2>
             <form className={styles["form"]}action="">
                 <h2>Delivery Address</h2>
-                <FormComponent user={user} labelName={"First Name"} variableName={Object.keys({dFirstName})[0]}variable={dFirstName} setVariable={setDFirstName} variableVal={dFirstNameVal} setVariableVal={setDFirstNameVal} inputType={"text"} required={true}/>
-                <FormComponent user={user} labelName={"Surname"}variable={dSurname} variableName={Object.keys({dSurname})[0]} setVariable={setDSurname} variableVal={dSurnameVal} setVariableVal={setDSurnameVal} inputType={"text"} required={true}/>
-                <FormComponent user={user} labelName={"Street name and number"}variable={dFirstLine} variableName={Object.keys({dFirstLine})[0]} setVariable={setDFirstLine} variableVal={dFirstLineVal} setVariableVal={setDFirstLineVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"First Name"} variableName={Object.keys({dFirstName})[0]}variable={dFirstName} setVariable={setDFirstName} variableVal={dFirstNameVal} setVariableVal={setDFirstNameVal} inputType={"text"} required={true}page={"Edit"}/>
+                <FormComponent user={user} labelName={"Surname"}variable={dSurname} variableName={Object.keys({dSurname})[0]} setVariable={setDSurname} variableVal={dSurnameVal} setVariableVal={setDSurnameVal} inputType={"text"} required={true}page={"Edit"}/>
+                <FormComponent user={user} labelName={"Street name and number"}variable={dFirstLine} variableName={Object.keys({dFirstLine})[0]} setVariable={setDFirstLine} variableVal={dFirstLineVal} setVariableVal={setDFirstLineVal} inputType={"text"} required={true}page={"Edit"}/>
                 
-                <FormComponent user={user} labelName={"2nd Line of address"}variable={dSecondLine} variableName={Object.keys({dSecondLine})[0]} setVariable={setDSecondLine} inputType={"text"} required={false}/>
-                <FormComponent user={user} labelName={"City"}variable={dCity} variableName={Object.keys({dCity})[0]}setVariable={setDCity} variableVal={dCityVal} setVariableVal={setDCityVal}inputType={"text"} required={true}/>
-                <FormComponent user={user} labelName={"Postcode"}variable={dPostcode} variableName={Object.keys({dPostcode})[0]}setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"2nd Line of address"}variable={dSecondLine} variableName={Object.keys({dSecondLine})[0]} setVariable={setDSecondLine} inputType={"text"} required={false}page={"Edit"}/>
+                <FormComponent user={user} labelName={"City"}variable={dCity} variableName={Object.keys({dCity})[0]}setVariable={setDCity} variableVal={dCityVal} setVariableVal={setDCityVal}inputType={"text"} required={true}page={"Edit"}/>
+                <FormComponent user={user} labelName={"Postcode"}variable={dPostcode} variableName={Object.keys({dPostcode})[0]}setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true}page={"Edit"}/>
                 <h2>Billing Address</h2>
-                <FormComponent user={user} labelName={"First Name"}variable={bFirstName} variableName={Object.keys({bFirstName})[0]}setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true}/>
-                <FormComponent user={user} labelName={"Surname"}variable={bSurname} variableName={Object.keys({bSurname})[0]}setVariable={setBSurname} variableVal={bSurnameVal} setVariableVal={setBSurnameVal} inputType={"text"} required={true}/>
-                <FormComponent user={user} labelName={"Street name and number"}variable={bFirstLine} variableName={Object.keys({bFirstLine})[0]}setVariable={setBFirstLine} variableVal={bFirstLineVal} setVariableVal={setBFirstLineVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"First Name"}variable={bFirstName} variableName={Object.keys({bFirstName})[0]}setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true}page={"Edit"}/>
+                <FormComponent user={user} labelName={"Surname"}variable={bSurname} variableName={Object.keys({bSurname})[0]}setVariable={setBSurname} variableVal={bSurnameVal} setVariableVal={setBSurnameVal} inputType={"text"} required={true}page={"Edit"}/>
+                <FormComponent user={user} labelName={"Street name and number"}variable={bFirstLine} variableName={Object.keys({bFirstLine})[0]}setVariable={setBFirstLine} variableVal={bFirstLineVal} setVariableVal={setBFirstLineVal} inputType={"text"} required={true}page={"Edit"}/>
                 
-                <FormComponent user={user} labelName={"2nd Line of address"}variable={bSecondLine}variableName={Object.keys({bSecondLine})[0]} setVariable={setBSecondLine} inputType={"text"} required={false}/>
-                <FormComponent user={user} labelName={"City"}variable={bCity} variableName={Object.keys({bCity})[0]}setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal}inputType={"text"} required={true}/>
-                <FormComponent user={user} labelName={"Postcode"}variable={bPostcode} variableName={Object.keys({bPostcode})[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"2nd Line of address"}variable={bSecondLine}variableName={Object.keys({bSecondLine})[0]} setVariable={setBSecondLine} inputType={"text"} required={false}page={"Edit"}/>
+                <FormComponent user={user} labelName={"City"}variable={bCity} variableName={Object.keys({bCity})[0]}setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal}inputType={"text"} required={true}page={"Edit"}/>
+                <FormComponent user={user} labelName={"Postcode"}variable={bPostcode} variableName={Object.keys({bPostcode})[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true}page={"Edit"}/>
                 <button type="submit" className="cta"onClick={(e)=>editUser(e)}>UPDATE</button>
             </form>
             {
@@ -215,10 +250,8 @@ export default function Edit(){
                 errorMessage?
 
             <p>{errorMessage}</p>:
-            null
-            }
-            </>
-        }
+            null}
+        
             
         </div>
     )

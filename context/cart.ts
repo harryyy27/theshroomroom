@@ -8,16 +8,16 @@ interface ContextInterface {
         total: Number,
         shipping: Number,
         shippingMethod:String,
-        totalQuantity:Number
+        totalQuantity:Number,
 
     },
-    loaded: Boolean,
+    cartLoaded: Boolean,
     dispatch: Dispatch<{
         type: String,
         payload: { items:Product[]}
     }>|undefined,
-    setLoaded:Dispatch<SetStateAction<boolean>>|undefined,
-    saveCart?: (product:Product)=>Promise<void>|undefined,
+    setCartLoaded:Dispatch<SetStateAction<boolean>>|undefined,
+    saveCart?: (product?:Product)=>Promise<void>|undefined,
 }
 const defaultState={
     state: {
@@ -28,11 +28,11 @@ const defaultState={
         total:5,
         shipping:5,
         shippingMethod:"Standard",
-        totalQuantity:0
+        totalQuantity:0,
     },
     dispatch:undefined,
-    loaded: false,
-    setLoaded:undefined,
+    cartLoaded: false,
+    setCartLoaded:undefined,
     saveCart:undefined
 }
 const CartContext = createContext<ContextInterface>(defaultState);

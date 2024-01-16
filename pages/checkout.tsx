@@ -10,14 +10,13 @@ const stripePromise = loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
   );
 // import {useEffect,useContext} from 'react';
-import {parseCookies, setCookie} from 'nookies'
+import {parseCookies, setCookie,destroyCookie} from 'nookies'
 import CheckoutForm from '../components/checkout-form'
 import { getSession, getCsrfToken } from 'next-auth/react';
 import { Product } from '../utils/types'
 import { v4 as uuidv4 } from 'uuid';
-import errorHandler from '../utils/errorHandler'
 
-export default function Checkout({paymentIntent}:any){
+export default function Checkout({paymentIntent,setComponentLoading}:any){
     
     // const context = useContext(CartContext);
     // useEffect(()=>{
@@ -36,8 +35,8 @@ export default function Checkout({paymentIntent}:any){
                     <meta property="og:title" content="Mega Mushrooms - buy our high quality lion's mane mushrooms here"/>
                     <meta property="og:description" content="Reap the rewards of adding this healthy, medicinal and delicious mushroom to your diet"/>
                 </Head>
-                <Elements stripe={stripePromise} options={options}>
-                    <CheckoutForm paymentIntent={paymentIntent}  />
+                <Elements stripe={stripePromise} options={options} >
+                    <CheckoutForm paymentIntent={paymentIntent}  setComponentLoading={setComponentLoading}/>
                 </Elements>
             </>
     )
@@ -52,7 +51,9 @@ export const getServerSideProps =  async(ctx:any) => {
             maxNetworkRetries:3
         })
         const sesh = await getSession(ctx)
-        const {Cart}= parseCookies(ctx)
+        const {Cart}= parseCookies(ctx,{
+            path:"/"
+        })
         let total;
         if(sesh&&sesh.user&&sesh.user.cart){
             total = sesh.user.cart.items.reduce((a:number,b:Product)=>{
@@ -65,7 +66,8 @@ export const getServerSideProps =  async(ctx:any) => {
                 return a+b.price
             },0)
         }
-
+        console.log(sesh)
+        console.log(Cart)
         if(!sesh&&!Cart){
             return {
                 redirect: {
@@ -75,15 +77,22 @@ export const getServerSideProps =  async(ctx:any) => {
                 props:{},
               };
         }
+        console.log('yoyoyoyoy')
         let paymentIntent;
         const {paymentIntentId} = parseCookies(ctx)
         if(paymentIntentId){
             paymentIntent=await stripe.paymentIntents.retrieve(paymentIntentId)
+            console.log(paymentIntent.status)
+            if(paymentIntent.status==="canceled"||paymentIntent.status==="succeeded"){
+                console.log('yee')
+                destroyCookie(ctx,"paymentIntentId")
+            }
+            console.log(paymentIntent.status)
             if(paymentIntent.amount!==total*100){
-                
                 paymentIntent=await stripe.paymentIntents.update(paymentIntentId,{
                     amount:total*100+500
                 })
+
             }
             return {
                 props: {
@@ -91,6 +100,10 @@ export const getServerSideProps =  async(ctx:any) => {
                 }
             }
         }
+        else {
+
+        }
+        console.log('where am i?')
         const idempotencyKey = uuidv4();
         paymentIntent = await stripe.paymentIntents.create({
             amount: total*100+500,
@@ -102,7 +115,9 @@ export const getServerSideProps =  async(ctx:any) => {
         },{
             idempotencyKey:idempotencyKey
         })
-        setCookie(ctx,'paymentIntentId',paymentIntent.id)
+        setCookie(ctx,'paymentIntentId',paymentIntent.id,{
+            path:'/checkout'
+        })
         return {
             props: {
                 paymentIntent:paymentIntent,
@@ -110,7 +125,14 @@ export const getServerSideProps =  async(ctx:any) => {
         }
     }
     catch(e:any){
-        await errorHandler(JSON.stringify(req.headers),req.body?JSON.stringify(req.body):'no body',req.method, e.message,e.stack,false)
+        console.log(e)
+        return {
+            redirect: {
+              permanent: false,
+              destination: "/",
+            },
+            props:{},
+          };
     }
     
 }

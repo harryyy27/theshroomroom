@@ -1,4 +1,4 @@
-import errorHandler from '../../utils/errorHandler'
+import {errorHandler} from '../../utils/emailHandlers'
 import {NextApiRequest,NextApiResponse} from 'next'
 import { getCsrfToken } from 'next-auth/react'
 import { sendEmail } from '../../utils/nodemailer'
@@ -29,10 +29,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         }
     }
     catch(e:any){
-        console.log(e)
-        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.message,e.stack,false)
-        res.status(500).json({
-            success:false
-        })
+        
+        console.error(e)
+        await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.toString(),false)
+        return res.status(500).json({success:false,error:e.toString()})
     }
 }

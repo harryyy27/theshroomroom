@@ -50,18 +50,18 @@ export default function Contact(){
                 })
                 const res = await resJson.json()
                 if(res["success"]===false){
-                    throw new Error('Email failed to send, we are working to resolve this')
+                    throw new Error('We are sorry but your email failed to send, we are working to resolve this')
                 }
                 else{
                     setMsg('Thank you for your message. We will respond as soon as possible!')
                 }
             }
             else {
-                throw new Error('Please fill form correctly')
+                throw new Error('Please fill the form in correctly')
             }
         }
         catch(e:any){
-            setErr(e.message)
+            setErr(e.toString())
         }
         
     }

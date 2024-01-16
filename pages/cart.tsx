@@ -1,23 +1,27 @@
 import {useContext,useEffect,useState} from 'react';
-import LoadingIndicator from '../components/loadingIndicator'
-import {getSession} from 'next-auth/react'
 import {CartContext} from '../context/cart'
 import Link from 'next/link';
-import Image from 'next/image';
-import {imageMap} from '../utils/imageMap/imageMap';
 import {Metadata} from '../utils/metadata/metadata';
+import {getSession} from 'next-auth/react'
+
 import Head from 'next/head';
-interface Product{
-    _id:String,
-    name: string,
-    quantity:number,
-    price: number,
-    fresh:boolean,
-    size:number,
-    image:string
-}
-export default function Cart(){
+import CartElement from '../components/cartElement'
+
+export default function Cart({setComponentLoading}:any){
     let context=useContext(CartContext)
+    const [user,setUser]=useState(false);
+    useEffect(()=>{
+        setComponentLoading(true)
+        async function initiate(){
+            const session = await getSession()
+            if(session?.user){
+                setUser(true)
+            }
+            
+            setComponentLoading(false)
+        }
+        initiate()
+    },[setComponentLoading])
 
     return(
         <div className="static-container">
@@ -30,79 +34,39 @@ export default function Cart(){
                     {
                     context.state.cart.items.length?
                     <div>
-                    <h1 className="main-heading center">BASKET CASE</h1>
+                    <h1 className="main-heading center">Cart</h1>
                         <div >
                         <div className="cart-summary">
                             <p><b>Sub-total: </b>{"£"+String(context.state.subTotal)}</p>
-                            <button className="cta"><Link  href="/checkout"><span id="checkout">Checkout</span></Link></button>
-
+                            <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkoutSide">Checkout</span></Link></button>
+                            {
+                                !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?<p>Please delete the unavailable items from your cart</p>:null
+                            }
+                
+                        </div>
+                        <div className="cart-header">
+                            <ul className="cart-header-wrapper">
+                                <li className="cart-header-element col-2">Name</li>
+                                <li className="cart-header-element col-3">Quantity</li>
+                                <li className="cart-header-element col-4">Price</li>
+                            </ul>
                         </div>
                         <div className="cart-container">
                             { 
                             context&&context.state.cart&&context.state.cart.items?
-                                context.state.cart.items.map(({_id,name,quantity,price,fresh,size},idx:number)=>{
+                                context.state.cart.items.map(({_id,name,quantity,price,fresh,size,stripeProductId,stockAvailable},idx:number)=>{
                                     return(
-                                        <div className="cart-wrapper"key={idx}>
-                                            <div className="cart-left">
-                                                
-                                                {
-                                                    name?
-
-                                                    <Image className="cart-product-image"  fill sizes={`(max-width:767px) 50vw,(min-width:767px) ${imageMap[name].width}px`} src={`${imageMap[name].path}.${imageMap[name].fileType}`} alt={name}/>
-                                                    :
-                                                    null
-                                                }
-                                            </div>
-                                            <div className="cart-right">
-
-                                                <h2 className="cart-product-name">{fresh?"Fresh ":"Dry "}{name}{` ${size}`}</h2>
-                                                <div>
-                                                <span><b>Qty:</b> </span><select className="product-quantity"id={`quantity${idx}`}name={"quantity"} defaultValue={String(quantity)}>
-                                                {
-                                                    [1,2,3,4,5,6,7,8,9,10].map((el:number)=>{
-                                                        return (
-                                                            <option key={String(el)}value={String(el)}>{String(el)}</option>
-                                                        )
-                                                    })
-                                                }
-
-                                            </select>
-                                            </div>
-                                            <div>
-                                            <button className="cart-btn" onClick={async(e)=>{
-                                                const input = document.getElementById(`quantity${idx}`) as HTMLInputElement
-                                                context.saveCart?
-                                                context.saveCart({
-                                                    _id:_id,
-                                                    name:name,
-                                                    fresh:fresh,
-                                                    size:size,
-                                                    quantity:Number(input.value),
-                                                    price:Number(price)
-                                                }):null}
-                                            }>Save</button>
-                                            <button className="cart-btn"onClick={async(e)=>{
-                                                context.saveCart?
-                                                context.saveCart({
-                                                    _id:_id,
-                                                    name:name,
-                                                    fresh:fresh,
-                                                    size:size,
-                                                    quantity:0,
-                                                    price: Number(price)
-                                                }):null}
-                                            }>Delete</button>
-                                            </div>
-                                            <p className="product-price"><b>Price: </b> £{quantity*price}</p>
-                                            </div>
-                                        </div>
+                                        <CartElement key={idx} _id={_id} idx={idx} name={name}quantity={quantity} price={price} fresh={fresh} size={size} stripeProductId={stripeProductId} stockAvailable={stockAvailable}  />
                                     )}
                                 )
                                 :null
                             }
                         </div>
                         <p className="total-text"><b>Sub-total: </b>{"£"+String(context.state.subTotal)}</p>
-                      
+                        <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkout">Checkout</span></Link></button>
+                        {
+                                !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?<p className="items-unavailable-cart">Please delete the unavailable items from your cart</p>:null
+                        }
                             </div>
                             </div>
                         :
