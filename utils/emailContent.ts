@@ -14,7 +14,6 @@ export function orderString(order:any){
                 <p>Dear ${order.bAddress.firstName + " " + order.bAddress.surname} </p>
                 <p style="margin:0;">Thank you for placing an order with Mega Mushrooms.</p>
                 <p style="margin:0;">Your order number is ${order._id}, placed ${order.dateOfPurchase}.</p>
-                
                 <p style="margin:0;">Your order details are below.</p>
               </td>
             </tr>
@@ -72,7 +71,7 @@ export function orderString(order:any){
                       </td>
                     </tr>
                     <tr>
-                      <td style="width:640px;color:#343434;"; font-size:24px; font-weight:normal;">Delivery Address</td>
+                      <td style="width:640px;color:#343434;"; font-size:24px; font-weight:normal;">You ordered:</td>
                     </tr>
                   </tbody>
                 </table>
