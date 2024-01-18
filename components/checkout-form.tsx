@@ -165,6 +165,7 @@ export default function CheckoutForm(props: any) {
                         setComponentLoading(false)
                     })
             }
+            setComponentLoading(false)
 
 
         }
@@ -488,7 +489,8 @@ export default function CheckoutForm(props: any) {
                             {
                                 subscription ?
                                     <>
-                                        <Dropdown selected={subscriptionInterval} setSelected={setSubscriptionInterval} dropList={["weekly", "monthly"]} />
+                                        <p>Deliver:</p>
+                                        <Dropdown selected={subscriptionInterval} setSelected={setSubscriptionInterval} dropList={["monthly"]} />
                                     </>
                                     : null
                             }

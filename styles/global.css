@@ -125,17 +125,26 @@ colour scheme - turkey tail */
   line-height:2rem;
   text-align:center;
 }
+.dropdown-container {
+  width:25%;
+  background-color: white;
+  position:relative;
+}
 .dropdown-wrapper {
   display: none;
   border:1px solid var(--pri);
   margin:0;
-  padding:0
+  padding:0;
+  position:absolute;
+  background:white;
+  width:100%;
 }
 .dropdown-open {
   display:block
 }
 .dropdown-elements {
-  border: 1px solid var(--pri)
+  border: 1px solid var(--pri);
+  text-align:center;
 }
 .total-text {
   text-align:center;

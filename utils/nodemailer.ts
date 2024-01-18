@@ -2,12 +2,18 @@ const nodemailer = require('nodemailer');
 const {google}=require('googleapis');
 const OAuth2 = google.auth.OAuth2;
 
+interface attachmentOptions {
+  filename:string,
+  path: string,
+  cid: string
+}
 interface mailOptions {
     subject: string,
     text?: string|undefined,
     to: string|undefined,
     from: string|undefined,
     html?:string|undefined,
+    attachments?:attachmentOptions[]|undefined
 
 }
 const createTransporter = async () => {

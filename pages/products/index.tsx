@@ -27,7 +27,7 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
             <meta name="description" content={Metadata["plp"]["description"]}/>
             </Head>
         <h1 className="main-heading">All products</h1>
-        <p>Welcome to Mega Mushrooms, where nature's wonders meet cutting-edge wellness. We take immense pride in curating and cultivating the finest Lion's Mane mushrooms, revered for their extraordinary health benefits and exquisite flavor. At the heart of our garden, nestled among verdant greens and thriving mycelium, our Lion's Mane mushrooms are meticulously grown, harvested, and prepared with utmost care.\n\nOur commitment to quality knows no bounds. Each batch of Lion's Mane undergoes rigorous testing, ensuring purity and potency. With their rich nutty taste and a myriad of health-enhancing compounds, our Lion's Mane mushrooms are not just a culinary delight but also a pathway to enhanced cognitive function, immune support, and overall well-being.\n\nExplore our virtual garden, where you can discover the allure of Lion's Mane mushrooms. From our sustainable cultivation practices to our dedication to preserving the environment, Mega Mushrooms stands as a testament to the harmonious coexistence of humans and fungi. Delve into a world where tradition meets innovation, and let the power of Lion's Mane mushrooms enrich your life. \n\nJoin us on this remarkable journey, and let the legacy of Lion's Mane mushrooms unfold in your daily rituals. Mega Mushrooms: Nurturing Nature, Nourishing Lives.</p>
+        <p></p>
         {/* <select id={`quantity${idx}`}name={"quantity"}>
                             {
                                 [1,2,3,4,5,6,7,8,9,10].map((el:Number)=>{

@@ -42,7 +42,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         
         const deleted = await User().deleteOne({username:emailStr})
-        await deleteAccountHandler(emailStr)
+        await deleteAccountHandler(emailStr,process.env.WEBSITE_NAME)
         return res.status(200).json({message:"Successfully deleted account"})
 
     }
