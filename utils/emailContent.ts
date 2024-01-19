@@ -273,9 +273,6 @@ export function subscriptionString(subscription:any){
                         subscription.products.items.map(({_id,name,quantity,price,fresh,size,stripeProductId}:Product,idx:number)=>{
                             return`
                                     <tr>
-                                    <td class="image" style="text-align:left; padding:20px 10px 20px 0; vertical-align:top;">
-                                        <a style="color:#943201;"href="${process.env.WEBSITE_NAME}/products/${name.replace(/[\s]/gi,'-')}"><img src="${process.env.WEBSITE_NAME}/${imageMap[name].path}.${imageMap[name].fileType}" alt="${imageMap[name].alt}" border="0" style="max-width: 100%;"></a>
-                                    </td>
                                     <td style="text-align:left; padding:20px 10px; vertical-align:top;">
                                     ${fresh?"Fresh ":"Dry "}${name}${` ${size}`}
                                         <!-- Variants -->
@@ -289,7 +286,7 @@ export function subscriptionString(subscription:any){
                     <tr>
                       <td colspan="2" style="padding:7px 10px 7px 20px;"><strong>Subtotal</strong></td>
                       <td></td>
-                      <td style="padding:7px 10px 7px 20px; text-align:right;"><strong>=£${subscription.products.items.reduce((acc:number,el:any)=>acc+el.price,0)}</strong></td>
+                      <td style="padding:7px 10px 7px 20px; text-align:right;"><strong>£${subscription.products.items.reduce((acc:number,el:any)=>acc+el.price,0)}</strong></td>
                     </tr>
                   </tbody>
                   <!-- end items loop -->
