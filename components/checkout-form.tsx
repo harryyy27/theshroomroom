@@ -68,6 +68,7 @@ export default function CheckoutForm(props: any) {
     const [dCityVal, setDCityVal] = useState<boolean | null>(null);
     const [dPostcode, setDPostcode] = useState('');
     const [dPostcodeVal, setDPostcodeVal] = useState<boolean | null>(null);
+    const [billingDelivery,setBillingDelivery]=useState<boolean | null>(false);
     const [bFirstName, setBFirstName] = useState('');
     const [bFirstNameVal, setBFirstNameVal] = useState<boolean | null>(null);
     const [bSurname, setBSurname] = useState('');
@@ -89,7 +90,7 @@ export default function CheckoutForm(props: any) {
     const [processing, setProcessing] = useState(false)
     const [errorMessage, setErrorMessage] = useState('');
     const stripe = useStripe();
-    const setComponentLoading = props.setComponentLoading
+    const setComponentLoading = props.setComponentLoading;
     const elements: any = useElements();
     useEffect(() => {
         setComponentLoading(true)
@@ -183,8 +184,7 @@ export default function CheckoutForm(props: any) {
 
     }
     const validate_form = () => {
-
-        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && cardDetailsValid) {
+        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && (billingDelivery||(bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal)) && cardDetailsValid) {
             if (guestEmailAddressVal || user) {
                 return true
             }
@@ -196,34 +196,44 @@ export default function CheckoutForm(props: any) {
         }
         else {
             if (!dFirstNameVal) {
+                console.log('here')
                 setDFirstNameVal(false)
             }
             if (!dSurnameVal) {
+                console.log('or here')
                 setDSurnameVal(false)
             }
             if (!dFirstLineVal) {
+                console.log('or is it here')
                 setDFirstLineVal(false)
             }
             if (!dCityVal) {
+                console.log('maybe here')
                 setDCityVal(false)
             }
             if (!dPostcodeVal) {
+                console.log('possibly here')
                 setDPostcodeVal(false)
             }
 
             if (!bFirstNameVal) {
+                console.log('probably maybe here')
                 setBFirstNameVal(false)
             }
             if (!bSurnameVal) {
+                console.log('what the fuck')
                 setBSurnameVal(false)
             }
             if (!bFirstLineVal) {
+                console.log('oi')
                 setBFirstLineVal(false)
             }
             if (!bCityVal) {
+                console.log('slag')
                 setBCityVal(false)
             }
             if (!bPostcodeVal) {
+                console.log('ffs better be one of these')
                 setBPostcodeVal(false)
             }
             setCheckoutError('Please fill in all required fields')
@@ -305,12 +315,12 @@ export default function CheckoutForm(props: any) {
                         postcode: dPostcode,
                     },
                     bAddress: {
-                        firstName: bFirstName,
-                        surname: bSurname,
-                        firstLine: bFirstLine,
-                        secondLine: bSecondLine,
-                        city: bCity,
-                        postcode: bPostcode,
+                        firstName: billingDelivery?dFirstName:bFirstName,
+                        surname: billingDelivery?dSurname:bSurname,
+                        firstLine: billingDelivery?dFirstLine:bFirstLine,
+                        secondLine: billingDelivery?dSecondLine:bSecondLine,
+                        city: billingDelivery?dCity:bCity,
+                        postcode: billingDelivery?dPostcode:bPostcode,
                     },
                     products: context.state.cart,
                     shippingCost: context.state.shipping,
@@ -443,15 +453,26 @@ export default function CheckoutForm(props: any) {
                 <FormComponent user={user} labelName={"2nd Line of address"} variable={dSecondLine} variableName={Object.keys({ dSecondLine })[0]} setVariable={setDSecondLine} inputType={"text"} required={false} />
                 <FormComponent user={user} labelName={"City"} variable={dCity} setVariable={setDCity} variableName={Object.keys({ dCity })[0]} variableVal={dCityVal} setVariableVal={setDCityVal} inputType={"text"} required={true} />
                 <FormComponent user={user} labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} />
+                
+                <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
+                    <label htmlFor="billingDelivery">Billing same as delivery:</label>
+                    <input  autoComplete="complete" id="billingDelivery" type="checkbox" value={String(updates)} onChange={(e) => setBillingDelivery(!billingDelivery)} />
+                </div>
+                {
+                    !billingDelivery?
+                    <>
+                        <h2>Billing Address</h2>
+                        <FormComponent user={user} labelName={"First Name"} variable={bFirstName} variableName={Object.keys({ bFirstName })[0]} setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true} />
+                        <FormComponent user={user} labelName={"Surname"} variable={bSurname} variableName={Object.keys({ bSurname })[0]} setVariable={setBSurname} variableVal={bSurnameVal} setVariableVal={setBSurnameVal} inputType={"text"} required={true} />
+                        <FormComponent user={user} labelName={"Street name and number"} variable={bFirstLine} variableName={Object.keys({ bFirstLine })[0]} setVariable={setBFirstLine} variableVal={bFirstLineVal} setVariableVal={setBFirstLineVal} inputType={"text"} required={true} />
 
-                <h2>Billing Address</h2>
-                <FormComponent user={user} labelName={"First Name"} variable={bFirstName} variableName={Object.keys({ bFirstName })[0]} setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true} />
-                <FormComponent user={user} labelName={"Surname"} variable={bSurname} variableName={Object.keys({ bSurname })[0]} setVariable={setBSurname} variableVal={bSurnameVal} setVariableVal={setBSurnameVal} inputType={"text"} required={true} />
-                <FormComponent user={user} labelName={"Street name and number"} variable={bFirstLine} variableName={Object.keys({ bFirstLine })[0]} setVariable={setBFirstLine} variableVal={bFirstLineVal} setVariableVal={setBFirstLineVal} inputType={"text"} required={true} />
-
-                <FormComponent user={user} labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
-                <FormComponent user={user} labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
-                <FormComponent user={user} labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
+                        <FormComponent user={user} labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
+                        <FormComponent user={user} labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
+                        <FormComponent user={user} labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
+                    </>:
+                null
+                }
+                
                 <h2>Card Details</h2>
                 <PaymentElement onChange={(e) => paymentElementHandler(e)} />
 
@@ -466,7 +487,7 @@ export default function CheckoutForm(props: any) {
                 }
                 <fieldset>
                     <div>
-                        <p>Would you like to receive these products regularly?{user ? "Click below to pay a weekly or monthly subscription" : "Log in to subscribe"} </p>
+                        <p>Would you like to receive these products regularly? {user ? "Click below to pay a weekly or monthly subscription" : "Log in to subscribe"} </p>
                         <label htmlFor="oneTimePurchase">One time purchase</label>
                         <input id="oneTimePurchase" type="radio" name="oneTimePurchase" checked={oneTimePurchase} onChange={(e) => {
                             setOneTimePurchase(!oneTimePurchase)

@@ -90,7 +90,7 @@ export async function errorHandler(headers:string,body:string|undefined,method:s
         timestamp: Date.now()
     })
     // console.log(error)
-    error.save()
+    await error.save()
     try{
         sendEmail({
             subject: client?"Client Side Error":"Server Side Error",

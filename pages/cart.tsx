@@ -33,9 +33,8 @@ export default function Cart({setComponentLoading}:any){
                     </Head>
                     {
                     context.state.cart.items.length?
-                    <div>
+                    <>
                     <h1 className="main-heading center">Cart</h1>
-                        <div >
                         <div className="cart-summary">
                             <p><b>Sub-total: </b>{"£"+String(context.state.subTotal)}</p>
                             <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkoutSide">Checkout</span></Link></button>
@@ -62,13 +61,8 @@ export default function Cart({setComponentLoading}:any){
                                 :null
                             }
                         </div>
-                        <p className="total-text"><b>Sub-total: </b>{"£"+String(context.state.subTotal)}</p>
-                        <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkout">Checkout</span></Link></button>
-                        {
-                                !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?<p className="items-unavailable-cart">Please delete the unavailable items from your cart</p>:null
-                        }
-                            </div>
-                            </div>
+                        
+                            </>
                         :
                         <h2>PLEASE ADD SOME SHROOMS TO YOUR BASKET</h2>}
                         </div>

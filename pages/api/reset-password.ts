@@ -27,7 +27,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 passwordResetToken:token,
                 userId: messageToClient._id
             })
-            resetToken.save()
+            await resetToken.save()
             await sendEmail({
                 subject: "Password reset",
                 html:`<p>Click the following link to reset your password</p>

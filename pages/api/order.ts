@@ -148,7 +148,9 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                     order.subscriptionId=subscription_id
                     order.stripeCustomerId=stripeCustomerId
                 }
-                var validated=order.save()
+                console.log('oiii')
+                var validated= await order.save()
+                console.log('ooiiii again')
                 if(validated){
                     return res.status(200).json(
                         {
@@ -180,6 +182,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         else if(req.method==='PUT'){
             var body=JSON.parse(req.body);
+            console.log(body)
             if(req.body.cancel){
                 var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId,status:{$nin:["ORDER_DISPATCHED","ORDER_DELIVERED"]}},{...body.order})
             }
