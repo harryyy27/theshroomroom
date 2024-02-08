@@ -17,7 +17,7 @@ export default function MyAccountSubscriptions({setComponentLoading}:any){
                     method:"GET"
                 })
                 const subscriptionDataJson = await subscriptionData.json()
-                setSubscriptions(subscriptionDataJson.subscriptions)
+                setSubscriptions(subscriptionDataJson.subscriptions.reverse())
                 setComponentLoading(false)
             }
             catch(e:any){

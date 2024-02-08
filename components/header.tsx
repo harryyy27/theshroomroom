@@ -164,6 +164,10 @@ export default function Header(){
                     </li> */}
                 </ul>
                 <BreadCrumbs homeElement={'Home'} separator={' > '}/>
+
+                <span className={styles["title-bar-element"]+ " " + styles["hidden-mobile"]+ " " + styles["cart-container"]} aria-hidden={width>1024?true:false}>
+                        <Link href="/cart" passHref replace><span id="cart" className={context.state.totalQuantity?styles["cart-glow"]+" "+styles["cart-writing"]:styles["cart-writing"]}><Image id="cartIcon"  className={styles["shopping-cart-icon"]}src={'/shopping_cart_icon.jpg'} alt="shopping cart icon" width="50" height="50" /><span className={styles["shopping-cart-quantity"]}>{`${context.state.totalQuantity}`}</span></span></Link>
+                </span>
             </nav>
         {
             process.env.NODE_ENV !== "production"?
@@ -181,9 +185,6 @@ export default function Header(){
         }}>THIS IS A TEST SITE</h1>:
             <></>
         }
-        <span className={styles["title-bar-element"]+ " " + styles["hidden-mobile"]+ " " + styles["cart-container"]} aria-hidden={width>1024?true:false}>
-                <Link href="/cart" passHref replace><span id="cart" className={context.state.totalQuantity?styles["cart-glow"]+" "+styles["cart-writing"]:styles["cart-writing"]}><Image id="cartIcon"  className={styles["shopping-cart-icon"]}src={'/shopping_cart_icon.jpg'} alt="shopping cart icon" width="50" height="50" /><span className={styles["shopping-cart-quantity"]}>{`${context.state.totalQuantity}`}</span></span></Link>
-        </span>
             <div id="burgerMenu"
                 onClick={(e)=>{
                     menuOpen()

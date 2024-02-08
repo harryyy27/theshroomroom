@@ -17,7 +17,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
                     method:"GET"
                 })
                 const orderDataJson = await orderData.json()
-                setOrders(orderDataJson.orders)
+                setOrders(orderDataJson.orders.reverse())
                 setComponentLoading(false)
     
             }

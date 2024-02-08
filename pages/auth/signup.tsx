@@ -41,6 +41,10 @@ export default function SignUp({setComponentLoading}:any){
                 await signIn("credentials",options)
                 Router.push('/')
             }
+            else {
+                setMessage(data.error)
+                throw new Error(data.error)
+            }
         }
         catch(error:any){
 
@@ -56,7 +60,6 @@ export default function SignUp({setComponentLoading}:any){
                 })
             })
             setComponentLoading(false)
-            setMessage('We\'re sorry something has gone wrong. Please try again later')
         }
         
 
