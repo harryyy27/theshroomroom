@@ -85,7 +85,7 @@ export default function CheckoutForm(props: any) {
     const [updates, setUpdates] = useState(false);
     const [user, setUser] = useState<UserSchema | null>(null);
     const [checkoutError, setCheckoutError] = useState('');
-    const [checkoutSuccess, setCheckoutSuccess] = useState('');
+    const [checkoutSuccess, setCheckoutSuccess] = useState(false);
     const [cardDetailsValid, setCardDetailsValid] = useState<boolean | null>(null);
     const [processing, setProcessing] = useState(false)
     const [errorMessage, setErrorMessage] = useState('');
@@ -196,19 +196,15 @@ export default function CheckoutForm(props: any) {
         }
         else {
             if (!dFirstNameVal) {
-                console.log('here')
                 setDFirstNameVal(false)
             }
             if (!dSurnameVal) {
-                console.log('or here')
                 setDSurnameVal(false)
             }
             if (!dFirstLineVal) {
-                console.log('or is it here')
                 setDFirstLineVal(false)
             }
             if (!dCityVal) {
-                console.log('maybe here')
                 setDCityVal(false)
             }
             if (!dPostcodeVal) {
@@ -389,14 +385,18 @@ export default function CheckoutForm(props: any) {
                 })
                 setProcessing(false)
                 if (context && context.dispatch) {
+                    setCheckoutSuccess(true)
+                    setTimeout(()=>{
+                        context.saveCart ? context.saveCart() : null
+                        props.setComponentLoading(false)
 
-                    context.saveCart ? context.saveCart() : null
-                    setCheckoutSuccess('Payment Made')
-                    props.setComponentLoading(false)
-                    router.push({
-                    pathname:`   /thank-you/[id]`,
-                    query:{id:`order_id=${'SKU' + order.id}date${order.date}`}
-                })
+                        router.push({
+                            pathname:`/thank-you/[id]`,
+                            query:{id:`order_id=${'SKU' + order.id}date${order.date}`}
+                        })
+                    },300)
+                    
+                    
 
                 }
             }
@@ -409,9 +409,13 @@ export default function CheckoutForm(props: any) {
         }
 
     }
-    if (checkoutSuccess) return <p>{checkoutSuccess}</p>
     return (
         <div className="static-container">
+        {
+            checkoutSuccess?<div id="success" style={{color:"green",position:"fixed",display:"block",width:"100vw",height:"400px",lineHeight:"400px",top:"100px",opacity:0.001}}><p>Success</p></div>:
+            null
+        }
+        
             <h1 className="main-heading center">Checkout</h1>
             {
                 errorMessage !== '' ?
@@ -478,10 +482,15 @@ export default function CheckoutForm(props: any) {
 
                 {
                     context.cartLoaded &&
-                    <div>
-                        <p>Subtotal: <>£{context.state.subTotal}</></p>
-                        <p>Shipping: <>£{context.state.shipping}</></p>
-                        <p>Total: <>£{context.state.total}</></p>
+                    <div style={{"marginTop":"1rem"}}>
+                        <ul>
+                                    {
+                                        context.state.cart.items.map((el:any)=><li className={"product-list-element"}>{el.fresh?"Fresh":"Dry"} {el.name} {el.size} x {el.quantity}</li>)
+                                    }
+                        </ul>
+                        <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toString()}</span></p>
+                        <p>Shipping: £<span id="shipping">{context.state.shipping.toString()}</span></p>
+                        <p>Total: £<span id="total">{context.state.total.toString()}</span></p>
 
                     </div>
                 }
@@ -524,18 +533,22 @@ export default function CheckoutForm(props: any) {
                     <label htmlFor="updates">Receive updates</label>
                     <input  autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e) => setUpdates(e.target.checked)} />
                 </div>
-                <button id="placeOrder"  className="cta" type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e) => placeOrder(e)}>Submit</button>
+                <button id="placeOrder"  className="cta add-relative" type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e) => placeOrder(e)}>Submit
+                
+                </button>
 
+                
             {
                 !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?
                 <div className="checkout-stock-message">
                 <p className="checkout-stock-lines">Please delete the unavailable items from your <Link className="link" href="/cart">cart</Link> to continue checking out.</p>
                 <button className="cta-sec-btn"onClick={(e)=>handleUnavailableItems()}>DELETE</button>
+                
                 </div>
                 :null
             }
             {
-                context.state.cart.items.length<=0?
+                context.state.cart.items.length<=0&&!checkoutSuccess?
                 <div className="checkout-stock-message">
                 <p className="checkout-stock-lines">You have no items in your basket, please select some products from our <Link className="link" href="/products">store</Link> to make a purchase.</p>
                 </div>

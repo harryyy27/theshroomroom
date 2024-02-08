@@ -58,7 +58,7 @@ export default function Subscribe(){
         
     }
     return(
-        <form className={styles["form"]}>
+        <form id="subscriptionForm"className={styles["form"]}>
             <div className={styles["form-element-wrapper"]}>
                 <h2>JOIN US</h2>
                 <p>For information on all of our latest products</p>
@@ -81,7 +81,7 @@ export default function Subscribe(){
             {
                     user&&updates?
                 <button type="submit"className="cta" onClick={()=>handleSubscribe(false)}>Unsubscribe</button>:
-                <button type="submit"className="cta" onClick={()=>handleSubscribe(true)}>Keep me updated</button>
+                <button id="subscriptionBtn" type="submit"className="cta" onClick={()=>handleSubscribe(true)}>Keep me updated</button>
             }
             
         </form>

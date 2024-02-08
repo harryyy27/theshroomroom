@@ -22,6 +22,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         const body = JSON.parse(req.body);
         const token = nanoid(32);
         const messageToClient=await User().findOne({username:body.username})
+        const website = process.env.WEBSITE_NAME
         if(messageToClient){
             const resetToken = new (PasswordResetToken() as any)({
                 passwordResetToken:token,
@@ -31,8 +32,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             await sendEmail({
                 subject: "Password reset",
                 html:`<p>Click the following link to reset your password</p>
-                        <a href="https://${req.headers.host}/forgotten-password/${token}">LINK</a>`,
-                to:"theshroomroomdev@gmail.com",
+                        <a href="${website}/forgotten-password/${token}">LINK</a>`,
+                to:`${body.username}`,
                 from: "ServerSideError@theshroomroomdev.com"
             })
             res.status(200).json({message:"Password sent to email provided."})

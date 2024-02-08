@@ -30,16 +30,11 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 var body = JSON.parse(req.body);
                 await dbSession?.withTransaction(async()=>{
                 for(var i =0;i<body.products.items.length;i++){
-                    let prod=await Product().findOne({stripe_product_id:body.products.items[i].stripeProductId}).session(dbSession)
-                    if(prod.stock_available>=body.products.items[i].quantity){
-                        console.log('oi')
-                        prod.stock_available=await prod.stock_available - body.products.items[i].quantity;
-                        const produuuuce = await prod.save();
-                        console.log(produuuuce)
-                    }
-                    else {
+                    let prod=await Product().findOneAndUpdate({stripe_product_id:body.products.items[i].stripeProductId,stock_available:{$gte:body.products.items[i].quantity}},{$inc:{stock_available:-body.products.items[i].quantity}}).session(dbSession)
+                    if(!prod){
                         await dbSession?.abortTransaction()
-                        if(prod.stock_available===0){
+                        const prodfail = await Product().findOne({stripe_product_id:body.products.items[i].stripeProductId})
+                        if(prodfail.stock_available===0){
                             var error= new Error(`Product: ${body.products.items[i].fresh?"fresh":"dry"} ${body.products.items[i].name} ${body.products.items[i].size} is no longer available.`)
                         }
                         else {
@@ -172,11 +167,19 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             
         }
         else if(req.method==='GET'){
-            if(req.url?.split('id=').length===1){
+            if(req.url?.includes('user_id=')){
+                const id = req.url?.split('user_id=')[1];
+                var orders= await Order().find({userId:id}).exec()
+            }
+            else if (req.url?.includes('order_id=')){
+                const id = req.url?.split('order_id=')[1];
+                var orders= await Order().find({_id:id}).exec()
+
+            }
+            else {
                 throw new Error('No id provided')
             }
-            const id = req.url?.split('id=')[1];
-            const orders= await Order().find({userId:id}).exec()
+            
             return res.status(200).json({orders:orders})
 
         }
@@ -184,11 +187,13 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             var body=JSON.parse(req.body);
             console.log(body)
             if(req.body.cancel){
-                var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId,status:{$nin:["ORDER_DISPATCHED","ORDER_DELIVERED"]}},{...body.order})
+                var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId,status:{$in:["ORDER_RECEIVED"]}},{...body.order})
             }
             else {
+                if(body.paymentIntentId){
+                    var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId},{...body})
+                }
                 
-                var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId},{...body})
             }
 
             if(order){
@@ -201,7 +206,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         else if(req.method==='DELETE'){
             var body=JSON.parse(req.body);
             console.log(body)
-            var order = await Order().findOneAndUpdate({_id:body._id},{status:"REFUND_PENDING"})
+            var order = await Order().findOneAndUpdate({_id:body._id,status:{$in:["ORDER_RECEIVED"]}},{status:"REFUND_PENDING"})
             if(order){
 
                 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
@@ -210,6 +215,10 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 const paymentIntent = await stripe.refunds.create({
                     payment_intent: order.paymentIntentId,
                 });
+
+                for(var i=0;i<order.products.items.length; i++){
+                    await Product().findOneAndUpdate({stripe_product_id:order.products.items[i].stripeProductId},{$inc:{stock_available:order.products.items[i].quantity}})
+                }
               if(paymentIntent){
                 return res.status(200).json({success:true})
               }

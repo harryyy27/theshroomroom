@@ -9,7 +9,7 @@ export default function Wholesale(){
             
         <div className={homeStyles["right"]+ " " +homeStyles["text-section"]}>
             <h1 style={{marginBottom:"1rem"}}className={homeStyles["hero-heading"]+" light"}>Wholesale options available</h1>
-            <button className="cta"><Link href="/wholesale">Click for quotes</Link></button>
+            <button id="wholesaleCta" className="cta"><Link id="wholeSaleCtaLink" href="/wholesale">Click for quotes</Link></button>
         </div>
         <div className={homeStyles["image-section"]}>
             <figure className={homeStyles["hero-image-wrap"]}>
