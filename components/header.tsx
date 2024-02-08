@@ -91,8 +91,8 @@ export default function Header(){
                         null
                     }
                 </div>
-                <ul className={`${styles["nav-list"]} ${mobileMenuOpen?"":styles["mobile-menu-visibility"]}`}>
-                        <div className={styles["title-bar-element"]+' '+styles["sign-in-up-desktop"]}aria-hidden={width>1025?true:false}>
+                <ul className={`${styles["nav-list"]} ${mobileMenuOpen?"":styles["mobile-menu-visibility"]}`} aria-hidden={width>1025?true:false}>
+                        <div className={styles["title-bar-element"]+' '+styles["sign-in-up-desktop"]}>
                             {
                                 (!session&& status!=="loading")?
                                 <div className={styles["acc-stuff"]}>

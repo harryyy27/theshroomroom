@@ -157,6 +157,7 @@
         top:0.25rem;
         right:3.5rem;
         text-align:right;
+        z-index:1001
     }
     .shopping-cart-quantity {
         position:absolute;
