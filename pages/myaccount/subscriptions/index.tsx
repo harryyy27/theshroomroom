@@ -67,8 +67,8 @@ export default function MyAccountSubscriptions({setComponentLoading}:any){
             subscriptions&&subscriptions.length?
             subscriptions.map((el:any,idx)=>{
                 return(
-                    <Link href={`/myaccount/subscriptions/${el._id}`}>
-                    <div key={idx} className={"order-sub-wrapper"+(idx%2==0?" order-sub-alt":"")}>
+                    <Link key={idx }href={`/myaccount/subscriptions/${el._id}`}>
+                    <div className={"order-sub-wrapper"+(idx%2==0?" order-sub-alt":"")}>
                         
                         <p>Subscription ID: {el.subscriptionId}</p>
                         <p>Subscription status: {el.status}</p>

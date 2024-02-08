@@ -69,7 +69,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
             orders.length?
             orders.map((el:any,idx:number)=>{
                 return(
-                    <Link href={`/myaccount/orders/${el._id}`}>
+                    <Link key={idx} href={`/myaccount/orders/${el._id}`}>
                     <div className={"order-sub-wrapper"+(idx%2==0?" order-sub-alt":"")}key={idx}>
                         
                         <p>Order ID: {el._id}</p>

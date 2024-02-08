@@ -141,7 +141,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
             }
         }
         initiate()
-    },[router,setComponentLoading])
+    },[order,router,setComponentLoading])
     
 
             

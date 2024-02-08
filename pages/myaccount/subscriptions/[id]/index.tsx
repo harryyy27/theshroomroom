@@ -142,7 +142,7 @@ export default function Subscription({setComponentLoading}:any){
             }
         }
         initiate()
-    },[router,setComponentLoading])
+    },[subscription,router,setComponentLoading])
     
 
             

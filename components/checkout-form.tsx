@@ -485,7 +485,7 @@ export default function CheckoutForm(props: any) {
                     <div style={{"marginTop":"1rem"}}>
                         <ul>
                                     {
-                                        context.state.cart.items.map((el:any)=><li className={"product-list-element"}>{el.fresh?"Fresh":"Dry"} {el.name} {el.size} x {el.quantity}</li>)
+                                        context.state.cart.items.map((el:any,idx:number)=><li key={idx}className={"product-list-element"}>{el.fresh?"Fresh":"Dry"} {el.name} {el.size} x {el.quantity}</li>)
                                     }
                         </ul>
                         <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toString()}</span></p>
