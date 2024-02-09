@@ -11,6 +11,7 @@ import { SessionProvider,getSession, getCsrfToken } from "next-auth/react"
 import {CartContext} from '../context/cart'
 import {Product} from '../utils/types';
 import { parseCookies,setCookie,destroyCookie } from 'nookies';
+import { GoogleTagManager,GoogleAnalytics } from '@next/third-parties/google'
 
 const signika = Signika({
   subsets: ["latin"],
@@ -280,7 +281,8 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
         </main>
         <Footer/>
       </CartContext.Provider>
-    
+      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID as string} />
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID as string} />
     </SessionProvider>
   )
 }

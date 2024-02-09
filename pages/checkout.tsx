@@ -66,8 +66,6 @@ export const getServerSideProps =  async(ctx:any) => {
                 return a+b.price
             },0)
         }
-        console.log(sesh)
-        console.log(Cart)
         if(!sesh&&!Cart){
             return {
                 redirect: {

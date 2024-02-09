@@ -20,45 +20,61 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         
         if(req.method==='GET'){
-            if(req.url?.split('id=').length===1){
-                throw new Error('No id provided')
+            if(req.url?.includes('user_id=')){
+                const id = req.url?.split('user_id=')[1];
+                const subscriptions= await Subscription().find({userId:id,status:["SUBSCRIPTION_ACTIVE","SUBSCRIPTION_CANCELLED"]}).exec()
+                return res.status(200).json({subscriptions:subscriptions})
             }
-            const id = req.url?.split('id=')[1];
-            const subscriptions= await Subscription().find({userId:id,status:["SUBSCRIPTION_ACTIVE","SUBSCRIPTION_CANCELLED"]}).exec()
-            return res.status(200).json({subscriptions:subscriptions})
+            else if(req.url?.includes('subscription_id=')){
+                const id = req.url?.split('subscription_id=')[1];
+                console.log(id)
+                const subscriptions= await Subscription().find({_id:id}).exec()
+                return res.status(200).json({subscriptions:subscriptions})
+            }
+            else {
+                throw new Error('No id provided')
+
+            }
+            
 
         }
         else if(req.method==='PUT'){
             var body=JSON.parse(req.body);
+            console.log(body)
             if(req.body.cancel){
-                var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$nin:["SUBSCRIPTION_ACTIVE"]}},{status:"SUBSCRIPTION_CANCELLED"})
+                console.log('oioi')
+                var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_ACTIVE"]}},{status:"SUBSCRIPTION_CANCELLED"})
             }
             else if (req.body.resume){
-                var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$nin:["SUBSCRIPTION_PAUSED"]}},{status:"SUBSCRIPTION_ACTIVE"})
+                console.log('hey')
+                var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_PAUSED"]}},{status:"SUBSCRIPTION_ACTIVE"})
             }
             else if (req.body.pause){
-                var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$nin:["SUBSCRIPTION_ACTIVE"]}},{status:"SUBSCRIPTION_PAUSED"})
+                console.log('oii')
+                var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_ACTIVE"]}},{status:"SUBSCRIPTION_PAUSED"})
+            }
+            else if (body.amend){
+
+                var subscription= await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_ACTIVE"]}},{dAddress:body.dAddress,bAddress:body.bAddress})
+                
             }
 
             if(subscription){
                 return res.status(200).json({success:true})
             }
             else {
-                throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                throw new Error(`Subscription update unsuccessfull: Subscription ID ${body.subscriptionId}`)
             }
         }
         else if(req.method==='DELETE'){
             var body=JSON.parse(req.body);
             const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
     
-            });            
-            const deletedSubscription = await stripe.subscriptions.del(
-                body.subscription_id
-            );
+            });     
+            const deletedSubscription = await stripe.subscriptions.cancel(body.subscription_id);
 
             if(deletedSubscription){
                 return res.status(200).json({success:true})
-                
             }
         }
 

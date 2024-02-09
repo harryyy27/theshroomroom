@@ -41,6 +41,10 @@ export default function SignUp({setComponentLoading}:any){
                 await signIn("credentials",options)
                 Router.push('/')
             }
+            else {
+                setMessage(data.error)
+                throw new Error(data.error)
+            }
         }
         catch(error:any){
 
@@ -56,7 +60,6 @@ export default function SignUp({setComponentLoading}:any){
                 })
             })
             setComponentLoading(false)
-            setMessage('We\'re sorry something has gone wrong. Please try again later')
         }
         
 
@@ -76,7 +79,7 @@ export default function SignUp({setComponentLoading}:any){
             <FormComponent user={user} labelName={"Email"}variable={username} variableName={Object.keys({username})[0]} setVariable={setUsername} variableVal={usernameVal} setVariableVal={setUsernameVal} inputType={"email"} required={true}/>
             <FormComponent user={user} labelName={"Password"}variable={password} variableName={Object.keys({password})[0]} setVariable={setPassword} variableVal={passwordVal} setVariableVal={setPasswordVal} inputType={"password"} required={true}/>
 
-            <button id="submit" className="cta" type="submit" value="submit" >Submit</button>
+            <button id="signUp" className="cta" type="submit" value="submit" >Submit</button>
             {/* <button id="googleSignUp">Sign up with Google</button> */}
             <p>
                 {message}

@@ -28,7 +28,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                         throw new Error('This user was not found')
                     }
                     await User().findOneAndUpdate({username:body.email},{updates:body.subscribe})
-                    await receiveUpdatesHandler(body.email,true)
+                    await receiveUpdatesHandler(body.email,true,process.env.WEBSITE_NAME)
             }
             else {
                 let userExists = await User().findOne({username:body.email})
@@ -44,12 +44,10 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 var subscription = new (ReceiveUpdates() as any)(body);
                 subscription.save()
 
-                await receiveUpdatesHandler(body.email,false)
+                await receiveUpdatesHandler(body.email,false,process.env.WEBSITE_NAME)
             }
         }
         else{
-            console.log('yeeeeeeee')
-            console.log('uhhhhhhh')
             console.log(body.cart.items)
             const messageToClient=await User().findOneAndUpdate({username:body.username},{...body})
             console.log(messageToClient.cart.items)

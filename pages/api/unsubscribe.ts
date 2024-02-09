@@ -24,7 +24,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     throw error
                 }
                 var subscription = new (ReceiveUpdates() as any)(body);
-                subscription.save()
+                await subscription.save()
             
         }
         else{

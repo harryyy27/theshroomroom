@@ -68,6 +68,7 @@ export default function CheckoutForm(props: any) {
     const [dCityVal, setDCityVal] = useState<boolean | null>(null);
     const [dPostcode, setDPostcode] = useState('');
     const [dPostcodeVal, setDPostcodeVal] = useState<boolean | null>(null);
+    const [billingDelivery,setBillingDelivery]=useState<boolean | null>(false);
     const [bFirstName, setBFirstName] = useState('');
     const [bFirstNameVal, setBFirstNameVal] = useState<boolean | null>(null);
     const [bSurname, setBSurname] = useState('');
@@ -84,12 +85,12 @@ export default function CheckoutForm(props: any) {
     const [updates, setUpdates] = useState(false);
     const [user, setUser] = useState<UserSchema | null>(null);
     const [checkoutError, setCheckoutError] = useState('');
-    const [checkoutSuccess, setCheckoutSuccess] = useState('');
+    const [checkoutSuccess, setCheckoutSuccess] = useState(false);
     const [cardDetailsValid, setCardDetailsValid] = useState<boolean | null>(null);
     const [processing, setProcessing] = useState(false)
     const [errorMessage, setErrorMessage] = useState('');
     const stripe = useStripe();
-    const setComponentLoading = props.setComponentLoading
+    const setComponentLoading = props.setComponentLoading;
     const elements: any = useElements();
     useEffect(() => {
         setComponentLoading(true)
@@ -165,6 +166,7 @@ export default function CheckoutForm(props: any) {
                         setComponentLoading(false)
                     })
             }
+            setComponentLoading(false)
 
 
         }
@@ -182,8 +184,7 @@ export default function CheckoutForm(props: any) {
 
     }
     const validate_form = () => {
-
-        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && cardDetailsValid) {
+        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && (billingDelivery||(bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal)) && cardDetailsValid) {
             if (guestEmailAddressVal || user) {
                 return true
             }
@@ -207,22 +208,28 @@ export default function CheckoutForm(props: any) {
                 setDCityVal(false)
             }
             if (!dPostcodeVal) {
+                console.log('possibly here')
                 setDPostcodeVal(false)
             }
 
             if (!bFirstNameVal) {
+                console.log('probably maybe here')
                 setBFirstNameVal(false)
             }
             if (!bSurnameVal) {
+                console.log('what the fuck')
                 setBSurnameVal(false)
             }
             if (!bFirstLineVal) {
+                console.log('oi')
                 setBFirstLineVal(false)
             }
             if (!bCityVal) {
+                console.log('slag')
                 setBCityVal(false)
             }
             if (!bPostcodeVal) {
+                console.log('ffs better be one of these')
                 setBPostcodeVal(false)
             }
             setCheckoutError('Please fill in all required fields')
@@ -304,12 +311,12 @@ export default function CheckoutForm(props: any) {
                         postcode: dPostcode,
                     },
                     bAddress: {
-                        firstName: bFirstName,
-                        surname: bSurname,
-                        firstLine: bFirstLine,
-                        secondLine: bSecondLine,
-                        city: bCity,
-                        postcode: bPostcode,
+                        firstName: billingDelivery?dFirstName:bFirstName,
+                        surname: billingDelivery?dSurname:bSurname,
+                        firstLine: billingDelivery?dFirstLine:bFirstLine,
+                        secondLine: billingDelivery?dSecondLine:bSecondLine,
+                        city: billingDelivery?dCity:bCity,
+                        postcode: billingDelivery?dPostcode:bPostcode,
                     },
                     products: context.state.cart,
                     shippingCost: context.state.shipping,
@@ -378,14 +385,18 @@ export default function CheckoutForm(props: any) {
                 })
                 setProcessing(false)
                 if (context && context.dispatch) {
+                    setCheckoutSuccess(true)
+                    setTimeout(()=>{
+                        context.saveCart ? context.saveCart() : null
+                        props.setComponentLoading(false)
 
-                    context.saveCart ? context.saveCart() : null
-                    setCheckoutSuccess('Payment Made')
-                    props.setComponentLoading(false)
-                    router.push({
-                    pathname:`   /thank-you/[id]`,
-                    query:{id:`order_id=${'SKU' + order.id}date${order.date}`}
-                })
+                        router.push({
+                            pathname:`/thank-you/[id]`,
+                            query:{id:`order_id=${'SKU' + order.id}date${order.date}`}
+                        })
+                    },300)
+                    
+                    
 
                 }
             }
@@ -398,9 +409,13 @@ export default function CheckoutForm(props: any) {
         }
 
     }
-    if (checkoutSuccess) return <p>{checkoutSuccess}</p>
     return (
         <div className="static-container">
+        {
+            checkoutSuccess?<div id="success" style={{color:"green",position:"fixed",display:"block",width:"100vw",height:"400px",lineHeight:"400px",top:"100px",opacity:0.001}}><p>Success</p></div>:
+            null
+        }
+        
             <h1 className="main-heading center">Checkout</h1>
             {
                 errorMessage !== '' ?
@@ -442,30 +457,46 @@ export default function CheckoutForm(props: any) {
                 <FormComponent user={user} labelName={"2nd Line of address"} variable={dSecondLine} variableName={Object.keys({ dSecondLine })[0]} setVariable={setDSecondLine} inputType={"text"} required={false} />
                 <FormComponent user={user} labelName={"City"} variable={dCity} setVariable={setDCity} variableName={Object.keys({ dCity })[0]} variableVal={dCityVal} setVariableVal={setDCityVal} inputType={"text"} required={true} />
                 <FormComponent user={user} labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} />
+                
+                <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
+                    <label htmlFor="billingDelivery">Billing same as delivery:</label>
+                    <input  autoComplete="complete" id="billingDelivery" type="checkbox" value={String(updates)} onChange={(e) => setBillingDelivery(!billingDelivery)} />
+                </div>
+                {
+                    !billingDelivery?
+                    <>
+                        <h2>Billing Address</h2>
+                        <FormComponent user={user} labelName={"First Name"} variable={bFirstName} variableName={Object.keys({ bFirstName })[0]} setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true} />
+                        <FormComponent user={user} labelName={"Surname"} variable={bSurname} variableName={Object.keys({ bSurname })[0]} setVariable={setBSurname} variableVal={bSurnameVal} setVariableVal={setBSurnameVal} inputType={"text"} required={true} />
+                        <FormComponent user={user} labelName={"Street name and number"} variable={bFirstLine} variableName={Object.keys({ bFirstLine })[0]} setVariable={setBFirstLine} variableVal={bFirstLineVal} setVariableVal={setBFirstLineVal} inputType={"text"} required={true} />
 
-                <h2>Billing Address</h2>
-                <FormComponent user={user} labelName={"First Name"} variable={bFirstName} variableName={Object.keys({ bFirstName })[0]} setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true} />
-                <FormComponent user={user} labelName={"Surname"} variable={bSurname} variableName={Object.keys({ bSurname })[0]} setVariable={setBSurname} variableVal={bSurnameVal} setVariableVal={setBSurnameVal} inputType={"text"} required={true} />
-                <FormComponent user={user} labelName={"Street name and number"} variable={bFirstLine} variableName={Object.keys({ bFirstLine })[0]} setVariable={setBFirstLine} variableVal={bFirstLineVal} setVariableVal={setBFirstLineVal} inputType={"text"} required={true} />
-
-                <FormComponent user={user} labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
-                <FormComponent user={user} labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
-                <FormComponent user={user} labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
+                        <FormComponent user={user} labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
+                        <FormComponent user={user} labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
+                        <FormComponent user={user} labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
+                    </>:
+                null
+                }
+                
                 <h2>Card Details</h2>
                 <PaymentElement onChange={(e) => paymentElementHandler(e)} />
 
                 {
                     context.cartLoaded &&
-                    <div>
-                        <p>Subtotal: <>£{context.state.subTotal}</></p>
-                        <p>Shipping: <>£{context.state.shipping}</></p>
-                        <p>Total: <>£{context.state.total}</></p>
+                    <div style={{"marginTop":"1rem"}}>
+                        <ul>
+                                    {
+                                        context.state.cart.items.map((el:any,idx:number)=><li key={idx}className={"product-list-element"}>{el.fresh?"Fresh":"Dry"} {el.name} {el.size} x {el.quantity}</li>)
+                                    }
+                        </ul>
+                        <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toString()}</span></p>
+                        <p>Shipping: £<span id="shipping">{context.state.shipping.toString()}</span></p>
+                        <p>Total: £<span id="total">{context.state.total.toString()}</span></p>
 
                     </div>
                 }
                 <fieldset>
                     <div>
-                        <p>Would you like to receive these products regularly?{user ? "Click below to pay a weekly or monthly subscription" : "Log in to subscribe"} </p>
+                        <p>Would you like to receive these products regularly? {user ? "Click below to pay a weekly or monthly subscription" : "Log in to subscribe"} </p>
                         <label htmlFor="oneTimePurchase">One time purchase</label>
                         <input id="oneTimePurchase" type="radio" name="oneTimePurchase" checked={oneTimePurchase} onChange={(e) => {
                             setOneTimePurchase(!oneTimePurchase)
@@ -488,7 +519,8 @@ export default function CheckoutForm(props: any) {
                             {
                                 subscription ?
                                     <>
-                                        <Dropdown selected={subscriptionInterval} setSelected={setSubscriptionInterval} dropList={["weekly", "monthly"]} />
+                                        <p>Deliver:</p>
+                                        <Dropdown selected={subscriptionInterval} setSelected={setSubscriptionInterval} dropList={["monthly"]} />
                                     </>
                                     : null
                             }
@@ -501,18 +533,22 @@ export default function CheckoutForm(props: any) {
                     <label htmlFor="updates">Receive updates</label>
                     <input  autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e) => setUpdates(e.target.checked)} />
                 </div>
-                <button id="placeOrder"  className="cta" type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e) => placeOrder(e)}>Submit</button>
+                <button id="placeOrder"  className="cta add-relative" type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e) => placeOrder(e)}>Submit
+                
+                </button>
 
+                
             {
                 !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?
                 <div className="checkout-stock-message">
                 <p className="checkout-stock-lines">Please delete the unavailable items from your <Link className="link" href="/cart">cart</Link> to continue checking out.</p>
                 <button className="cta-sec-btn"onClick={(e)=>handleUnavailableItems()}>DELETE</button>
+                
                 </div>
                 :null
             }
             {
-                context.state.cart.items.length<=0?
+                context.state.cart.items.length<=0&&!checkoutSuccess?
                 <div className="checkout-stock-message">
                 <p className="checkout-stock-lines">You have no items in your basket, please select some products from our <Link className="link" href="/products">store</Link> to make a purchase.</p>
                 </div>

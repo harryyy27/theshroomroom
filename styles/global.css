@@ -1,5 +1,8 @@
 /* 
 colour scheme - turkey tail */
+.add-relative {
+  position:relative;
+}
 .add-vertical-margin {
   margin: 1rem 0;
 }
@@ -125,17 +128,26 @@ colour scheme - turkey tail */
   line-height:2rem;
   text-align:center;
 }
+.dropdown-container {
+  width:25%;
+  background-color: white;
+  position:relative;
+}
 .dropdown-wrapper {
   display: none;
   border:1px solid var(--pri);
   margin:0;
-  padding:0
+  padding:0;
+  position:absolute;
+  background:white;
+  width:100%;
 }
 .dropdown-open {
   display:block
 }
 .dropdown-elements {
-  border: 1px solid var(--pri)
+  border: 1px solid var(--pri);
+  text-align:center;
 }
 .total-text {
   text-align:center;
@@ -281,7 +293,8 @@ colour scheme - turkey tail */
   font-size:0.8rem;
 }
 .main {
-  transform:translateY(3.25rem);
+  position:relative;
+  top:3.25rem;
   min-height:calc(100vh - 11.25rem);
 }
 .static-container {
@@ -449,6 +462,7 @@ h1,h2,h3 {
   .hidden-desktop{
     display:none;
   }
+  
 }
 @media(max-width:767px){
   .cart-left {
@@ -489,8 +503,16 @@ ul {
   height:2.5rem;
   line-height:1rem;
   margin:0.25rem auto;
-  display:block;
+  display:table;
   text-transform:uppercase;
+  padding:0;
+}
+.cta > a {
+  width:7.75rem;
+  height:2.5rem;
+  display:table-cell;
+  vertical-align:middle;
+  transform:translate(-2px,-2px)
 }
 .left { 
   margin-left:0;
@@ -544,9 +566,75 @@ ul {
 html {
   font-size:12px
 }
+.order-sub-wrapper {
+  background:#edd29b;
+  margin:0;
+  padding:1rem;
+}
+.order-sub-alt {
+  background:#f4e6c3
+}
 @media(min-width:481px){
   html {
     font-size: 16px;
+  }
+  .cart-wrapper {
+    display:grid;
+    grid-template-columns:30% 70%;
+  }
+  .col-1 {
+    grid-column-start:1
+  }
+  .col-2 {
+    grid-column-start:2
+  }
+  .col-3{
+    grid-column-start:3
+  }
+  .col-4{
+    grid-column-start: 4;
+  }
+  .col-5 {
+    grid-column-start:5
+  }
+  .cart-header {
+    width:60%;
+    margin:auto;
+  
+  }
+  .cart-header-wrapper {
+    display:grid;
+    grid-template-columns:30% 28% 14% 14% 14%;
+    margin:0;
+    width:100%;
+    padding:0;
+  }
+  .cart-header-element {
+    font-weight:600;
+    width:100%;
+    text-align:center;
+  
+  
+  }
+  .cart-product-name {
+    font-size:1rem;
+    text-align:center;
+  }
+  .quantity-wrapper {
+    margin:0rem 1rem;
+    text-align:center;
+  }
+  .product-price {
+    margin:0;
+    text-align:center;
+  }
+  .cart-left { 
+    grid-column-start:1;
+  }
+  .cart-right {
+    display:grid;
+    grid-column-start: 2;
+    grid-template-columns:40% 20% 20% 20%;
   }
 }
 @media(min-width: 768px){
@@ -555,6 +643,9 @@ html {
   }
 }
 @media(max-width:1024px){
+  .cart-header {
+    display:none;
+  }
   .loader {
     border-top: 5px solid var(--pri);
     border-right: 5px solid var(--pri);
@@ -578,74 +669,16 @@ html {
   
   
   .cart-summary {
-    position:static;
+    position:sticky;
     text-align:center;
     margin-bottom:2rem;
-  }
-  .cart-wrapper {
-    display:block;
-    text-align:center;
+    top:0px;
+    z-index:9000;
+    background-color:white;
   }
 }
 @media(min-width: 1025px){
-  .cart-wrapper {
-    display:grid;
-    grid-template-columns:30% 70%;
-  }
-  .col-1 {
-    grid-column-start:1
-  }
-  .col-2 {
-    grid-column-start:2
-  }
-  .col-3{
-    grid-column-start:3
-  }
-  .col-4{
-    grid-column-start: 4;
-  }
-  .col-5 {
-    grid-column-start:5
-  }
-  .cart-header {
-    width:60%;
-    margin:auto;
-
-  }
-  .cart-header-wrapper {
-    display:grid;
-    grid-template-columns:30% 28% 14% 14% 14%;
-    margin:0;
-    width:100%;
-    padding:0;
-  }
-  .cart-header-element {
-    font-weight:600;
-    width:100%;
-    text-align:center;
-
-
-  }
-  .cart-product-name {
-    font-size:1rem;
-    text-align:center;
-  }
-  .quantity-wrapper {
-    margin:0rem 1rem;
-    text-align:center;
-  }
-  .product-price {
-    margin:0;
-    text-align:center;
-  }
-  .cart-left { 
-    grid-column-start:1;
-  }
-  .cart-right {
-    display:grid;
-    grid-column-start: 2;
-    grid-template-columns:40% 20% 20% 20%;
-  }
+  
   html {
     font-size: 24px;
   }
@@ -659,6 +692,10 @@ html {
     width:80%;
     margin:auto;
 
+  }
+  .cart-wrapper {
+    display:block;
+    text-align:center;
   }
 }
 @media(max-width:480px){
