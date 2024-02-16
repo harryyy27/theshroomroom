@@ -5,21 +5,17 @@ import {getCsrfToken} from 'next-auth/react';
 import {deleteAccountHandler, errorHandler} from '../../utils/emailHandlers'
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
     try{
-        console.log('yoyoyoyo')
         if(req.method!=="DELETE"){
             throw new Error('Not delete request.')
         }
-        console.log('errr')
         if(!req.headers.csrftoken){
             throw new Error('No csrf header found.')
         }
-        console.log('yepyepypeyp')
         const csrfClient=req.headers.csrftoken;
         const csrfServer = await getCsrfToken({req:{headers:req.headers}});
         if(csrfClient !== csrfServer){
             throw new Error('CSRF authentication failed.')
         }
-        console.log('errrrrrrrr')
         const email = JSON.parse(req.body)
         const emailStr=email.email
         await connect()

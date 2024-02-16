@@ -21,6 +21,7 @@ declare module "next-auth" {
           secondLine: String,
           city: String,
           postcode: String,
+          phoneNumber:String
       },
       bAddress: {
           firstName: String,
@@ -29,6 +30,7 @@ declare module "next-auth" {
           secondLine:String,
           city: String,
           postcode: String,
+          phoneNumber:String
       },
       updates:boolean,
       stripeCustomerId:String,

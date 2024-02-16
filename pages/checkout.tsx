@@ -6,6 +6,7 @@ import {
     Elements
   } from "@stripe/react-stripe-js";
 import Stripe from "stripe";
+import {useEffect} from 'react'
 const stripePromise = loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
   );
@@ -16,15 +17,25 @@ import { getSession, getCsrfToken } from 'next-auth/react';
 import { Product } from '../utils/types'
 import { v4 as uuidv4 } from 'uuid';
 
-export default function Checkout({paymentIntent,setComponentLoading}:any){
+export default function Checkout(props:any){
     
     // const context = useContext(CartContext);
-    // useEffect(()=>{
-
-    // },[])
     const options = {
-        clientSecret: paymentIntent.client_secret
+        clientSecret: ''
     }
+        useEffect(()=>{
+            if(props.refresh){
+
+                window.location.href=`/`
+            }
+            else {
+                options.clientSecret=props.paymentIntent.client_secret
+
+            }
+        },[])
+
+    
+    
    
     
     return(
@@ -36,7 +47,7 @@ export default function Checkout({paymentIntent,setComponentLoading}:any){
                     <meta property="og:description" content="Reap the rewards of adding this healthy, medicinal and delicious mushroom to your diet"/>
                 </Head>
                 <Elements stripe={stripePromise} options={options} >
-                    <CheckoutForm paymentIntent={paymentIntent}  setComponentLoading={setComponentLoading}/>
+                    <CheckoutForm paymentIntent={props.paymentIntent}  setComponentLoading={props.setComponentLoading}/>
                 </Elements>
             </>
     )
@@ -68,24 +79,18 @@ export const getServerSideProps =  async(ctx:any) => {
         }
         if(!sesh&&!Cart){
             return {
-                redirect: {
-                  permanent: false,
-                  destination: "/",
+                props:{
+                    refresh:true
                 },
-                props:{},
               };
         }
-        console.log('yoyoyoyoy')
         let paymentIntent;
         const {paymentIntentId} = parseCookies(ctx)
         if(paymentIntentId){
             paymentIntent=await stripe.paymentIntents.retrieve(paymentIntentId)
-            console.log(paymentIntent.status)
             if(paymentIntent.status==="canceled"||paymentIntent.status==="succeeded"){
-                console.log('yee')
                 destroyCookie(ctx,"paymentIntentId")
             }
-            console.log(paymentIntent.status)
             if(paymentIntent.amount!==total*100){
                 paymentIntent=await stripe.paymentIntents.update(paymentIntentId,{
                     amount:total*100+500
@@ -98,10 +103,6 @@ export const getServerSideProps =  async(ctx:any) => {
                 }
             }
         }
-        else {
-
-        }
-        console.log('where am i?')
         const idempotencyKey = uuidv4();
         paymentIntent = await stripe.paymentIntents.create({
             amount: total*100+500,
@@ -125,11 +126,9 @@ export const getServerSideProps =  async(ctx:any) => {
     catch(e:any){
         console.log(e)
         return {
-            redirect: {
-              permanent: false,
-              destination: "/",
+            props:{
+                refresh:true
             },
-            props:{},
           };
     }
     

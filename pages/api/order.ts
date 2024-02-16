@@ -17,8 +17,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 throw new Error('No csrf header found.')
             }
             const csrftoken = await getCsrfToken({req:{headers:req.headers}})
-            console.log(csrftoken)
-            console.log(req.headers.csrftoken)
             if(req.headers.csrftoken!==csrftoken){
                 throw new Error('CSRF authentication failed.')
             }
@@ -143,9 +141,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                     order.subscriptionId=subscription_id
                     order.stripeCustomerId=stripeCustomerId
                 }
-                console.log('oiii')
                 var validated= await order.save()
-                console.log('ooiiii again')
                 if(validated){
                     return res.status(200).json(
                         {
@@ -185,7 +181,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         else if(req.method==='PUT'){
             var body=JSON.parse(req.body);
-            console.log(body)
             if(req.body.cancel){
                 var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId,status:{$in:["ORDER_RECEIVED"]}},{...body.order})
             }
@@ -205,7 +200,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         else if(req.method==='DELETE'){
             var body=JSON.parse(req.body);
-            console.log(body)
             var order = await Order().findOneAndUpdate({_id:body._id,status:{$in:["ORDER_RECEIVED"]}},{status:"REFUND_PENDING"})
             if(order){
 

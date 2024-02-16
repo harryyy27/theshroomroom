@@ -21,9 +21,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
       response = await Product().find({"product_type":req.url?.split('type=')[1]},{})
     }
     else if(RegExp('stripe_product_id=').test(req.url as string)===true){
-      console.log('yeee')
       response = await Product().findOne({"stripe_product_id":req.url?.split('stripe_product_id=')[1]},{})
-      console.log(response)
 
     }
     else {
@@ -43,8 +41,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
       throw new Error('No csrf header found.')
     }
     const csrftoken = await getCsrfToken({req:{headers:req.headers}})
-    console.log(csrftoken)
-    console.log(req.headers.csrftoken)
     if(req.headers.csrftoken!==csrftoken){
         throw new Error('CSRF authentication failed.')
     }

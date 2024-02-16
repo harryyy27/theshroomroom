@@ -12,8 +12,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 throw new Error('No csrf header found.')
             }
             const csrftoken = await getCsrfToken({req:{headers:req.headers}})
-            console.log(csrftoken)
-            console.log(req.headers.csrftoken)
             if(req.headers.csrftoken!==csrftoken){
                 throw new Error('CSRF authentication failed.')
             }
@@ -27,7 +25,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             }
             else if(req.url?.includes('subscription_id=')){
                 const id = req.url?.split('subscription_id=')[1];
-                console.log(id)
                 const subscriptions= await Subscription().find({_id:id}).exec()
                 return res.status(200).json({subscriptions:subscriptions})
             }
@@ -40,17 +37,13 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         else if(req.method==='PUT'){
             var body=JSON.parse(req.body);
-            console.log(body)
             if(req.body.cancel){
-                console.log('oioi')
                 var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_ACTIVE"]}},{status:"SUBSCRIPTION_CANCELLED"})
             }
             else if (req.body.resume){
-                console.log('hey')
                 var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_PAUSED"]}},{status:"SUBSCRIPTION_ACTIVE"})
             }
             else if (req.body.pause){
-                console.log('oii')
                 var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_ACTIVE"]}},{status:"SUBSCRIPTION_PAUSED"})
             }
             else if (body.amend){

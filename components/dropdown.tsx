@@ -21,11 +21,8 @@ export default function Dropdown({dropList,selected,setSelected}:props){
             <ul className="dropdown-wrapper">
                 {
                     dropList.map((el:string,idx)=>{
-                        console.log(idx)
                         return (
                             <li key={idx}className="dropdown-elements"onClick={(e:any)=>{
-                                console.log(e.target.textContent)
-                                console.log(selected)
 
                                 setSelected(e.target.textContent)
                                 var wrapper = document.querySelector('.dropdown-wrapper')
@@ -38,8 +35,6 @@ export default function Dropdown({dropList,selected,setSelected}:props){
                                     wrapper.classList.remove('dropdown-open')
                                     wrapper["ariaHidden"]="true"
                                 }
-                                console.log(e.target.textContent)
-                                console.log(selected)
 
 
                                 

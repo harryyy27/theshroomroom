@@ -7,12 +7,29 @@ export default function FormComponent(props:any){
                     <input className={styles["form-element"]} autoComplete="autocomplete" type={props.inputType} required={props.required} id={props.variableName+(props.page?props.page:'')} value={props.variable||''} 
                         onBlur={(e)=>{
                             if(props.required){
-                                if(e.target.checkValidity()){
-                                    props.setVariableVal(true)
+                                if(props.callback){
+                                    if(props.callback(e.target.value,props.params)){
+                                        if(e.target.checkValidity()){
+                                            props.setVariableVal(true)
+                                        }
+                                        else {
+                                            props.setVariableVal(false)
+                                        }
+
+                                    }
+                                    else {
+                                        props.setVariableVal(false)
+                                    }
                                 }
                                 else {
-                                    props.setVariableVal(false)
+                                    if(e.target.checkValidity()){
+                                        props.setVariableVal(true)
+                                    }
+                                    else {
+                                        props.setVariableVal(false)
+                                    }
                                 }
+                                
                             }
                             
 
@@ -20,12 +37,28 @@ export default function FormComponent(props:any){
                         onChange={(e)=>{
                             props.setVariable(e.target.value)
                             if(props.required&&typeof props.variableVal==="boolean"){
-                                if(e.target.checkValidity()){
-                                    props.setVariableVal(true)
+
+                                if(props.callback){
+                                    if(props.callback(e.target.value,props.params)){
+                                        if(e.target.checkValidity()){
+                                            props.setVariableVal(true)
+                                        }
+                                        else {
+                                            props.setVariableVal(false)
+                                        }
+                                    }
+                                    else {
+                                        props.setVariableVal(false)
+                                    }
                                 }
-                                else {
-                                    props.setVariableVal(false)
-                                }
+                                    else{
+                                        if(e.target.checkValidity()){
+                                            props.setVariableVal(true)
+                                        }
+                                        else {
+                                            props.setVariableVal(false)
+                                        }
+                                    }
 
                             }
                         }

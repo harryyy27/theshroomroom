@@ -23,6 +23,8 @@ export default function Subscription({setComponentLoading}:any){
     const [dCityVal, setDCityVal] = useState<boolean | null>(null);
     const [dPostcode, setDPostcode] = useState('');
     const [dPostcodeVal, setDPostcodeVal] = useState<boolean | null>(null);
+    const [dPhoneNumber,setDPhoneNumber]=useState('');
+    const [dPhoneNumberVal, setDPhoneNumberVal] = useState<boolean | null>(null);
     const [bFirstName, setBFirstName] = useState('');
     const [bFirstNameVal, setBFirstNameVal] = useState<boolean | null>(null);
     const [bSurname, setBSurname] = useState('');
@@ -34,6 +36,8 @@ export default function Subscription({setComponentLoading}:any){
     const [bCityVal, setBCityVal] = useState<boolean | null>(null);
     const [bPostcode, setBPostcode] = useState('');
     const [bPostcodeVal, setBPostcodeVal] = useState<boolean | null>(null);
+    const [bPhoneNumber,setBPhoneNumber]=useState('');
+    const [bPhoneNumberVal, setBPhoneNumberVal] = useState<boolean | null>(null);
     const [emailAddress, setEmailAddress] = useState('');
     const [status,setStatus]=useState('');
     const [err,setErr]=useState('')
@@ -42,18 +46,15 @@ export default function Subscription({setComponentLoading}:any){
         async function getSubscriptions(sesh:Session){
             try{
                 setComponentLoading(true)
-                console.log('oiiii')
                 const subscription_id=window.location.href.split('/subscriptions/')[1]
                 const subscriptionData = await fetch(`/api/subscriptions/?subscription_id=${subscription_id}`,{
                     method:"GET"
                 })
                 const subscriptionDetails = await subscriptionData.json()
                 const subscriptionArr = subscriptionDetails.subscriptions
-                console.log(subscriptionDetails)
 
                 setSubscription(subscriptionArr)
                 setComponentLoading(false)
-                console.log(subscription)
                 if(subscription){
                     setSubscriptionId(subscriptionArr[0].subscriptionId)
                     setEmailAddress(subscriptionArr[0].emailAddress)
@@ -81,6 +82,11 @@ export default function Subscription({setComponentLoading}:any){
                         setDPostcode(subscriptionArr[0].dAddress.postcode);
                         setDPostcodeVal(true)
                     }
+
+                    if (subscriptionArr[0].dAddress.phoneNumber && subscriptionArr[0].dAddress.phoneNumber.length > 0) {
+                        setDPhoneNumber(subscriptionArr[0].dAddress.phoneNumber);
+                        setDPhoneNumberVal(true)
+                    }
                     if (subscriptionArr[0].bAddress.firstName && subscriptionArr[0].bAddress.firstName.length > 0) {
                         setBFirstName(subscriptionArr[0].bAddress.firstName);
                         setBFirstNameVal(true)
@@ -105,6 +111,10 @@ export default function Subscription({setComponentLoading}:any){
                     if (subscriptionArr[0].bAddress.postcode && subscriptionArr[0].bAddress.postcode.length > 0) {
                         setBPostcode(subscriptionArr[0].bAddress.postcode);
                         setBPostcodeVal(true)
+                    }
+                    if (subscriptionArr[0].bAddress.phoneNumber && subscriptionArr[0].bAddress.phoneNumber.length > 0) {
+                        setBPhoneNumber(subscriptionArr[0].bAddress.phoneNumber);
+                        setBPhoneNumberVal(true)
                     }
                 }
     
@@ -148,7 +158,7 @@ export default function Subscription({setComponentLoading}:any){
             
         
     const validate_form = () => {
-        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal) {
+        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal&&bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal) {
             
                 return true
         }
@@ -169,6 +179,9 @@ export default function Subscription({setComponentLoading}:any){
             if (!dPostcodeVal) {
                 setDPostcodeVal(false)
             }
+            if (!dPhoneNumberVal) {
+                setDPhoneNumberVal(false)
+            }
 
             if (!bFirstNameVal) {
                 setBFirstNameVal(false)
@@ -184,6 +197,9 @@ export default function Subscription({setComponentLoading}:any){
             }
             if (!bPostcodeVal) {
                 setBPostcodeVal(false)
+            }
+            if (!bPhoneNumberVal) {
+                setBPhoneNumber
             }
             return false
         }
@@ -215,6 +231,7 @@ export default function Subscription({setComponentLoading}:any){
                             secondLine: dSecondLine,
                             city: dCity,
                             postcode: dPostcode,
+                            phoneNumber:dPhoneNumber
                         },
                         bAddress: {
                             firstName: bFirstName,
@@ -223,6 +240,7 @@ export default function Subscription({setComponentLoading}:any){
                             secondLine: bSecondLine,
                             city: bCity,
                             postcode: bPostcode,
+                            phoneNumber:bPhoneNumber
                         }, 
                         }
                     )
@@ -293,7 +311,6 @@ export default function Subscription({setComponentLoading}:any){
 
     }
     function showModal(open:boolean,id:string,idx:number){
-        console.log(id)
         try{
             let modal = document.querySelectorAll(`.SUBSCRIPTION_ACTIVE${idx} .cancel-modal`)[0]
             if(open){
@@ -372,6 +389,7 @@ export default function Subscription({setComponentLoading}:any){
                             <FormComponent labelName={"2nd Line of address"} variable={dSecondLine} variableName={Object.keys({ dSecondLine })[0]} setVariable={setDSecondLine} inputType={"text"} required={false} />
                             <FormComponent labelName={"City"} variable={dCity} setVariable={setDCity} variableName={Object.keys({ dCity })[0]} variableVal={dCityVal} setVariableVal={setDCityVal} inputType={"text"} required={true} />
                             <FormComponent labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} />
+                            <FormComponent labelName={"Phone Number"} variable={dPhoneNumber} variableName={Object.keys({ dPhoneNumber })[0]} setVariable={setDPhoneNumber} variableVal={dPhoneNumberVal} setVariableVal={setDPhoneNumberVal} inputType={"text"} required={true} />
 
                             <h2>Billing Address</h2>
                             <FormComponent labelName={"First Name"} variable={bFirstName} variableName={Object.keys({ bFirstName })[0]} setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true} />
@@ -381,6 +399,8 @@ export default function Subscription({setComponentLoading}:any){
                             <FormComponent labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
                             <FormComponent labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
                             <FormComponent labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
+                            <FormComponent labelName={"Phone Number"} variable={bPhoneNumber} variableName={Object.keys({ bPhoneNumber })[0]} setVariable={setBPhoneNumber} variableVal={bPhoneNumberVal} setVariableVal={setBPhoneNumberVal} inputType={"text"} required={true} />
+
                             <button type="submit" className="cta" onClick={(e)=>{amendSubscription(e)}}>Amend Subscription</button>
                             {
                                 amendSuccess?

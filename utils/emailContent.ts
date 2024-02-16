@@ -50,6 +50,7 @@ export function orderString(order:any){
                             ${order.dAddress.secondLine?order.dAddress.secondLine+',<br/>':''}
                             ${order.dAddress.city},<br>
                             ${order.dAddress.postcode},<br>
+                            ${order.dAddress.phoneNumber},<br>
                             United Kingdom
                           </p>
                         </td>
@@ -232,6 +233,7 @@ export function subscriptionString(subscription:any){
                             ${subscription.dAddress.secondLine?subscription.dAddress.secondLine:''},<br>
                             ${subscription.dAddress.city},<br>
                             ${subscription.dAddress.postcode},<br>
+                            ${subscription.dAddress.phoneNumber},<br>
                             United Kingdom
                           </p>
                         </td>

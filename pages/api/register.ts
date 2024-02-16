@@ -35,9 +35,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse) {
             const salt = await bcrypt.genSalt(10);
             user.password = await bcrypt.hash(user.password,salt)
             user.subscriptions=[]
-            console.log('break');
             await user.save()
-            console.log('yeeeee')
             await registerHandler(body.username,user,process.env.WEBSITE_URL)
             res.status(200).json({message: 'Registered successfully'})
 

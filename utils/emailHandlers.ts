@@ -89,7 +89,6 @@ export async function errorHandler(headers:string,body:string|undefined,method:s
         errorMessage:message,
         timestamp: Date.now()
     })
-    // console.log(error)
     await error.save()
     try{
         sendEmail({
@@ -127,12 +126,10 @@ export async function receiveUpdatesHandler(email:string,user:boolean,websiteNam
     catch(e){
         console.log(e)
     }
-    console.log('yepppp')
 
 }
 export async function orderHandler(order:any,websiteName:string|undefined){
     try{
-        console.log(order.products.items)
         const content = orderString(order)
         const imageAttach = [
           {
@@ -152,7 +149,6 @@ export async function orderHandler(order:any,websiteName:string|undefined){
     catch(e){
         console.log(e)
     }
-    console.log('yepppp')
 
 }
 export async function subscriptionHandler(subscription:any,websiteName:string|undefined){
@@ -176,7 +172,6 @@ export async function subscriptionHandler(subscription:any,websiteName:string|un
     catch(e){
         console.log(e)
     }
-    console.log('yepppp')
 
 }
 export async function registerHandler(email:string,user:any,websiteName:string|undefined){
@@ -200,7 +195,6 @@ export async function registerHandler(email:string,user:any,websiteName:string|u
     catch(e){
         console.log(e)
     }
-    console.log('yepppp')
 
 }
 export async function deleteAccountHandler(email:string,websiteName:string|undefined){
@@ -224,7 +218,6 @@ export async function deleteAccountHandler(email:string,websiteName:string|undef
     catch(e){
         console.log(e)
     }
-    console.log('yepppp')
 
 }
 export async function disputeHandler(object:any,status:string,websiteName:string|undefined){
@@ -248,7 +241,6 @@ export async function disputeHandler(object:any,status:string,websiteName:string
   catch(e){
       console.log(e)
   }
-  console.log('yepppp')
 
 }
 export async function invoiceFailHandler(attemptCount:number,email:string,finalizationFailure:boolean,websiteName:string|undefined){

@@ -82,8 +82,6 @@ export default function Header(){
                                     })
                                 }
                             })
-                            console.log('oi twat')
-                            console.log(document.querySelector(`.${styles["header-stock-message"]}`))
                             document.querySelector(`.${styles["header-stock-message"]}`)?.classList.add("hidden")
                         }}>Delete</button>
                         </div>

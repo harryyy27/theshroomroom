@@ -8,12 +8,9 @@ function Loading(props:any) {
 
   useEffect(() => {
       const handleStart = (url:string) => {
-        console.log('start')
         return setLoading(true);
       }
       const handleComplete = (url:string) => {
-        console.log('finish')
-        console.log(url)
        return setTimeout(()=>setLoading(false),250);
       }
 

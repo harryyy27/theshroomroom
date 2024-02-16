@@ -23,6 +23,8 @@ export default function MyAccountOrders({setComponentLoading}:any){
     const [dCityVal, setDCityVal] = useState<boolean | null>(null);
     const [dPostcode, setDPostcode] = useState('');
     const [dPostcodeVal, setDPostcodeVal] = useState<boolean | null>(null);
+    const [dPhoneNumber,setDPhoneNumber]=useState('');
+    const [dPhoneNumberVal, setDPhoneNumberVal] = useState<boolean | null>(null);
     const [bFirstName, setBFirstName] = useState('');
     const [bFirstNameVal, setBFirstNameVal] = useState<boolean | null>(null);
     const [bSurname, setBSurname] = useState('');
@@ -34,6 +36,8 @@ export default function MyAccountOrders({setComponentLoading}:any){
     const [bCityVal, setBCityVal] = useState<boolean | null>(null);
     const [bPostcode, setBPostcode] = useState('');
     const [bPostcodeVal, setBPostcodeVal] = useState<boolean | null>(null);
+    const [bPhoneNumber,setBPhoneNumber]=useState('');
+    const [bPhoneNumberVal, setBPhoneNumberVal] = useState<boolean | null>(null);
     const [emailAddress, setEmailAddress] = useState('');
     const [status,setStatus]=useState('');
     const [err,setErr]=useState('')
@@ -48,11 +52,9 @@ export default function MyAccountOrders({setComponentLoading}:any){
                 })
                 const orderDetails = await orderData.json()
                 const orderArr = orderDetails.orders
-                console.log(orderDetails)
 
                 setOrder(orderArr)
                 setComponentLoading(false)
-                console.log(order)
                 if(order){
     
                     setEmailAddress(orderArr[0].emailAddress)
@@ -80,6 +82,10 @@ export default function MyAccountOrders({setComponentLoading}:any){
                         setDPostcode(orderArr[0].dAddress.postcode);
                         setDPostcodeVal(true)
                     }
+                    if (orderArr[0].dAddress.phoneNumber && orderArr[0].dAddress.phoneNumber.length > 0) {
+                        setDPhoneNumber(orderArr[0].dAddress.phoneNumber);
+                        setDPhoneNumberVal(true)
+                    }
                     if (orderArr[0].bAddress.firstName && orderArr[0].bAddress.firstName.length > 0) {
                         setBFirstName(orderArr[0].bAddress.firstName);
                         setBFirstNameVal(true)
@@ -104,6 +110,10 @@ export default function MyAccountOrders({setComponentLoading}:any){
                     if (orderArr[0].bAddress.postcode && orderArr[0].bAddress.postcode.length > 0) {
                         setBPostcode(orderArr[0].bAddress.postcode);
                         setBPostcodeVal(true)
+                    }
+                    if (orderArr[0].bAddress.phoneNumber && orderArr[0].bAddress.phoneNumber.length > 0) {
+                        setBPhoneNumber(orderArr[0].bAddress.phoneNumber);
+                        setBPhoneNumberVal(true)
                     }
                 }
     
@@ -147,7 +157,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
             
         
     const validate_form = () => {
-        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal) {
+        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal) {
             
                 return true
         }
@@ -168,6 +178,10 @@ export default function MyAccountOrders({setComponentLoading}:any){
             if (!dPostcodeVal) {
                 setDPostcodeVal(false)
             }
+            if (!dPhoneNumberVal) {
+                setDPhoneNumberVal(false)
+            }
+
 
             if (!bFirstNameVal) {
                 setBFirstNameVal(false)
@@ -183,6 +197,9 @@ export default function MyAccountOrders({setComponentLoading}:any){
             }
             if (!bPostcodeVal) {
                 setBPostcodeVal(false)
+            }
+            if (!bPhoneNumberVal) {
+                setBPhoneNumberVal(false)
             }
             return false
         }
@@ -212,6 +229,8 @@ export default function MyAccountOrders({setComponentLoading}:any){
                         secondLine: dSecondLine,
                         city: dCity,
                         postcode: dPostcode,
+                        phoneNumber:dPhoneNumber
+
                     },
                     bAddress: {
                         firstName: bFirstName,
@@ -220,6 +239,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
                         secondLine: bSecondLine,
                         city: bCity,
                         postcode: bPostcode,
+                        phoneNumber:bPhoneNumber
                     }, 
                     }
                 )
@@ -274,7 +294,6 @@ export default function MyAccountOrders({setComponentLoading}:any){
 
     }
     function showModal(open:boolean,id:string,idx:number){
-        console.log(id)
         try{
             let modal = document.querySelectorAll(`.ORDER_RECEIVED${idx} .cancel-modal`)[0]
             if(open){
@@ -352,6 +371,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
                             <FormComponent labelName={"2nd Line of address"} variable={dSecondLine} variableName={Object.keys({ dSecondLine })[0]} setVariable={setDSecondLine} inputType={"text"} required={false} />
                             <FormComponent labelName={"City"} variable={dCity} setVariable={setDCity} variableName={Object.keys({ dCity })[0]} variableVal={dCityVal} setVariableVal={setDCityVal} inputType={"text"} required={true} />
                             <FormComponent labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} />
+                            <FormComponent labelName={"Phone Number"} variable={dPhoneNumber} variableName={Object.keys({ dPhoneNumber })[0]} setVariable={setDPhoneNumber} variableVal={dPhoneNumberVal} setVariableVal={setDPhoneNumberVal} inputType={"text"} required={true} />
 
                             <h2>Billing Address</h2>
                             <FormComponent labelName={"First Name"} variable={bFirstName} variableName={Object.keys({ bFirstName })[0]} setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true} />
@@ -361,6 +381,8 @@ export default function MyAccountOrders({setComponentLoading}:any){
                             <FormComponent labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
                             <FormComponent labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
                             <FormComponent labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
+                            <FormComponent labelName={"Phone Number"} variable={bPhoneNumber} variableName={Object.keys({ bPhoneNumber })[0]} setVariable={setBPhoneNumber} variableVal={bPhoneNumberVal} setVariableVal={setBPhoneNumberVal} inputType={"text"} required={true} />
+
                             <button type="submit" className="cta" onClick={(e)=>{amendOrder(e)}}>Amend Order</button>
                             {
                                 amendSuccess?

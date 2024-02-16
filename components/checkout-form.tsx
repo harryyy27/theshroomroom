@@ -39,6 +39,7 @@ interface UserSchema {
         secondLine: String,
         city: String,
         postcode: String,
+        phoneNumber:String
     },
     bAddress: {
         firstName: String,
@@ -47,6 +48,7 @@ interface UserSchema {
         secondLine: String,
         city: String,
         postcode: String,
+        phoneNumber:String
     },
     updates: Boolean,
 }
@@ -68,6 +70,8 @@ export default function CheckoutForm(props: any) {
     const [dCityVal, setDCityVal] = useState<boolean | null>(null);
     const [dPostcode, setDPostcode] = useState('');
     const [dPostcodeVal, setDPostcodeVal] = useState<boolean | null>(null);
+    const [dPhoneNumber,setDPhoneNumber]=useState('');
+    const [dPhoneNumberVal, setDPhoneNumberVal] = useState<boolean | null>(null);
     const [billingDelivery,setBillingDelivery]=useState<boolean | null>(false);
     const [bFirstName, setBFirstName] = useState('');
     const [bFirstNameVal, setBFirstNameVal] = useState<boolean | null>(null);
@@ -80,6 +84,8 @@ export default function CheckoutForm(props: any) {
     const [bCityVal, setBCityVal] = useState<boolean | null>(null);
     const [bPostcode, setBPostcode] = useState('');
     const [bPostcodeVal, setBPostcodeVal] = useState<boolean | null>(null);
+    const [bPhoneNumber,setBPhoneNumber]=useState('');
+    const [bPhoneNumberVal, setBPhoneNumberVal] = useState<boolean | null>(null);
     const [guestEmailAddress, setGuestEmailAddress] = useState('');
     const [guestEmailAddressVal, setGuestEmailAddressVal] = useState<boolean | null>(null)
     const [updates, setUpdates] = useState(false);
@@ -89,11 +95,13 @@ export default function CheckoutForm(props: any) {
     const [cardDetailsValid, setCardDetailsValid] = useState<boolean | null>(null);
     const [processing, setProcessing] = useState(false)
     const [errorMessage, setErrorMessage] = useState('');
+    const [validPostcodes,setValidPostcodes]=useState<string[]>([])
     const stripe = useStripe();
     const setComponentLoading = props.setComponentLoading;
     const elements: any = useElements();
     useEffect(() => {
         setComponentLoading(true)
+        setValidPostcodes(["BR3"])
         const initiate = async () => {
             const session = await getSession()
             if (session?.user) {
@@ -132,6 +140,10 @@ export default function CheckoutForm(props: any) {
                             setDPostcode(res.user.dAddress.postcode);
                             setDPostcodeVal(true)
                         }
+                        if (res.user.dAddress.phoneNumber && res.user.dAddress.phoneNumber.length > 0) {
+                            setDPhoneNumber(res.user.dAddress.phoneNumber);
+                            setDPhoneNumberVal(true)
+                        }
                         if (res.user.bAddress.firstName && res.user.bAddress.firstName.length > 0) {
                             setBFirstName(res.user.bAddress.firstName);
                             setBFirstNameVal(true)
@@ -156,6 +168,10 @@ export default function CheckoutForm(props: any) {
                         if (res.user.bAddress.postcode && res.user.bAddress.postcode.length > 0) {
                             setBPostcode(res.user.bAddress.postcode);
                             setBPostcodeVal(true)
+                        }
+                        if (res.user.bAddress.phoneNumber && res.user.bAddress.phoneNumber.length > 0) {
+                            setBPhoneNumber(res.user.bAddress.phoneNumber);
+                            setBPhoneNumberVal(true)
                         }
                         setUpdates(res.user.updates)
                         setComponentLoading(false)
@@ -184,7 +200,7 @@ export default function CheckoutForm(props: any) {
 
     }
     const validate_form = () => {
-        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && (billingDelivery||(bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal)) && cardDetailsValid) {
+        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal && (billingDelivery||(bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal)) && cardDetailsValid) {
             if (guestEmailAddressVal || user) {
                 return true
             }
@@ -208,29 +224,29 @@ export default function CheckoutForm(props: any) {
                 setDCityVal(false)
             }
             if (!dPostcodeVal) {
-                console.log('possibly here')
                 setDPostcodeVal(false)
+            }
+            if (!dPhoneNumberVal) {
+                setDPhoneNumberVal(false)
             }
 
             if (!bFirstNameVal) {
-                console.log('probably maybe here')
                 setBFirstNameVal(false)
             }
             if (!bSurnameVal) {
-                console.log('what the fuck')
                 setBSurnameVal(false)
             }
             if (!bFirstLineVal) {
-                console.log('oi')
                 setBFirstLineVal(false)
             }
             if (!bCityVal) {
-                console.log('slag')
                 setBCityVal(false)
             }
             if (!bPostcodeVal) {
-                console.log('ffs better be one of these')
                 setBPostcodeVal(false)
+            }
+            if (!bPhoneNumberVal) {
+                setBPhoneNumberVal(false)
             }
             setCheckoutError('Please fill in all required fields')
             setFormPosition()
@@ -260,6 +276,16 @@ export default function CheckoutForm(props: any) {
             }
         })
     }
+    const postCodeValidate=(formPostcode:string,validPostcodesArr:string[])=>{
+        console.log(formPostcode)
+        console.log(validPostcodesArr)
+        if(validPostcodesArr.every((el:string)=>!formPostcode.toLowerCase().trim().startsWith(el.toLowerCase()))){
+            return false
+        }
+        else{
+            return true
+        }
+    }
     const placeOrder = async (e: FormEvent) => {
         props.setComponentLoading(true)
         e.preventDefault()
@@ -270,8 +296,6 @@ export default function CheckoutForm(props: any) {
             setProcessing(true)
             let valid = validate_form()
             let subValid = true;
-            console.log(subscription)
-            console.log(subscriptionInterval)
             if (subscription && subscriptionInterval === '') {
                 subValid = false
             }
@@ -300,23 +324,25 @@ export default function CheckoutForm(props: any) {
                 },
                 body: JSON.stringify({
                     userId: userId,
-                    email: emailAddress,
+                    email: emailAddress?.trim(),
                     guestCheckout: guestCheckout,
                     dAddress: {
-                        firstName: dFirstName,
-                        surname: dSurname,
-                        firstLine: dFirstLine,
-                        secondLine: dSecondLine,
-                        city: dCity,
-                        postcode: dPostcode,
+                        firstName: dFirstName.trim(),
+                        surname: dSurname.trim(),
+                        firstLine: dFirstLine.trim(),
+                        secondLine: dSecondLine.trim(),
+                        city: dCity.trim(),
+                        postcode: dPostcode.trim(),
+                        phoneNumber:dPhoneNumber.trim()
                     },
                     bAddress: {
-                        firstName: billingDelivery?dFirstName:bFirstName,
-                        surname: billingDelivery?dSurname:bSurname,
-                        firstLine: billingDelivery?dFirstLine:bFirstLine,
-                        secondLine: billingDelivery?dSecondLine:bSecondLine,
-                        city: billingDelivery?dCity:bCity,
-                        postcode: billingDelivery?dPostcode:bPostcode,
+                        firstName: billingDelivery?dFirstName.trim():bFirstName.trim(),
+                        surname: billingDelivery?dSurname.trim():bSurname.trim(),
+                        firstLine: billingDelivery?dFirstLine.trim():bFirstLine.trim(),
+                        secondLine: billingDelivery?dSecondLine.trim():bSecondLine.trim(),
+                        city: billingDelivery?dCity.trim():bCity.trim(),
+                        postcode: billingDelivery?dPostcode.trim():bPostcode.trim(),
+                        phoneNumber: billingDelivery?dPhoneNumber.trim():bPhoneNumber.trim(),
                     },
                     products: context.state.cart,
                     shippingCost: context.state.shipping,
@@ -402,7 +428,6 @@ export default function CheckoutForm(props: any) {
             }
         }
         catch (e: any) {
-            console.log(e)
             setProcessing(false)
             setCheckoutError(e.message)
             props.setComponentLoading(false)
@@ -456,8 +481,10 @@ export default function CheckoutForm(props: any) {
 
                 <FormComponent user={user} labelName={"2nd Line of address"} variable={dSecondLine} variableName={Object.keys({ dSecondLine })[0]} setVariable={setDSecondLine} inputType={"text"} required={false} />
                 <FormComponent user={user} labelName={"City"} variable={dCity} setVariable={setDCity} variableName={Object.keys({ dCity })[0]} variableVal={dCityVal} setVariableVal={setDCityVal} inputType={"text"} required={true} />
-                <FormComponent user={user} labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} />
-                
+                <FormComponent user={user} labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} callback={postCodeValidate} params={validPostcodes} />
+                <Link className="link" href="/delivery">See available postcodes here</Link>
+                <FormComponent user={user} labelName={"Phone Number"} variable={dPhoneNumber} variableName={Object.keys({ dPhoneNumber })[0]} setVariable={setDPhoneNumber} variableVal={dPhoneNumberVal} setVariableVal={setDPhoneNumberVal} inputType={"text"} required={true} />
+
                 <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
                     <label htmlFor="billingDelivery">Billing same as delivery:</label>
                     <input  autoComplete="complete" id="billingDelivery" type="checkbox" value={String(updates)} onChange={(e) => setBillingDelivery(!billingDelivery)} />
@@ -473,6 +500,8 @@ export default function CheckoutForm(props: any) {
                         <FormComponent user={user} labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
                         <FormComponent user={user} labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
                         <FormComponent user={user} labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
+                        <FormComponent user={user} labelName={"Phone Number"} variable={bPhoneNumber} variableName={Object.keys({ bPhoneNumber })[0]} setVariable={setBPhoneNumber} variableVal={bPhoneNumberVal} setVariableVal={setBPhoneNumberVal} inputType={"tel"} required={true} />
+
                     </>:
                 null
                 }

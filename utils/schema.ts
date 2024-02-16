@@ -128,6 +128,11 @@ const UserSchema=new Schema({
             type: String,
             required: false,
             default: ''
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     bAddress: {
@@ -159,7 +164,12 @@ const UserSchema=new Schema({
         postcode: {
             type: String,
             required: false,
-            default: ''
+            default: '',
+            phoneNumber: {
+                type: String,
+                required: false,
+                default: ''
+            }
         }
     },
     updates: {
@@ -225,6 +235,11 @@ const OrderSchema=new Schema({
         postcode: {
             type:String,
             required:true
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     bAddress: {
@@ -251,6 +266,11 @@ const OrderSchema=new Schema({
         postcode: {
             type:String,
             required:true
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     products: {
@@ -366,6 +386,11 @@ const SubscriptionSchema=new Schema({
         postcode: {
             type:String,
             required:true
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     bAddress: {
@@ -392,6 +417,11 @@ const SubscriptionSchema=new Schema({
         postcode: {
             type:String,
             required:true
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     products: {

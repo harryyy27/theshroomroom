@@ -43,6 +43,7 @@ export interface UserSchema {
       secondLine: String,
       city: String,
       postcode: String,
+      phoneNumber:String
   },
   bAddress: {
       firstName: String,
@@ -51,6 +52,7 @@ export interface UserSchema {
       secondLine:String,
       city: String,
       postcode: String,
+      phoneNumber:String
   },
   updates: Boolean|false,
 }

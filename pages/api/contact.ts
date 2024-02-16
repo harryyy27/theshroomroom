@@ -4,7 +4,6 @@ import { getCsrfToken } from 'next-auth/react'
 import { sendEmail } from '../../utils/nodemailer'
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
     try{
-        console.log('this bit works')
         if(req.method==='POST'){
             if(!req.headers.csrftoken){
                 throw new Error('No csrf header found.')

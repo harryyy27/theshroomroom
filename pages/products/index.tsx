@@ -106,7 +106,6 @@ export async function getServerSideProps(ctx:any){
     try {
         const data= await fetch(`http://${req.headers.host}/api/products/`)
         var response = await data.json()
-        console.log('OI')
         if(response){
             var resp = response.reduce((acc:any,b:any)=>{
                 for(var i = 0;i<acc.length;i++){
