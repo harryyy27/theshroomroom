@@ -14,8 +14,8 @@ export const imageMap: {[mushroom:string]:ProductImage} = {
         path:'/products/mushrooms/lions_mane',
         fileType:'jpeg',
         link: '/products/lions_mane',
-        width:334,
-        height:151
+        width:3500,
+        height:2500
     },
     'Turkey Tail':{
         name: 'Turkey Tail',

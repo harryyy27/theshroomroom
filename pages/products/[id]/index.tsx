@@ -135,7 +135,7 @@ export default function ProductDetails({setComponentLoading}:any){
                 {
                     name?
 
-                    <Image id="productImage" fill src={`${imageMap[name].path}.${imageMap[name].fileType}`} alt={name} sizes="(min-width:1025px) 40vw, (max-width:767px) 80vw"priority placeholder="blur" blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} />
+                    <Image id="productImage" fill src={`${imageMap[name].path}_${fresh?"fresh":"dry"}.${imageMap[name].fileType}`} alt={name} sizes="(min-width:1025px) 40vw, (max-width:767px) 80vw"priority placeholder="blur" blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} />
                     :
                     null
                 }

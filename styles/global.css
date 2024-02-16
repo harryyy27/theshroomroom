@@ -163,14 +163,14 @@ colour scheme - turkey tail */
 .plp-image-wrapper {
   position:relative;
   width:100%;
-  aspect-ratio:334/151;
+  aspect-ratio: 350/250;
   margin:auto;
 }
 .cart-left {
   margin-right:2rem;
   position:relative;
-  width:100%;
-  aspect-ratio:334/151;
+  width:60%;
+  aspect-ratio:1/1;
   margin:auto;
 }
 .cart-product-name {
@@ -217,7 +217,7 @@ colour scheme - turkey tail */
 }
 #productImage {
   width:100%;
-  aspect-ratio: 334/151;
+  aspect-ratio: 350/250;
 }
 .cross-link{
   color:var(--sec);
@@ -265,7 +265,7 @@ colour scheme - turkey tail */
   position:relative;
   margin:0rem 1rem;
   width:100%;
-  aspect-ratio: 334/151;
+  aspect-ratio: 1/1;
   flex:60;
 }
 .text-section {
@@ -467,8 +467,9 @@ h1,h2,h3 {
 @media(max-width:767px){
   .cart-left {
     width:80%;
-    aspect-ratio:334/151;
+    aspect-ratio:1/1;
     margin:auto;
+    margin-bottom:1rem;
   }
   .hidden-mobile {
     display:none
@@ -672,7 +673,7 @@ html {
     position:sticky;
     text-align:center;
     margin-bottom:2rem;
-    top:0px;
+    top:1rem;
     z-index:9000;
     background-color:white;
   }

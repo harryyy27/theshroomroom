@@ -24,7 +24,7 @@ export default function CartElement({_id,idx,name,quantity,price,fresh,size,stri
                 
                 {
                     name?
-                    <Link  href={`/products/${name.replace(/[\s]/gi,'-')}`} ><Image className="cart-product-image"  fill sizes={`(max-width:767px) 50vw,(min-width:768px) ${imageMap[name].width}px`} src={`${imageMap[name].path}.${imageMap[name].fileType}`} priority alt={name}/></Link>
+                    <Link  href={`/products/${name.replace(/[\s]/gi,'-')}`} ><Image className="cart-product-image"  fill sizes={`(max-width:767px) 50vw,(min-width:768px) ${imageMap[name].width}px`} src={`${imageMap[name].path}_${fresh?"fresh":"dry"}.${imageMap[name].fileType}`} priority alt={name}/></Link>
                     :
                     null
                 }
