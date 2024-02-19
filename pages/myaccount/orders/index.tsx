@@ -4,7 +4,8 @@ import {useRouter} from "next/router";
 import { useEffect,useState,FormEvent } from "react";
 import authenticate from '../../../utils/authenticationRequired';
 import Link from 'next/link';
-
+import {Metadata} from '../../../utils/metadata/metadata'
+import Head from 'next/head'
 export default function MyAccountOrders({setComponentLoading}:any){
     const [orders,setOrders]=useState([])
     const [error,setError]=useState<string|null>(null)
@@ -59,6 +60,13 @@ export default function MyAccountOrders({setComponentLoading}:any){
     
     return(
         <div className="static-container">
+
+<Head>
+            <title>{Metadata["general"]["title"]}</title>
+                <meta name="description" content={Metadata["general"]["description"]}/>
+                <meta property="og:title" content={Metadata["general"]["title"]}/>
+                <meta property="og:description" content={Metadata["general"]["description"]}/>
+            </Head>
         <h1 className="main-heading center">My Orders</h1>
         {
         error?

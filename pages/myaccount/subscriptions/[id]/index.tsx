@@ -5,6 +5,8 @@ import { useEffect,useState,FormEvent } from "react";
 import authenticate from '../../../../utils/authenticationRequired';
 import Link from 'next/link';
 import FormComponent from "../../../../components/form-component";
+import Head from 'next/head'
+import {Metadata} from '../../../../utils/metadata/metadata'
 export default function Subscription({setComponentLoading}:any){
     const [cancelSubscriptionId,setCancelSubscriptionId]=useState('');
     const [cancelError, setCancelError]=useState<string|null>(null)
@@ -42,101 +44,102 @@ export default function Subscription({setComponentLoading}:any){
     const [status,setStatus]=useState('');
     const [err,setErr]=useState('')
     const [amendSuccess,setAmendSuccess]=useState(false)
-    useEffect(()=>{
-        async function getSubscriptions(sesh:Session){
-            try{
-                setComponentLoading(true)
-                const subscription_id=window.location.href.split('/subscriptions/')[1]
-                const subscriptionData = await fetch(`/api/subscriptions/?subscription_id=${subscription_id}`,{
-                    method:"GET"
-                })
-                const subscriptionDetails = await subscriptionData.json()
-                const subscriptionArr = subscriptionDetails.subscriptions
+    async function getSubscriptions(sesh:Session){
+        try{
+            setComponentLoading(true)
+            const subscription_id=window.location.href.split('/subscriptions/')[1]
+            const subscriptionData = await fetch(`/api/subscriptions/?subscription_id=${subscription_id}`,{
+                method:"GET"
+            })
+            const subscriptionDetails = await subscriptionData.json()
+            const subscriptionArr = subscriptionDetails.subscriptions
 
-                setSubscription(subscriptionArr)
-                setComponentLoading(false)
-                if(subscription){
-                    setSubscriptionId(subscriptionArr[0].subscriptionId)
-                    setEmailAddress(subscriptionArr[0].emailAddress)
-                    setStatus(subscriptionArr[0].status)
-                    if (subscriptionArr[0].dAddress.firstName && subscriptionArr[0].dAddress.firstName.length > 0) {
-                        setDFirstName(subscriptionArr[0].dAddress.firstName);
-                        setDFirstNameVal(true)
-                    }
-                    if (subscriptionArr[0].dAddress?.surname && subscriptionArr[0].dAddress?.surname.length > 0) {
-                        setDSurname(subscriptionArr[0].dAddress.surname);
-                        setDSurnameVal(true)
-                    }
-                    if (subscriptionArr[0].dAddress.firstLine && subscriptionArr[0].dAddress.firstLine.length > 0) {
-                        setDFirstLine(subscriptionArr[0].dAddress.firstLine);
-                        setDFirstLineVal(true)
-                    }
-                    if (subscriptionArr[0].dAddress.secondLine) {
-                        setDSecondLine(subscriptionArr[0].dAddress.secondLine);
-                    }
-                    if (subscriptionArr[0].dAddress.city && subscriptionArr[0].dAddress.city.length > 0) {
-                        setDCity(subscriptionArr[0].dAddress.city);
-                        setDCityVal(true)
-                    }
-                    if (subscriptionArr[0].dAddress.postcode && subscriptionArr[0].dAddress.postcode.length > 0) {
-                        setDPostcode(subscriptionArr[0].dAddress.postcode);
-                        setDPostcodeVal(true)
-                    }
-
-                    if (subscriptionArr[0].dAddress.phoneNumber && subscriptionArr[0].dAddress.phoneNumber.length > 0) {
-                        setDPhoneNumber(subscriptionArr[0].dAddress.phoneNumber);
-                        setDPhoneNumberVal(true)
-                    }
-                    if (subscriptionArr[0].bAddress.firstName && subscriptionArr[0].bAddress.firstName.length > 0) {
-                        setBFirstName(subscriptionArr[0].bAddress.firstName);
-                        setBFirstNameVal(true)
-                    }
-                    if (subscriptionArr[0].bAddress.surname && subscriptionArr[0].bAddress.surname.length > 0) {
-                        setBSurname(subscriptionArr[0].bAddress.surname);
-                        setBSurnameVal(true)
-                    }
-                    if (subscriptionArr[0].bAddress.firstLine && subscriptionArr[0].bAddress.firstLine.length > 0) {
-                        setBFirstLine(subscriptionArr[0].bAddress.firstLine);
-                        setBFirstLineVal(true)
-                    }
-                    if (subscriptionArr[0].bAddress.secondLine) {
-                        setBSecondLine(subscriptionArr[0].bAddress.secondLine);
-    
-                    }
-                    if (subscriptionArr[0].bAddress.city && subscriptionArr[0].bAddress.city.length > 0) {
-                        setBCity(subscriptionArr[0].bAddress.city);
-                        setBCityVal(true)
-    
-                    }
-                    if (subscriptionArr[0].bAddress.postcode && subscriptionArr[0].bAddress.postcode.length > 0) {
-                        setBPostcode(subscriptionArr[0].bAddress.postcode);
-                        setBPostcodeVal(true)
-                    }
-                    if (subscriptionArr[0].bAddress.phoneNumber && subscriptionArr[0].bAddress.phoneNumber.length > 0) {
-                        setBPhoneNumber(subscriptionArr[0].bAddress.phoneNumber);
-                        setBPhoneNumberVal(true)
-                    }
+            setSubscription(subscriptionArr)
+            setComponentLoading(false)
+            if(subscription){
+                setSubscriptionId(subscriptionArr[0].subscriptionId)
+                setEmailAddress(subscriptionArr[0].emailAddress)
+                setStatus(subscriptionArr[0].status)
+                if (subscriptionArr[0].dAddress.firstName && subscriptionArr[0].dAddress.firstName.length > 0) {
+                    setDFirstName(subscriptionArr[0].dAddress.firstName);
+                    setDFirstNameVal(true)
                 }
-    
+                if (subscriptionArr[0].dAddress?.surname && subscriptionArr[0].dAddress?.surname.length > 0) {
+                    setDSurname(subscriptionArr[0].dAddress.surname);
+                    setDSurnameVal(true)
+                }
+                if (subscriptionArr[0].dAddress.firstLine && subscriptionArr[0].dAddress.firstLine.length > 0) {
+                    setDFirstLine(subscriptionArr[0].dAddress.firstLine);
+                    setDFirstLineVal(true)
+                }
+                if (subscriptionArr[0].dAddress.secondLine) {
+                    setDSecondLine(subscriptionArr[0].dAddress.secondLine);
+                }
+                if (subscriptionArr[0].dAddress.city && subscriptionArr[0].dAddress.city.length > 0) {
+                    setDCity(subscriptionArr[0].dAddress.city);
+                    setDCityVal(true)
+                }
+                if (subscriptionArr[0].dAddress.postcode && subscriptionArr[0].dAddress.postcode.length > 0) {
+                    setDPostcode(subscriptionArr[0].dAddress.postcode);
+                    setDPostcodeVal(true)
+                }
+
+                if (subscriptionArr[0].dAddress.phoneNumber && subscriptionArr[0].dAddress.phoneNumber.length > 0) {
+                    setDPhoneNumber(subscriptionArr[0].dAddress.phoneNumber);
+                    setDPhoneNumberVal(true)
+                }
+                if (subscriptionArr[0].bAddress.firstName && subscriptionArr[0].bAddress.firstName.length > 0) {
+                    setBFirstName(subscriptionArr[0].bAddress.firstName);
+                    setBFirstNameVal(true)
+                }
+                if (subscriptionArr[0].bAddress.surname && subscriptionArr[0].bAddress.surname.length > 0) {
+                    setBSurname(subscriptionArr[0].bAddress.surname);
+                    setBSurnameVal(true)
+                }
+                if (subscriptionArr[0].bAddress.firstLine && subscriptionArr[0].bAddress.firstLine.length > 0) {
+                    setBFirstLine(subscriptionArr[0].bAddress.firstLine);
+                    setBFirstLineVal(true)
+                }
+                if (subscriptionArr[0].bAddress.secondLine) {
+                    setBSecondLine(subscriptionArr[0].bAddress.secondLine);
+
+                }
+                if (subscriptionArr[0].bAddress.city && subscriptionArr[0].bAddress.city.length > 0) {
+                    setBCity(subscriptionArr[0].bAddress.city);
+                    setBCityVal(true)
+
+                }
+                if (subscriptionArr[0].bAddress.postcode && subscriptionArr[0].bAddress.postcode.length > 0) {
+                    setBPostcode(subscriptionArr[0].bAddress.postcode);
+                    setBPostcodeVal(true)
+                }
+                if (subscriptionArr[0].bAddress.phoneNumber && subscriptionArr[0].bAddress.phoneNumber.length > 0) {
+                    setBPhoneNumber(subscriptionArr[0].bAddress.phoneNumber);
+                    setBPhoneNumberVal(true)
+                }
             }
-            catch(e:any){
-                await fetch('/api/clientSideError',{
-                    method:"POST",
-                    headers: {
-                        "csrfToken": await getCsrfToken() as string,
-                        "client-error": "true"
-                    },
-                    body:JSON.stringify({
-                        error:e.message,
-                        stack:e.stack
-                    })
-                })
-                setComponentLoading(false)
-                setError(e)
-    
-            }
-    
+
         }
+        catch(e:any){
+            await fetch('/api/clientSideError',{
+                method:"POST",
+                headers: {
+                    "csrfToken": await getCsrfToken() as string,
+                    "client-error": "true"
+                },
+                body:JSON.stringify({
+                    error:e.message,
+                    stack:e.stack
+                })
+            })
+            setComponentLoading(false)
+            setError(e)
+
+        }
+
+    }
+    useEffect(()=>{
+        
         const initiate=async()=>{
             try{
                 const sesh = await getSession()
@@ -152,7 +155,7 @@ export default function Subscription({setComponentLoading}:any){
             }
         }
         initiate()
-    },[subscription,router,setComponentLoading])
+    },[setComponentLoading])
     
 
             
@@ -349,6 +352,13 @@ export default function Subscription({setComponentLoading}:any){
     }
     return(
         <div className="static-container">
+
+<Head>
+            <title>{Metadata["general"]["title"]}</title>
+                <meta name="description" content={Metadata["general"]["description"]}/>
+                <meta property="og:title" content={Metadata["general"]["title"]}/>
+                <meta property="og:description" content={Metadata["general"]["description"]}/>
+            </Head>
         {/* {
         error?
             <p>{error}</p>:

@@ -180,8 +180,15 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     var subscription = await stripe.subscriptions.retrieve(
                         sub
                     )
-                    var updateSubscription = await Subscription().findOneAndUpdate({subscriptionId:sub},{dateRenewal:subscription.current_period_end})
-                    success=true
+                    var renewalDate=new Date(subscription.current_period_end*1000)
+                    var updateSubscription = await Subscription().findOneAndUpdate({subscriptionId:sub},{dateRenewal:renewalDate})
+                    if(updateSubscription){
+
+                        success=true
+                    }
+                    else {
+                        success=false
+                    }
                     break;
                 case "invoice.finalization_failed":
                     console.log("invoice.finaliazation_failed")

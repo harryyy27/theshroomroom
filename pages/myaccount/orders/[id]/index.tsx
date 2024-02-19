@@ -5,6 +5,8 @@ import { useEffect,useState,FormEvent } from "react";
 import authenticate from '../../../../utils/authenticationRequired';
 import Link from 'next/link';
 import FormComponent from "../../../../components/form-component";
+import Head from 'next/head'
+import {Metadata } from '../../../../utils/metadata/metadata'
 export default function MyAccountOrders({setComponentLoading}:any){
     const [cancelOrderId,setCancelOrderId]=useState('');
     const [cancelError, setCancelError]=useState<string|null>(null)
@@ -42,100 +44,102 @@ export default function MyAccountOrders({setComponentLoading}:any){
     const [status,setStatus]=useState('');
     const [err,setErr]=useState('')
     const [amendSuccess,setAmendSuccess]=useState(false)
-    useEffect(()=>{
-        async function getOrders(sesh:Session){
-            try{
-                setComponentLoading(true)
-                const order_id=window.location.href.split('/orders/')[1]
-                const orderData = await fetch(`/api/order/?order_id=${order_id}`,{
-                    method:"GET"
-                })
-                const orderDetails = await orderData.json()
-                const orderArr = orderDetails.orders
+    async function getOrders(sesh:Session){
+        try{
+            setComponentLoading(true)
+            console.log('oioio')
+            const order_id=window.location.href.split('/orders/')[1]
+            const orderData = await fetch(`/api/order/?order_id=${order_id}`,{
+                method:"GET"
+            })
+            const orderDetails = await orderData.json()
+            const orderArr = orderDetails.orders
 
-                setOrder(orderArr)
-                setComponentLoading(false)
-                if(order){
-    
-                    setEmailAddress(orderArr[0].emailAddress)
-                    setStatus(orderArr[0].status)
-                    if (orderArr[0].dAddress.firstName && orderArr[0].dAddress.firstName.length > 0) {
-                        setDFirstName(orderArr[0].dAddress.firstName);
-                        setDFirstNameVal(true)
-                    }
-                    if (orderArr[0].dAddress?.surname && orderArr[0].dAddress?.surname.length > 0) {
-                        setDSurname(orderArr[0].dAddress.surname);
-                        setDSurnameVal(true)
-                    }
-                    if (orderArr[0].dAddress.firstLine && orderArr[0].dAddress.firstLine.length > 0) {
-                        setDFirstLine(orderArr[0].dAddress.firstLine);
-                        setDFirstLineVal(true)
-                    }
-                    if (orderArr[0].dAddress.secondLine) {
-                        setDSecondLine(orderArr[0].dAddress.secondLine);
-                    }
-                    if (orderArr[0].dAddress.city && orderArr[0].dAddress.city.length > 0) {
-                        setDCity(orderArr[0].dAddress.city);
-                        setDCityVal(true)
-                    }
-                    if (orderArr[0].dAddress.postcode && orderArr[0].dAddress.postcode.length > 0) {
-                        setDPostcode(orderArr[0].dAddress.postcode);
-                        setDPostcodeVal(true)
-                    }
-                    if (orderArr[0].dAddress.phoneNumber && orderArr[0].dAddress.phoneNumber.length > 0) {
-                        setDPhoneNumber(orderArr[0].dAddress.phoneNumber);
-                        setDPhoneNumberVal(true)
-                    }
-                    if (orderArr[0].bAddress.firstName && orderArr[0].bAddress.firstName.length > 0) {
-                        setBFirstName(orderArr[0].bAddress.firstName);
-                        setBFirstNameVal(true)
-                    }
-                    if (orderArr[0].bAddress.surname && orderArr[0].bAddress.surname.length > 0) {
-                        setBSurname(orderArr[0].bAddress.surname);
-                        setBSurnameVal(true)
-                    }
-                    if (orderArr[0].bAddress.firstLine && orderArr[0].bAddress.firstLine.length > 0) {
-                        setBFirstLine(orderArr[0].bAddress.firstLine);
-                        setBFirstLineVal(true)
-                    }
-                    if (orderArr[0].bAddress.secondLine) {
-                        setBSecondLine(orderArr[0].bAddress.secondLine);
-    
-                    }
-                    if (orderArr[0].bAddress.city && orderArr[0].bAddress.city.length > 0) {
-                        setBCity(orderArr[0].bAddress.city);
-                        setBCityVal(true)
-    
-                    }
-                    if (orderArr[0].bAddress.postcode && orderArr[0].bAddress.postcode.length > 0) {
-                        setBPostcode(orderArr[0].bAddress.postcode);
-                        setBPostcodeVal(true)
-                    }
-                    if (orderArr[0].bAddress.phoneNumber && orderArr[0].bAddress.phoneNumber.length > 0) {
-                        setBPhoneNumber(orderArr[0].bAddress.phoneNumber);
-                        setBPhoneNumberVal(true)
-                    }
+            setOrder(orderArr)
+            setComponentLoading(false)
+            if(order){
+
+                setEmailAddress(orderArr[0].emailAddress)
+                setStatus(orderArr[0].status)
+                if (orderArr[0].dAddress.firstName && orderArr[0].dAddress.firstName.length > 0) {
+                    setDFirstName(orderArr[0].dAddress.firstName);
+                    setDFirstNameVal(true)
                 }
-    
+                if (orderArr[0].dAddress?.surname && orderArr[0].dAddress?.surname.length > 0) {
+                    setDSurname(orderArr[0].dAddress.surname);
+                    setDSurnameVal(true)
+                }
+                if (orderArr[0].dAddress.firstLine && orderArr[0].dAddress.firstLine.length > 0) {
+                    setDFirstLine(orderArr[0].dAddress.firstLine);
+                    setDFirstLineVal(true)
+                }
+                if (orderArr[0].dAddress.secondLine) {
+                    setDSecondLine(orderArr[0].dAddress.secondLine);
+                }
+                if (orderArr[0].dAddress.city && orderArr[0].dAddress.city.length > 0) {
+                    setDCity(orderArr[0].dAddress.city);
+                    setDCityVal(true)
+                }
+                if (orderArr[0].dAddress.postcode && orderArr[0].dAddress.postcode.length > 0) {
+                    setDPostcode(orderArr[0].dAddress.postcode);
+                    setDPostcodeVal(true)
+                }
+                if (orderArr[0].dAddress.phoneNumber && orderArr[0].dAddress.phoneNumber.length > 0) {
+                    setDPhoneNumber(orderArr[0].dAddress.phoneNumber);
+                    setDPhoneNumberVal(true)
+                }
+                if (orderArr[0].bAddress.firstName && orderArr[0].bAddress.firstName.length > 0) {
+                    setBFirstName(orderArr[0].bAddress.firstName);
+                    setBFirstNameVal(true)
+                }
+                if (orderArr[0].bAddress.surname && orderArr[0].bAddress.surname.length > 0) {
+                    setBSurname(orderArr[0].bAddress.surname);
+                    setBSurnameVal(true)
+                }
+                if (orderArr[0].bAddress.firstLine && orderArr[0].bAddress.firstLine.length > 0) {
+                    setBFirstLine(orderArr[0].bAddress.firstLine);
+                    setBFirstLineVal(true)
+                }
+                if (orderArr[0].bAddress.secondLine) {
+                    setBSecondLine(orderArr[0].bAddress.secondLine);
+
+                }
+                if (orderArr[0].bAddress.city && orderArr[0].bAddress.city.length > 0) {
+                    setBCity(orderArr[0].bAddress.city);
+                    setBCityVal(true)
+
+                }
+                if (orderArr[0].bAddress.postcode && orderArr[0].bAddress.postcode.length > 0) {
+                    setBPostcode(orderArr[0].bAddress.postcode);
+                    setBPostcodeVal(true)
+                }
+                if (orderArr[0].bAddress.phoneNumber && orderArr[0].bAddress.phoneNumber.length > 0) {
+                    setBPhoneNumber(orderArr[0].bAddress.phoneNumber);
+                    setBPhoneNumberVal(true)
+                }
             }
-            catch(e:any){
-                await fetch('/api/clientSideError',{
-                    method:"POST",
-                    headers: {
-                        "csrfToken": await getCsrfToken() as string,
-                        "client-error": "true"
-                    },
-                    body:JSON.stringify({
-                        error:e.message,
-                        stack:e.stack
-                    })
-                })
-                setComponentLoading(false)
-                setError(e)
-    
-            }
-    
+
         }
+        catch(e:any){
+            await fetch('/api/clientSideError',{
+                method:"POST",
+                headers: {
+                    "csrfToken": await getCsrfToken() as string,
+                    "client-error": "true"
+                },
+                body:JSON.stringify({
+                    error:e.message,
+                    stack:e.stack
+                })
+            })
+            setComponentLoading(false)
+            setError(e)
+
+        }
+
+    }
+    useEffect(()=>{
+        
         const initiate=async()=>{
             try{
                 const sesh = await getSession()
@@ -151,7 +155,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
             }
         }
         initiate()
-    },[order,router,setComponentLoading])
+    },[setComponentLoading])
     
 
             
@@ -332,6 +336,13 @@ export default function MyAccountOrders({setComponentLoading}:any){
     }
     return(
         <div className="static-container">
+
+<Head>
+            <title>{Metadata["general"]["title"]}</title>
+                <meta name="description" content={Metadata["general"]["description"]}/>
+                <meta property="og:title" content={Metadata["general"]["title"]}/>
+                <meta property="og:description" content={Metadata["general"]["description"]}/>
+            </Head>
         {/* {
         error?
             <p>{error}</p>:

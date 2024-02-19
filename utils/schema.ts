@@ -348,6 +348,10 @@ const OrderSchema=new Schema({
     invoiceId:{
         type:String,
         required:false
+    },
+    zedBookingId:{
+        type:String,
+        required:false
     }
 })
 const Order = function(){

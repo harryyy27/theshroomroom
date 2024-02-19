@@ -12,7 +12,7 @@ export const imageMap: {[mushroom:string]:ProductImage} = {
         name: 'Lions Mane',
         alt:'lions mane mushroom',
         path:'/products/mushrooms/lions_mane',
-        fileType:'jpeg',
+        fileType:'png',
         link: '/products/lions_mane',
         width:3500,
         height:2500

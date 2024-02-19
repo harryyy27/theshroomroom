@@ -3,6 +3,8 @@ import {getCsrfToken, getSession,signIn} from 'next-auth/react';
 import authenticate from '../../utils/authenticationRequired';
 import FormComponent from '../../components/form-component';
 import styles from '../../styles/Components/Form.module.css'
+import Head from 'next/head'
+import {Metadata} from '../../utils/metadata/metadata'
 
 export default function Edit({setComponentLoading}:any){
     const [dFirstName,setDFirstName]=useState('');
@@ -238,6 +240,12 @@ export default function Edit({setComponentLoading}:any){
 
     return(
         <div className="static-container">
+            <Head>
+            <title>{Metadata["general"]["title"]}</title>
+                <meta name="description" content={Metadata["general"]["description"]}/>
+                <meta property="og:title" content={Metadata["general"]["title"]}/>
+                <meta property="og:description" content={Metadata["general"]["description"]}/>
+            </Head>
             <h2>Edit details</h2>
             <form className={styles["form"]}action="">
                 <h2>Delivery Address</h2>

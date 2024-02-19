@@ -172,7 +172,11 @@
   padding:0;
   width:100%;
 }
-
+@media(max-width:1024px){
+  .hero-sub-heading {
+    display:none
+  }
+}
 @media(max-width:767px){
   .hero-heading {
     font-size:1.6rem;

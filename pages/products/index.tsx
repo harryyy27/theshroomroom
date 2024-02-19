@@ -53,7 +53,7 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
                                 {
                                     name?
 
-                                    <Image className="product-image" priority blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} fill sizes={`(min-width:768px) ${imageMap[name].width}px, (max-width:767px): 40vw`} src={`${imageMap[name].path}.${imageMap[name].fileType}`} alt={name}/>
+                                    <Image className="product-image" priority blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} fill sizes={`(min-width:768px) ${imageMap[name].width}px, (max-width:767px): 40vw`} src={`${imageMap[name].path}.${imageMap[name].fileType}`} alt={name+ " mushrooms"}/>
                                     :
                                     null
                                 }
