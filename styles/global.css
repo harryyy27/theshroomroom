@@ -55,6 +55,7 @@ colour scheme - turkey tail */
 }
 .size-btn-message {
   position:absolute;
+  display:block;
   color:red;
   left:50%;
   top:50%;

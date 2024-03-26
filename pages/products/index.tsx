@@ -6,10 +6,12 @@ import {imageMap} from '../../utils/imageMap/imageMap'
 import Head from 'next/head';
 import {Metadata} from '../../utils/metadata/metadata'
 interface ProductInterface{
+    _id:String;
     name:String;
     description: String;
     price_fresh_100g: Number;
     quantity: Number;
+    new: Boolean;
     
 }
 export default function Product(props:{mushrooms:ProductInterface[]}){
@@ -43,9 +45,9 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
             <>
         <ul className="product-list">
         {
-            products.length?products.map(({_id,name,price}:any,idx)=>{
+            products.length?products.map(({_id,name,price,new_product}:any,idx)=>{
                 return(
-                    <li className="product" key={name}>
+                    <li className="product" key={idx}>
                         <Link  href={`/products/${name.replace(/[\s]/gi,'-')}`} >
                             <span>
                                 <h2 className="product-name">{name}</h2>
@@ -61,6 +63,11 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
 
                             </span>
                         </Link>
+                        {
+                            new_product?
+                            <h2>NEW!</h2>:
+                            null
+                        }
                             <p className="product-price">£{price}</p>
                         {/* <select className="product-quantity" id={`quantity${idx}`}name={"quantity"} >
                             {
@@ -120,6 +127,9 @@ export async function getServerSideProps(ctx:any){
                 }
                 return [...acc,b]
             },[])
+            const prods=resp.map((el:any)=>{
+                el["new_product"]=el["new"]
+            })
     }
         
         else {

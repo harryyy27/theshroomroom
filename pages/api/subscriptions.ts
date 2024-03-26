@@ -37,18 +37,18 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         else if(req.method==='PUT'){
             var body=JSON.parse(req.body);
-            if(req.body.cancel){
+            if(body.cancel){
                 var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_ACTIVE"]}},{status:"SUBSCRIPTION_CANCELLED"})
             }
-            else if (req.body.resume){
+            else if (body.resume){
                 var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_PAUSED"]}},{status:"SUBSCRIPTION_ACTIVE"})
             }
-            else if (req.body.pause){
+            else if (body.pause){
                 var subscription = await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_ACTIVE"]}},{status:"SUBSCRIPTION_PAUSED"})
             }
             else if (body.amend){
 
-                var subscription= await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_ACTIVE"]}},{dAddress:body.dAddress,bAddress:body.bAddress})
+                var subscription= await Subscription().findOneAndUpdate({subscriptionId:body.subscriptionId,status:{$in:["SUBSCRIPTION_ACTIVE"]}},{dAddress:body.dAddress,bAddress:body.bAddress,deliveryHub:body.deliveryHub})
                 
             }
 

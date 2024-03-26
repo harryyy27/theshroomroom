@@ -7,6 +7,7 @@ import Link from 'next/link';
 import FormComponent from "../../../../components/form-component";
 import Head from 'next/head'
 import {Metadata } from '../../../../utils/metadata/metadata'
+import postcodes from '../../../../utils/zedPostcodes/postcodes'
 export default function MyAccountOrders({setComponentLoading}:any){
     const [cancelOrderId,setCancelOrderId]=useState('');
     const [cancelError, setCancelError]=useState<string|null>(null)
@@ -44,6 +45,9 @@ export default function MyAccountOrders({setComponentLoading}:any){
     const [status,setStatus]=useState('');
     const [err,setErr]=useState('')
     const [amendSuccess,setAmendSuccess]=useState(false)
+    const [validPostcodes,setValidPostcodes]=useState<any|null>(null)
+    const [deliveryHub,setDeliveryHub]=useState('');
+    const [deliveryHubVal,setDeliveryHubVal]=useState(false);
     async function getOrders(sesh:Session){
         try{
             setComponentLoading(true)
@@ -83,6 +87,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
                 if (orderArr[0].dAddress.postcode && orderArr[0].dAddress.postcode.length > 0) {
                     setDPostcode(orderArr[0].dAddress.postcode);
                     setDPostcodeVal(true)
+
                 }
                 if (orderArr[0].dAddress.phoneNumber && orderArr[0].dAddress.phoneNumber.length > 0) {
                     setDPhoneNumber(orderArr[0].dAddress.phoneNumber);
@@ -117,6 +122,11 @@ export default function MyAccountOrders({setComponentLoading}:any){
                     setBPhoneNumber(orderArr[0].bAddress.phoneNumber);
                     setBPhoneNumberVal(true)
                 }
+
+                if(orderArr[0].deliveryHub&& orderArr[0].deliveryHub.length>0){
+                    setDeliveryHub(orderArr[0].deliveryHub)
+                    setDeliveryHubVal(true)
+                }
             }
 
         }
@@ -143,6 +153,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
         const initiate=async()=>{
             try{
                 const sesh = await getSession()
+                setValidPostcodes(postcodes)
                 if(!sesh){
                     throw new Error("You should be logged in to view this page")
                 }
@@ -160,8 +171,9 @@ export default function MyAccountOrders({setComponentLoading}:any){
 
             
         
-    const validate_form = () => {
-        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal) {
+    const validate_form = async() => {
+        try{
+            if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal&&deliveryHubVal) {
             
                 return true
         }
@@ -205,13 +217,31 @@ export default function MyAccountOrders({setComponentLoading}:any){
             if (!bPhoneNumberVal) {
                 setBPhoneNumberVal(false)
             }
+            if (dPostcodeVal&&!deliveryHubVal){
+                throw new Error('Delivery hub validation issue - order edit dpostcode = '+ dPostcode + ' deliveryHub= '+deliveryHub)
+            }
             return false
         }
+        }
+        catch(error:any){
+            await fetch('/api/clientSideError',{
+                method:"POST",
+                headers: {
+                    "csrfToken": await getCsrfToken() as string,
+                    "client-error": "true"
+                },
+                body:JSON.stringify({
+                    error:error.message,
+                    stack:error.stack
+                })
+            })
+        }
+        
 
     }
     async function amendOrder(e:FormEvent) {
         e.preventDefault()
-        const valid = validate_form()
+        const valid = await validate_form()
         if(valid){
             const csrftoken=await getCsrfToken()
             if(!csrftoken){
@@ -244,7 +274,8 @@ export default function MyAccountOrders({setComponentLoading}:any){
                         city: bCity,
                         postcode: bPostcode,
                         phoneNumber:bPhoneNumber
-                    }, 
+                    },
+                    deliveryHub:deliveryHub
                     }
                 )
             })
@@ -334,6 +365,38 @@ export default function MyAccountOrders({setComponentLoading}:any){
             setError(e)
         }
     }
+    const postCodeValidate=(formPostcode:string,validPostcodesArr:any)=>{
+        
+        const keys = Object.keys(validPostcodesArr)
+        let validPostcode=false
+        let postcodeArea=''
+        keys.forEach((key:string)=>{
+            if(!validPostcodesArr[key as string].every((el:string)=>!formPostcode.toLowerCase().trim().startsWith(el.toLowerCase()))){
+                validPostcode=true
+                postcodeArea=key
+            }
+        })
+        if(formPostcode.length>0){
+            validPostcode=true
+        }
+        if(validPostcode&&postcodeArea!==''){
+            setDeliveryHub(postcodeArea)
+            setDeliveryHubVal(true)
+            return true
+        }
+        else if(validPostcode){
+            setDeliveryHub('')
+            setDeliveryHubVal(true)
+            return true
+        }
+        else {
+            setDeliveryHub('')
+            setDeliveryHubVal(false)
+            return false
+        }
+        
+    }
+    
     return(
         <div className="static-container">
 
@@ -381,7 +444,9 @@ export default function MyAccountOrders({setComponentLoading}:any){
 
                             <FormComponent labelName={"2nd Line of address"} variable={dSecondLine} variableName={Object.keys({ dSecondLine })[0]} setVariable={setDSecondLine} inputType={"text"} required={false} />
                             <FormComponent labelName={"City"} variable={dCity} setVariable={setDCity} variableName={Object.keys({ dCity })[0]} variableVal={dCityVal} setVariableVal={setDCityVal} inputType={"text"} required={true} />
-                            <FormComponent labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} />
+                            <FormComponent labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} callback={postCodeValidate} params={validPostcodes} required={true} />
+                            <Link className="link" href="/delivery">See available delivery postcodes here</Link>
+
                             <FormComponent labelName={"Phone Number"} variable={dPhoneNumber} variableName={Object.keys({ dPhoneNumber })[0]} setVariable={setDPhoneNumber} variableVal={dPhoneNumberVal} setVariableVal={setDPhoneNumberVal} inputType={"text"} required={true} />
 
                             <h2>Billing Address</h2>

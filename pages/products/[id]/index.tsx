@@ -30,7 +30,7 @@ export default function ProductDetails({setComponentLoading}:any){
     const [price,setPrice]=useState('');
     const [productAvailable,setProductAvailable]=useState(true)
     const [id,setId]=useState('');
-    const [fresh,setFresh]=useState(true);
+    const [fresh,setFresh]=useState(false);
     const [size,setSize]=useState('');
     const [qty,setQty]=useState(1);
     const [user,setUser]=useState(false);
@@ -60,6 +60,12 @@ export default function ProductDetails({setComponentLoading}:any){
                     dryList.push(el.mass)
                 }
             })
+            console.log(freshList)
+            console.log(dryList)
+            if(freshList.length>0){
+                console.log('eh')
+                setFresh(true)
+            }
             freshList.sort((a:string,b:string)=>{
                 if(a.slice(-2)==='kg'&&b.slice(-2)==='kg'){
                     return Number(a.slice(0,a.length-2))-Number(b.slice(0,b.length-2))
@@ -148,17 +154,21 @@ export default function ProductDetails({setComponentLoading}:any){
                     itemsAvailable?
 
                     <>
-                <div role="listbox" aria-label="select fresh or dry">
-                <button role="option"className="select-custom fresh-dry select-active" aria-selected={true}onClick={(e)=>{
-                    setFresh(true);
-                    setPrice('');
-                    setSize('');
-                    setStripeProductId('');
-                    setProductAvailable(true);
-                    toggleBackground(e.target as HTMLElement,"fresh-dry")
-                    toggleBackground(null,"size-select")
-                }}>Fresh</button>
-                <button role="option" className="select-custom fresh-dry" aria-selected={false} onClick={(e)=>{
+                <div role="listbox" aria-label="select fresh or dry">{
+                    freshSizeList.length>0?
+                    <button role="option"className={`select-custom fresh-dry ${fresh?"select-active":""}`} aria-selected={true}onClick={(e)=>{
+                        setFresh(true);
+                        setPrice('');
+                        setSize('');
+                        setStripeProductId('');
+                        setProductAvailable(true);
+                        toggleBackground(e.target as HTMLElement,"fresh-dry")
+                        toggleBackground(null,"size-select")
+                    }}>Fresh</button>
+                    :null
+                }
+                {drySizeList.length>0?
+                <button role="option" className={`select-custom fresh-dry ${fresh?"":"select-active"}`} aria-selected={false} onClick={(e)=>{
                     setFresh(false)
                     setPrice('');
                     setSize('');
@@ -166,7 +176,9 @@ export default function ProductDetails({setComponentLoading}:any){
                     setProductAvailable(true);
                     toggleBackground(e.target as HTMLElement,"fresh-dry")
                     toggleBackground(null,"size-select")
-                    }}>Dry</button>
+                    }}>Dry</button>:
+                    null
+                }
                 </div>
                 
                 

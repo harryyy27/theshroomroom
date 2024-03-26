@@ -38,6 +38,10 @@ const ProductSchema = new Schema({
         type: String,
         required:true
     },
+    new: {
+        type: Boolean,
+        required:true
+    }
     
 })
 // OUR TODO MODEL
@@ -349,6 +353,10 @@ const OrderSchema=new Schema({
         type:String,
         required:false
     },
+    deliveryHub:{
+        type:String,
+        required:false
+    },
     zedBookingId:{
         type:String,
         required:false
@@ -480,6 +488,10 @@ const SubscriptionSchema=new Schema({
         type:Date,
         required:false
 
+    },
+    deliveryHub:{
+        type:String,
+        required:false
     },
     shippingMethod: {
         type:String,

@@ -181,7 +181,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         else if(req.method==='PUT'){
             var body=JSON.parse(req.body);
-            if(req.body.cancel){
+            if(body.cancel){
                 var order = await Order().findOneAndUpdate({paymentIntentId:body.paymentIntentId,status:{$in:["ORDER_RECEIVED"]}},{...body.order})
             }
             else {
