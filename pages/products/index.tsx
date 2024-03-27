@@ -65,7 +65,7 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
                         </Link>
                         {
                             new_product?
-                            <h2>NEW!</h2>:
+                            <h2 className="new">NEW!</h2>:
                             null
                         }
                             <p className="product-price">£{price}</p>

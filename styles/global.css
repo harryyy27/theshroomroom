@@ -53,6 +53,16 @@ colour scheme - turkey tail */
   padding:0;
   display:inline;
 }
+.new {
+  top: 25%;
+  position: absolute;
+  right: 15%;
+  background-color: var(--sec);
+  border-radius: 50%;
+  padding: 0.5rem;
+  color: var(--ter2);
+  font-size: 1rem;
+}
 .size-btn-message {
   position:absolute;
   display:block;
@@ -164,7 +174,7 @@ colour scheme - turkey tail */
 .plp-image-wrapper {
   position:relative;
   width:100%;
-  aspect-ratio: 350/250;
+  aspect-ratio: 1/1;
   margin:auto;
 }
 .cart-left {
@@ -248,7 +258,7 @@ colour scheme - turkey tail */
 }
 .product {
   width:25%;
-
+  position:relative;
 }
 .product-heading {
   text-align:center;
