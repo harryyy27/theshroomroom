@@ -20,6 +20,8 @@ interface Product {
 export default function ProductDetails({setComponentLoading}:any){
     const context = useContext(CartContext);
     const [product,setProduct]=useState<Product[]>([])
+    const [freshSizeList,setFreshSizeList]=useState<string[]>([])
+    const [drySizeList,setDrySizeList]=useState<string[]>([])
     const [name,setName]=useState('');
     const [description,setDescription]=useState('');
     const [imageUrl,setImageUrl]=useState('');
@@ -28,7 +30,7 @@ export default function ProductDetails({setComponentLoading}:any){
     const [price,setPrice]=useState('');
     const [productAvailable,setProductAvailable]=useState(true)
     const [id,setId]=useState('');
-    const [fresh,setFresh]=useState(true);
+    const [fresh,setFresh]=useState(false);
     const [size,setSize]=useState('');
     const [qty,setQty]=useState(1);
     const [user,setUser]=useState(false);
@@ -48,8 +50,56 @@ export default function ProductDetails({setComponentLoading}:any){
             }
             const productDetailsJson = await fetch(`/api/products?product=${productName}`)
             const productDetails = await productDetailsJson.json()
-            console.log(productDetails)
-            const stock=["stock_available_dry_100g","stock_available_dry_10g","stock_available_dry_25g","stock_available_dry_50g","stock_available_fresh_100g","stock_available_fresh_1kg"]
+            const freshList:string[] = []
+            const dryList:string[] = []
+            productDetails.forEach((el:any)=>{
+                if(el.fresh){
+                    freshList.push(el.mass);
+                }
+                else {
+                    dryList.push(el.mass)
+                }
+            })
+            console.log(freshList)
+            console.log(dryList)
+            if(freshList.length>0){
+                console.log('eh')
+                setFresh(true)
+            }
+            freshList.sort((a:string,b:string)=>{
+                if(a.slice(-2)==='kg'&&b.slice(-2)==='kg'){
+                    return Number(a.slice(0,a.length-2))-Number(b.slice(0,b.length-2))
+                }
+                else if(a.slice(-2)==='kg'&&b.slice(-2)!=='kg'){
+                    return Number(a.slice(0,a.length-2))*1000-Number(b.slice(0,b.length-1))
+                }
+                else if(a.slice(-2)!=='kg'&&b.slice(-2)==='kg'){
+                    return Number(a.slice(0,a.length-1))-Number(b.slice(0,b.length-2))*1000
+
+                }
+                else {
+
+                    return Number(a.slice(0,a.length-1))-Number(b.slice(0,b.length-1))
+                }
+            })
+            dryList.sort((a:string,b:string)=>{
+                if(a.slice(-2)==='kg'&&b.slice(-2)==='kg'){
+                    return Number(a.slice(0,a.length-2))-Number(b.slice(0,b.length-2))
+                }
+                else if(a.slice(-2)==='kg'&&b.slice(-2)!=='kg'){
+                    return Number(a.slice(0,a.length-2))*1000-Number(b.slice(0,b.length-1))
+                }
+                else if(a.slice(-2)!=='kg'&&b.slice(-2)==='kg'){
+                    return Number(a.slice(0,a.length-1))-Number(b.slice(0,b.length-2))*1000
+
+                }
+                else {
+
+                    return Number(a.slice(0,a.length-1))-Number(b.slice(0,b.length-1))
+                }
+            })
+            setFreshSizeList(freshList)
+            setDrySizeList(dryList)
             if(productDetails.every((el:string)=>productDetails.stock_available===0)){
                 setItemsAvailable(false)
                 setProductAvailable(false)
@@ -91,7 +141,7 @@ export default function ProductDetails({setComponentLoading}:any){
                 {
                     name?
 
-                    <Image id="productImage" fill src={`${imageMap[name].path}.${imageMap[name].fileType}`} alt={name} sizes="(min-width:1025px) 40vw, (max-width:767px) 80vw"priority placeholder="blur" blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} />
+                    <Image id="productImage" fill src={`${imageMap[name].path}_${fresh?"fresh":"dry"}.${imageMap[name].fileType}`} alt={name} sizes="(min-width:1025px) 40vw, (max-width:767px) 80vw"priority placeholder="blur" blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} />
                     :
                     null
                 }
@@ -104,17 +154,21 @@ export default function ProductDetails({setComponentLoading}:any){
                     itemsAvailable?
 
                     <>
-                <div role="listbox" aria-label="select fresh or dry">
-                <button role="option"className="select-custom fresh-dry select-active" aria-selected={true}onClick={(e)=>{
-                    setFresh(true);
-                    setPrice('');
-                    setSize('');
-                    setStripeProductId('');
-                    setProductAvailable(true);
-                    toggleBackground(e.target as HTMLElement,"fresh-dry")
-                    toggleBackground(null,"size-select")
-                }}>Fresh</button>
-                <button role="option" className="select-custom fresh-dry" aria-selected={false} onClick={(e)=>{
+                <div role="listbox" aria-label="select fresh or dry">{
+                    freshSizeList.length>0?
+                    <button role="option"className={`select-custom fresh-dry ${fresh?"select-active":""}`} aria-selected={true}onClick={(e)=>{
+                        setFresh(true);
+                        setPrice('');
+                        setSize('');
+                        setStripeProductId('');
+                        setProductAvailable(true);
+                        toggleBackground(e.target as HTMLElement,"fresh-dry")
+                        toggleBackground(null,"size-select")
+                    }}>Fresh</button>
+                    :null
+                }
+                {drySizeList.length>0?
+                <button role="option" className={`select-custom fresh-dry ${fresh?"":"select-active"}`} aria-selected={false} onClick={(e)=>{
                     setFresh(false)
                     setPrice('');
                     setSize('');
@@ -122,7 +176,9 @@ export default function ProductDetails({setComponentLoading}:any){
                     setProductAvailable(true);
                     toggleBackground(e.target as HTMLElement,"fresh-dry")
                     toggleBackground(null,"size-select")
-                    }}>Dry</button>
+                    }}>Dry</button>:
+                    null
+                }
                 </div>
                 
                 
@@ -130,10 +186,10 @@ export default function ProductDetails({setComponentLoading}:any){
                 <p id="sizeLabel">Select a size:</p>
                 <div role="listbox" aria-labelledby="sizeLabel">
                     {
-                        fresh?["100g","250g","500g","1kg"].map((el:string)=>{
+                        fresh&&freshSizeList.length>0?freshSizeList.map((el:string,idx:number)=>{
                             return(
-                                <div key={el}className={"size-button-wrapper"}>
-                                <button key={el} className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0?'button-disabled':''}`} role="option" aria-selected={false}
+                                <div key={idx}className={"size-button-wrapper"}>
+                                <button key={idx} className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0?'button-disabled':''}`} role="option" aria-selected={false}
                                 onClick={(e)=>{
                                     var text=(e.target as HTMLInputElement).textContent as string;
                                     const chosenProduct:Product=product.filter((prod:any)=>{
@@ -157,7 +213,7 @@ export default function ProductDetails({setComponentLoading}:any){
                             )
                         })
                         :
-                        ["10g","25g","50g","100g"].map((el:string)=>{
+                        drySizeList.length?drySizeList.map((el:string)=>{
                             return(
                             <div key={el}className={"size-button-wrapper"}>
                                 <button key={el} disabled={product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0}className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0?'button-disabled':''}`} role="option"aria-selected={false}
@@ -180,7 +236,8 @@ export default function ProductDetails({setComponentLoading}:any){
 
                                 }}>{el}</button>{product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0?<span className="size-btn-message">Out of stock</span>:null}</div>
                             )
-                        })
+                        }):
+                        null
                     }
                 </div>
                 <p id="productPrice"> Price: £{price?qty*Number(price):null}</p>
@@ -197,7 +254,6 @@ export default function ProductDetails({setComponentLoading}:any){
                             if(chosenProduct.stock_available>=Number(e.target.value)){
                                 setProductAvailable(true)
                                 setErr('');
-                                console.log('yoo')
                             }
                             else {
                                 setProductAvailable(false)
@@ -228,7 +284,6 @@ export default function ProductDetails({setComponentLoading}:any){
                                 setComponentLoading(true)
                                 const input = document.getElementById(`productQuantity`) as HTMLInputElement;
                                 if(size!==''&&input.value!==''){
-                                    console.log(context.state.cart)
                                     context.saveCart? context.saveCart({
                                         _id:id,
                                         name:name,

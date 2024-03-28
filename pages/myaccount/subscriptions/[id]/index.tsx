@@ -5,6 +5,9 @@ import { useEffect,useState,FormEvent } from "react";
 import authenticate from '../../../../utils/authenticationRequired';
 import Link from 'next/link';
 import FormComponent from "../../../../components/form-component";
+import Head from 'next/head'
+import {Metadata} from '../../../../utils/metadata/metadata'
+import postcodes from '../../../../utils/zedPostcodes/postcodes'
 export default function Subscription({setComponentLoading}:any){
     const [cancelSubscriptionId,setCancelSubscriptionId]=useState('');
     const [cancelError, setCancelError]=useState<string|null>(null)
@@ -23,6 +26,8 @@ export default function Subscription({setComponentLoading}:any){
     const [dCityVal, setDCityVal] = useState<boolean | null>(null);
     const [dPostcode, setDPostcode] = useState('');
     const [dPostcodeVal, setDPostcodeVal] = useState<boolean | null>(null);
+    const [dPhoneNumber,setDPhoneNumber]=useState('');
+    const [dPhoneNumberVal, setDPhoneNumberVal] = useState<boolean | null>(null);
     const [bFirstName, setBFirstName] = useState('');
     const [bFirstNameVal, setBFirstNameVal] = useState<boolean | null>(null);
     const [bSurname, setBSurname] = useState('');
@@ -34,102 +39,119 @@ export default function Subscription({setComponentLoading}:any){
     const [bCityVal, setBCityVal] = useState<boolean | null>(null);
     const [bPostcode, setBPostcode] = useState('');
     const [bPostcodeVal, setBPostcodeVal] = useState<boolean | null>(null);
+    const [bPhoneNumber,setBPhoneNumber]=useState('');
+    const [bPhoneNumberVal, setBPhoneNumberVal] = useState<boolean | null>(null);
     const [emailAddress, setEmailAddress] = useState('');
     const [status,setStatus]=useState('');
     const [err,setErr]=useState('')
     const [amendSuccess,setAmendSuccess]=useState(false)
-    useEffect(()=>{
-        async function getSubscriptions(sesh:Session){
-            try{
-                setComponentLoading(true)
-                console.log('oiiii')
-                const subscription_id=window.location.href.split('/subscriptions/')[1]
-                const subscriptionData = await fetch(`/api/subscriptions/?subscription_id=${subscription_id}`,{
-                    method:"GET"
-                })
-                const subscriptionDetails = await subscriptionData.json()
-                const subscriptionArr = subscriptionDetails.subscriptions
-                console.log(subscriptionDetails)
+    const [validPostcodes,setValidPostcodes]=useState<any|null>(null)
+    const [deliveryHub,setDeliveryHub]=useState('');
+    const [deliveryHubVal,setDeliveryHubVal]=useState(false);
+    async function getSubscriptions(sesh:Session){
+        try{
+            setComponentLoading(true)
+            const subscription_id=window.location.href.split('/subscriptions/')[1]
+            const subscriptionData = await fetch(`/api/subscriptions/?subscription_id=${subscription_id}`,{
+                method:"GET"
+            })
+            const subscriptionDetails = await subscriptionData.json()
+            const subscriptionArr = subscriptionDetails.subscriptions
 
-                setSubscription(subscriptionArr)
-                setComponentLoading(false)
-                console.log(subscription)
-                if(subscription){
-                    setSubscriptionId(subscriptionArr[0].subscriptionId)
-                    setEmailAddress(subscriptionArr[0].emailAddress)
-                    setStatus(subscriptionArr[0].status)
-                    if (subscriptionArr[0].dAddress.firstName && subscriptionArr[0].dAddress.firstName.length > 0) {
-                        setDFirstName(subscriptionArr[0].dAddress.firstName);
-                        setDFirstNameVal(true)
-                    }
-                    if (subscriptionArr[0].dAddress?.surname && subscriptionArr[0].dAddress?.surname.length > 0) {
-                        setDSurname(subscriptionArr[0].dAddress.surname);
-                        setDSurnameVal(true)
-                    }
-                    if (subscriptionArr[0].dAddress.firstLine && subscriptionArr[0].dAddress.firstLine.length > 0) {
-                        setDFirstLine(subscriptionArr[0].dAddress.firstLine);
-                        setDFirstLineVal(true)
-                    }
-                    if (subscriptionArr[0].dAddress.secondLine) {
-                        setDSecondLine(subscriptionArr[0].dAddress.secondLine);
-                    }
-                    if (subscriptionArr[0].dAddress.city && subscriptionArr[0].dAddress.city.length > 0) {
-                        setDCity(subscriptionArr[0].dAddress.city);
-                        setDCityVal(true)
-                    }
-                    if (subscriptionArr[0].dAddress.postcode && subscriptionArr[0].dAddress.postcode.length > 0) {
-                        setDPostcode(subscriptionArr[0].dAddress.postcode);
-                        setDPostcodeVal(true)
-                    }
-                    if (subscriptionArr[0].bAddress.firstName && subscriptionArr[0].bAddress.firstName.length > 0) {
-                        setBFirstName(subscriptionArr[0].bAddress.firstName);
-                        setBFirstNameVal(true)
-                    }
-                    if (subscriptionArr[0].bAddress.surname && subscriptionArr[0].bAddress.surname.length > 0) {
-                        setBSurname(subscriptionArr[0].bAddress.surname);
-                        setBSurnameVal(true)
-                    }
-                    if (subscriptionArr[0].bAddress.firstLine && subscriptionArr[0].bAddress.firstLine.length > 0) {
-                        setBFirstLine(subscriptionArr[0].bAddress.firstLine);
-                        setBFirstLineVal(true)
-                    }
-                    if (subscriptionArr[0].bAddress.secondLine) {
-                        setBSecondLine(subscriptionArr[0].bAddress.secondLine);
-    
-                    }
-                    if (subscriptionArr[0].bAddress.city && subscriptionArr[0].bAddress.city.length > 0) {
-                        setBCity(subscriptionArr[0].bAddress.city);
-                        setBCityVal(true)
-    
-                    }
-                    if (subscriptionArr[0].bAddress.postcode && subscriptionArr[0].bAddress.postcode.length > 0) {
-                        setBPostcode(subscriptionArr[0].bAddress.postcode);
-                        setBPostcodeVal(true)
-                    }
+            setSubscription(subscriptionArr)
+            setComponentLoading(false)
+            if(subscription){
+                setSubscriptionId(subscriptionArr[0].subscriptionId)
+                setEmailAddress(subscriptionArr[0].emailAddress)
+                setStatus(subscriptionArr[0].status)
+                if (subscriptionArr[0].dAddress.firstName && subscriptionArr[0].dAddress.firstName.length > 0) {
+                    setDFirstName(subscriptionArr[0].dAddress.firstName);
+                    setDFirstNameVal(true)
                 }
-    
+                if (subscriptionArr[0].dAddress?.surname && subscriptionArr[0].dAddress?.surname.length > 0) {
+                    setDSurname(subscriptionArr[0].dAddress.surname);
+                    setDSurnameVal(true)
+                }
+                if (subscriptionArr[0].dAddress.firstLine && subscriptionArr[0].dAddress.firstLine.length > 0) {
+                    setDFirstLine(subscriptionArr[0].dAddress.firstLine);
+                    setDFirstLineVal(true)
+                }
+                if (subscriptionArr[0].dAddress.secondLine) {
+                    setDSecondLine(subscriptionArr[0].dAddress.secondLine);
+                }
+                if (subscriptionArr[0].dAddress.city && subscriptionArr[0].dAddress.city.length > 0) {
+                    setDCity(subscriptionArr[0].dAddress.city);
+                    setDCityVal(true)
+                }
+                if (subscriptionArr[0].dAddress.postcode && subscriptionArr[0].dAddress.postcode.length > 0) {
+                    setDPostcode(subscriptionArr[0].dAddress.postcode);
+                    setDPostcodeVal(true)
+                }
+
+                if (subscriptionArr[0].dAddress.phoneNumber && subscriptionArr[0].dAddress.phoneNumber.length > 0) {
+                    setDPhoneNumber(subscriptionArr[0].dAddress.phoneNumber);
+                    setDPhoneNumberVal(true)
+                }
+                if (subscriptionArr[0].bAddress.firstName && subscriptionArr[0].bAddress.firstName.length > 0) {
+                    setBFirstName(subscriptionArr[0].bAddress.firstName);
+                    setBFirstNameVal(true)
+                }
+                if (subscriptionArr[0].bAddress.surname && subscriptionArr[0].bAddress.surname.length > 0) {
+                    setBSurname(subscriptionArr[0].bAddress.surname);
+                    setBSurnameVal(true)
+                }
+                if (subscriptionArr[0].bAddress.firstLine && subscriptionArr[0].bAddress.firstLine.length > 0) {
+                    setBFirstLine(subscriptionArr[0].bAddress.firstLine);
+                    setBFirstLineVal(true)
+                }
+                if (subscriptionArr[0].bAddress.secondLine) {
+                    setBSecondLine(subscriptionArr[0].bAddress.secondLine);
+
+                }
+                if (subscriptionArr[0].bAddress.city && subscriptionArr[0].bAddress.city.length > 0) {
+                    setBCity(subscriptionArr[0].bAddress.city);
+                    setBCityVal(true)
+
+                }
+                if (subscriptionArr[0].bAddress.postcode && subscriptionArr[0].bAddress.postcode.length > 0) {
+                    setBPostcode(subscriptionArr[0].bAddress.postcode);
+                    setBPostcodeVal(true)
+                }
+                if (subscriptionArr[0].bAddress.phoneNumber && subscriptionArr[0].bAddress.phoneNumber.length > 0) {
+                    setBPhoneNumber(subscriptionArr[0].bAddress.phoneNumber);
+                    setBPhoneNumberVal(true)
+                }
+                if(subscriptionArr[0].deliveryHub&& subscriptionArr[0].deliveryHub.length>0){
+                    setDeliveryHub(subscriptionArr[0].deliveryHub)
+                    setDeliveryHubVal(true)
+                }
             }
-            catch(e:any){
-                await fetch('/api/clientSideError',{
-                    method:"POST",
-                    headers: {
-                        "csrfToken": await getCsrfToken() as string,
-                        "client-error": "true"
-                    },
-                    body:JSON.stringify({
-                        error:e.message,
-                        stack:e.stack
-                    })
-                })
-                setComponentLoading(false)
-                setError(e)
-    
-            }
-    
+
         }
+        catch(e:any){
+            await fetch('/api/clientSideError',{
+                method:"POST",
+                headers: {
+                    "csrfToken": await getCsrfToken() as string,
+                    "client-error": "true"
+                },
+                body:JSON.stringify({
+                    error:e.message,
+                    stack:e.stack
+                })
+            })
+            setComponentLoading(false)
+            setError(e)
+
+        }
+
+    }
+    useEffect(()=>{
+        
         const initiate=async()=>{
             try{
                 const sesh = await getSession()
+                setValidPostcodes(postcodes)
                 if(!sesh){
                     throw new Error("You should be logged in to view this page")
                 }
@@ -142,57 +164,81 @@ export default function Subscription({setComponentLoading}:any){
             }
         }
         initiate()
-    },[subscription,router,setComponentLoading])
+    },[setComponentLoading])
     
 
             
         
-    const validate_form = () => {
-        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal) {
+    const validate_form = async() => {
+        try{
+            if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal&&bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal&&deliveryHubVal) {
+                
+                    return true
+            }
             
-                return true
-        }
-        
-        else {
-            if (!dFirstNameVal) {
-                setDFirstNameVal(false)
-            }
-            if (!dSurnameVal) {
-                setDSurnameVal(false)
-            }
-            if (!dFirstLineVal) {
-                setDFirstLineVal(false)
-            }
-            if (!dCityVal) {
-                setDCityVal(false)
-            }
-            if (!dPostcodeVal) {
-                setDPostcodeVal(false)
-            }
+            else {
+                if (!dFirstNameVal) {
+                    setDFirstNameVal(false)
+                }
+                if (!dSurnameVal) {
+                    setDSurnameVal(false)
+                }
+                if (!dFirstLineVal) {
+                    setDFirstLineVal(false)
+                }
+                if (!dCityVal) {
+                    setDCityVal(false)
+                }
+                if (!dPostcodeVal) {
+                    setDPostcodeVal(false)
+                }
+                if (!dPhoneNumberVal) {
+                    setDPhoneNumberVal(false)
+                }
 
-            if (!bFirstNameVal) {
-                setBFirstNameVal(false)
+                if (!bFirstNameVal) {
+                    setBFirstNameVal(false)
+                }
+                if (!bSurnameVal) {
+                    setBSurnameVal(false)
+                }
+                if (!bFirstLineVal) {
+                    setBFirstLineVal(false)
+                }
+                if (!bCityVal) {
+                    setBCityVal(false)
+                }
+                if (!bPostcodeVal) {
+                    setBPostcodeVal(false)
+                }
+                if (!bPhoneNumberVal) {
+                    setBPhoneNumber
+                }
+                if(dPostcodeVal&&!deliveryHubVal){
+                    throw new Error('Delivery Hub fail - subscriptions dPostcode = '+ dPostcode + ' deliveryHub= '+deliveryHub)
+                }
+                return false
             }
-            if (!bSurnameVal) {
-                setBSurnameVal(false)
-            }
-            if (!bFirstLineVal) {
-                setBFirstLineVal(false)
-            }
-            if (!bCityVal) {
-                setBCityVal(false)
-            }
-            if (!bPostcodeVal) {
-                setBPostcodeVal(false)
-            }
-            return false
-        }
+    }
+    catch(error:any){
+        await fetch('/api/clientSideError',{
+            method:"POST",
+            headers: {
+                "csrfToken": await getCsrfToken() as string,
+                "client-error": "true"
+            },
+            body:JSON.stringify({
+                error:error.message,
+                stack:error.stack
+            })
+        })
+    }
 
     }
     async function amendSubscription(e:FormEvent) {
         try{
             e.preventDefault()
-            const valid = validate_form()
+            const valid = await validate_form()
             if(valid){
                 const csrftoken=await getCsrfToken()
                 if(!csrftoken){
@@ -215,6 +261,7 @@ export default function Subscription({setComponentLoading}:any){
                             secondLine: dSecondLine,
                             city: dCity,
                             postcode: dPostcode,
+                            phoneNumber:dPhoneNumber
                         },
                         bAddress: {
                             firstName: bFirstName,
@@ -223,7 +270,9 @@ export default function Subscription({setComponentLoading}:any){
                             secondLine: bSecondLine,
                             city: bCity,
                             postcode: bPostcode,
-                        }, 
+                            phoneNumber:bPhoneNumber
+                        },
+                        deliveryHub:deliveryHub
                         }
                     )
                 })
@@ -293,7 +342,6 @@ export default function Subscription({setComponentLoading}:any){
 
     }
     function showModal(open:boolean,id:string,idx:number){
-        console.log(id)
         try{
             let modal = document.querySelectorAll(`.SUBSCRIPTION_ACTIVE${idx} .cancel-modal`)[0]
             if(open){
@@ -330,8 +378,46 @@ export default function Subscription({setComponentLoading}:any){
             setError(e)
         }
     }
+    const postCodeValidate=(formPostcode:string,validPostcodesArr:any)=>{
+        
+        const keys = Object.keys(validPostcodesArr)
+        let validPostcode=false
+        let postcodeArea=''
+        keys.forEach((key:string)=>{
+            if(!validPostcodesArr[key as string].every((el:string)=>!formPostcode.toLowerCase().trim().startsWith(el.toLowerCase()))){
+                validPostcode=true
+                postcodeArea=key
+            }
+        })
+        if(formPostcode.length>0){
+            validPostcode=true
+        }
+        if(validPostcode&&postcodeArea!==''){
+            setDeliveryHub(postcodeArea)
+            setDeliveryHubVal(true)
+            return true
+        }
+        else if(validPostcode){
+            setDeliveryHub('')
+            setDeliveryHubVal(true)
+            return true
+        }
+        else {
+            setDeliveryHub('')
+            setDeliveryHubVal(false)
+            return false
+        }
+        
+    }
     return(
         <div className="static-container">
+
+<Head>
+            <title>{Metadata["general"]["title"]}</title>
+                <meta name="description" content={Metadata["general"]["description"]}/>
+                <meta property="og:title" content={Metadata["general"]["title"]}/>
+                <meta property="og:description" content={Metadata["general"]["description"]}/>
+            </Head>
         {/* {
         error?
             <p>{error}</p>:
@@ -371,7 +457,10 @@ export default function Subscription({setComponentLoading}:any){
 
                             <FormComponent labelName={"2nd Line of address"} variable={dSecondLine} variableName={Object.keys({ dSecondLine })[0]} setVariable={setDSecondLine} inputType={"text"} required={false} />
                             <FormComponent labelName={"City"} variable={dCity} setVariable={setDCity} variableName={Object.keys({ dCity })[0]} variableVal={dCityVal} setVariableVal={setDCityVal} inputType={"text"} required={true} />
-                            <FormComponent labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} />
+                            <FormComponent labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} callback={postCodeValidate} params={validPostcodes} required={true} />
+                            <Link className="link" href="/delivery">See available delivery postcodes here</Link>
+
+                            <FormComponent labelName={"Phone Number"} variable={dPhoneNumber} variableName={Object.keys({ dPhoneNumber })[0]} setVariable={setDPhoneNumber} variableVal={dPhoneNumberVal} setVariableVal={setDPhoneNumberVal} inputType={"text"} required={true} />
 
                             <h2>Billing Address</h2>
                             <FormComponent labelName={"First Name"} variable={bFirstName} variableName={Object.keys({ bFirstName })[0]} setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true} />
@@ -381,6 +470,8 @@ export default function Subscription({setComponentLoading}:any){
                             <FormComponent labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
                             <FormComponent labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
                             <FormComponent labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
+                            <FormComponent labelName={"Phone Number"} variable={bPhoneNumber} variableName={Object.keys({ bPhoneNumber })[0]} setVariable={setBPhoneNumber} variableVal={bPhoneNumberVal} setVariableVal={setBPhoneNumberVal} inputType={"text"} required={true} />
+
                             <button type="submit" className="cta" onClick={(e)=>{amendSubscription(e)}}>Amend Subscription</button>
                             {
                                 amendSuccess?

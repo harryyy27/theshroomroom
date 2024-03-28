@@ -56,7 +56,7 @@ const Metadata:WholeMeta = {
     },
     wholesale:{
         title:"Mega Mushrooms- Buy wholesale lion's mane.",
-        description:"Purchase wholesale lion's mane to keep your restaurants well supplied."
+        description:"Purchase wholesale lion's mane to keep your stores well supplied."
     },
     forgottenpassword:{
         title:"Mega Mushrooms - forgotten password",
@@ -67,8 +67,12 @@ const Metadata:WholeMeta = {
         description: "Thank you for your purchasing our lion's mane mushrooms.",
     },
     unsubscribe:{
-        title: "Mega Mushrooms - unsuscribe",
+        title: "Mega Mushrooms - unsubscribe",
         description: "We're sorry to see you go.",
+    },
+    general: {
+        title:"Mega Mushrooms - cultivators of lion's mane mushrooms",
+        description:"Venders of premium lions mane mushrooms 🍄"
     }
 
 

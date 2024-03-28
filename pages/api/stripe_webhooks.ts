@@ -59,15 +59,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     }
                     
                     
-
-                    
-                    // console.log(JSON.parse(payload).data.object)
-                    
-                    
                     break;
                 case "payment_intent.failed":
                     console.log("payment_intent.failed")
-                    // console.log(JSON.parse(payload).data.object)
                     body= {
                         paymentIntentId: JSON.parse(payload).data.object.id,
                         status:"ORDER_FAILED",
@@ -85,7 +79,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 
                 case "payment_intent.canceled":
                     console.log("payment_intent.canceled")
-                    // console.log(JSON.parse(payload).data.object)
                     body= {
                             paymentIntentId: JSON.parse(payload).data.object.id,
                             status:"ORDER_CANCELLED"
@@ -112,14 +105,12 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     break;
                 case "customer.subscription.created":
                     console.log("customer.subscription.created")
-                    // console.log(JSON.parse(payload).data.object)
                     subBody={
                         stripeCustomerId:JSON.parse(payload).data.object.customer,
                         isActive:true,
                         subscriptionId: JSON.parse(payload).data.object.id,
                         status:"SUBSCRIPTION_ACTIVE"
                     }
-                    console.log(subBody)
                     var subscription = await Subscription().findOneAndUpdate({subscriptionId:subBody.subscriptionId},{...subBody})
                     
                     var user = await User().findOneAndUpdate({stripeCustomerId:subBody.stripeCustomerId},{$push:{subscriptions:{subscriptionId:subBody.subscriptionId}}})
@@ -135,8 +126,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     break;
                 case "customer.subscription.updated":
                     console.log("customer.subscription.updated")
-                    // console.log(JSON.parse(payload).data.object)
-                    // console.log(JSON.parse(payload).data.object.payment_intent)
                     let subscription_renewal:boolean|null|undefined;
                     
                     if(JSON.parse(payload).data.object.canceled_at!==null){    
@@ -191,8 +180,15 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     var subscription = await stripe.subscriptions.retrieve(
                         sub
                     )
-                    var updateSubscription = await Subscription().findOneAndUpdate({subscriptionId:sub},{dateRenewal:subscription.current_period_end})
-                    success=true
+                    var renewalDate=new Date(subscription.current_period_end*1000)
+                    var updateSubscription = await Subscription().findOneAndUpdate({subscriptionId:sub},{dateRenewal:renewalDate})
+                    if(updateSubscription){
+
+                        success=true
+                    }
+                    else {
+                        success=false
+                    }
                     break;
                 case "invoice.finalization_failed":
                     console.log("invoice.finaliazation_failed")

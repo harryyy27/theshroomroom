@@ -3,6 +3,8 @@ import {getCsrfToken, getSession,signIn} from 'next-auth/react';
 import authenticate from '../../utils/authenticationRequired';
 import FormComponent from '../../components/form-component';
 import styles from '../../styles/Components/Form.module.css'
+import Head from 'next/head'
+import {Metadata} from '../../utils/metadata/metadata'
 
 export default function Edit({setComponentLoading}:any){
     const [dFirstName,setDFirstName]=useState('');
@@ -16,6 +18,8 @@ export default function Edit({setComponentLoading}:any){
     const [dCityVal,setDCityVal]=useState<boolean|null>(null);
     const [dPostcode,setDPostcode]=useState('');
     const [dPostcodeVal,setDPostcodeVal]=useState<boolean|null>(null);
+    const [dPhoneNumber,setDPhoneNumber]=useState('');
+    const [dPhoneNumberVal, setDPhoneNumberVal] = useState<boolean | null>(null);
     const [bFirstName,setBFirstName]=useState('');
     const [bFirstNameVal,setBFirstNameVal]=useState<boolean|null>(null);
     const [bSurname,setBSurname]=useState('');
@@ -27,6 +31,8 @@ export default function Edit({setComponentLoading}:any){
     const [bCityVal,setBCityVal]=useState<boolean|null>(null);
     const [bPostcode,setBPostcode]=useState('');
     const [bPostcodeVal,setBPostcodeVal]=useState<boolean|null>(null);
+    const [bPhoneNumber,setBPhoneNumber]=useState('');
+    const [bPhoneNumberVal, setBPhoneNumberVal] = useState<boolean | null>(null);
     const [updates,setUpdates]=useState(false);
     const [user,setUser]=useState({
         bAddress: {
@@ -34,6 +40,7 @@ export default function Edit({setComponentLoading}:any){
             firstLine:"",
             firstName:"",
             postcode:"",
+            phoneNumber:"",
             secondLine:"",
             surname:""
         },
@@ -46,6 +53,7 @@ export default function Edit({setComponentLoading}:any){
             firstLine:"",
             firstName:"",
             postcode:"",
+            phoneNumber:"",
             secondLine:"",
         },
         name:"",
@@ -69,6 +77,7 @@ export default function Edit({setComponentLoading}:any){
                     return res.json()
                 })
                 .then((res)=>{
+                    console.log(res)
                         setUser(res.user)
                         if(res.user.dAddress.firstName){
                             setDFirstName(res.user.dAddress.firstName);
@@ -89,6 +98,11 @@ export default function Edit({setComponentLoading}:any){
                         if(res.user.dAddress.postcode){
                             setDPostcode(res.user.dAddress.postcode);
                             setDPostcodeVal(true)
+                            
+                        }
+                        if(res.user.dAddress.phoneNumber){
+                            setDPhoneNumber(res.user.dAddress.phoneNumber);
+                            setDPhoneNumberVal(true)
                             
                         }
                         if(res.user.bAddress.firstName){
@@ -115,6 +129,11 @@ export default function Edit({setComponentLoading}:any){
                             setBPostcode(res.user.bAddress.postcode);
                             setBPostcodeVal(true)
                         }
+                        if(res.user.bAddress.phoneNumber){
+                            setBPhoneNumber(res.user.bAddress.phoneNumber);
+                            setBPhoneNumberVal(true)
+                            
+                        }
                         setDSecondLine(res.user.dAddress.secondLine);
                         setBSecondLine(res.user.bAddress.secondLine);
                         setUpdates(res.user.updates)
@@ -132,7 +151,7 @@ export default function Edit({setComponentLoading}:any){
 
     },[setComponentLoading])
     const validate_form=()=>{
-        if(dFirstNameVal&&dSurnameVal&&dFirstLineVal&&dCityVal&&dPostcodeVal&&bFirstNameVal&&bSurnameVal&&bFirstLineVal&&bCityVal&&bPostcodeVal){
+        if(dFirstNameVal&&dSurnameVal&&dFirstLineVal&&dCityVal&&dPostcodeVal&&dPhoneNumberVal&&bFirstNameVal&&bSurnameVal&&bFirstLineVal&&bCityVal&&bPostcodeVal&&bPhoneNumberVal){
             return true
         }
         else {
@@ -169,7 +188,8 @@ export default function Edit({setComponentLoading}:any){
                     firstLine: dFirstLine,
                     secondLine:dSecondLine,
                     city:dCity,
-                    postcode:dPostcode
+                    postcode:dPostcode,
+                    phoneNumber:dPhoneNumber
                 },
                 bAddress:
                 {
@@ -178,7 +198,8 @@ export default function Edit({setComponentLoading}:any){
                     firstLine: bFirstLine,
                     secondLine:bSecondLine,
                     city:bCity,
-                    postcode:bPostcode
+                    postcode:bPostcode,
+                    phoneNumber:bPhoneNumber
                 },
                 updates:updates
             }
@@ -220,6 +241,12 @@ export default function Edit({setComponentLoading}:any){
 
     return(
         <div className="static-container">
+            <Head>
+            <title>{Metadata["general"]["title"]}</title>
+                <meta name="description" content={Metadata["general"]["description"]}/>
+                <meta property="og:title" content={Metadata["general"]["title"]}/>
+                <meta property="og:description" content={Metadata["general"]["description"]}/>
+            </Head>
             <h2>Edit details</h2>
             <form className={styles["form"]}action="">
                 <h2>Delivery Address</h2>
@@ -230,6 +257,8 @@ export default function Edit({setComponentLoading}:any){
                 <FormComponent user={user} labelName={"2nd Line of address"}variable={dSecondLine} variableName={Object.keys({dSecondLine})[0]} setVariable={setDSecondLine} inputType={"text"} required={false}page={"Edit"}/>
                 <FormComponent user={user} labelName={"City"}variable={dCity} variableName={Object.keys({dCity})[0]}setVariable={setDCity} variableVal={dCityVal} setVariableVal={setDCityVal}inputType={"text"} required={true}page={"Edit"}/>
                 <FormComponent user={user} labelName={"Postcode"}variable={dPostcode} variableName={Object.keys({dPostcode})[0]}setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true}page={"Edit"}/>
+                <FormComponent user={user} labelName={"Phone Number"}variable={dPhoneNumber} variableName={Object.keys({dPhoneNumber})[0]}setVariable={setDPhoneNumber} variableVal={dPhoneNumberVal} setVariableVal={setDPhoneNumberVal} inputType={"text"} required={true}page={"Edit"}/>
+
                 <h2>Billing Address</h2>
                 <FormComponent user={user} labelName={"First Name"}variable={bFirstName} variableName={Object.keys({bFirstName})[0]}setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true}page={"Edit"}/>
                 <FormComponent user={user} labelName={"Surname"}variable={bSurname} variableName={Object.keys({bSurname})[0]}setVariable={setBSurname} variableVal={bSurnameVal} setVariableVal={setBSurnameVal} inputType={"text"} required={true}page={"Edit"}/>
@@ -238,6 +267,8 @@ export default function Edit({setComponentLoading}:any){
                 <FormComponent user={user} labelName={"2nd Line of address"}variable={bSecondLine}variableName={Object.keys({bSecondLine})[0]} setVariable={setBSecondLine} inputType={"text"} required={false}page={"Edit"}/>
                 <FormComponent user={user} labelName={"City"}variable={bCity} variableName={Object.keys({bCity})[0]}setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal}inputType={"text"} required={true}page={"Edit"}/>
                 <FormComponent user={user} labelName={"Postcode"}variable={bPostcode} variableName={Object.keys({bPostcode})[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true}page={"Edit"}/>
+                <FormComponent user={user} labelName={"Phone Number"}variable={bPhoneNumber} variableName={Object.keys({bPhoneNumber})[0]}setVariable={setBPhoneNumber} variableVal={bPhoneNumberVal} setVariableVal={setBPhoneNumberVal} inputType={"text"} required={true}page={"Edit"}/>
+
                 <button type="submit" className="cta"onClick={(e)=>editUser(e)}>UPDATE</button>
             </form>
             {

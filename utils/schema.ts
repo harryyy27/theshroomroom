@@ -38,6 +38,10 @@ const ProductSchema = new Schema({
         type: String,
         required:true
     },
+    new: {
+        type: Boolean,
+        required:true
+    }
     
 })
 // OUR TODO MODEL
@@ -128,6 +132,11 @@ const UserSchema=new Schema({
             type: String,
             required: false,
             default: ''
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     bAddress: {
@@ -159,7 +168,12 @@ const UserSchema=new Schema({
         postcode: {
             type: String,
             required: false,
-            default: ''
+            default: '',
+            phoneNumber: {
+                type: String,
+                required: false,
+                default: ''
+            }
         }
     },
     updates: {
@@ -225,6 +239,11 @@ const OrderSchema=new Schema({
         postcode: {
             type:String,
             required:true
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     bAddress: {
@@ -251,6 +270,11 @@ const OrderSchema=new Schema({
         postcode: {
             type:String,
             required:true
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     products: {
@@ -328,6 +352,14 @@ const OrderSchema=new Schema({
     invoiceId:{
         type:String,
         required:false
+    },
+    deliveryHub:{
+        type:String,
+        required:false
+    },
+    zedBookingId:{
+        type:String,
+        required:false
     }
 })
 const Order = function(){
@@ -366,6 +398,11 @@ const SubscriptionSchema=new Schema({
         postcode: {
             type:String,
             required:true
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     bAddress: {
@@ -392,6 +429,11 @@ const SubscriptionSchema=new Schema({
         postcode: {
             type:String,
             required:true
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     products: {
@@ -446,6 +488,10 @@ const SubscriptionSchema=new Schema({
         type:Date,
         required:false
 
+    },
+    deliveryHub:{
+        type:String,
+        required:false
     },
     shippingMethod: {
         type:String,

@@ -13,6 +13,7 @@ import { getCsrfToken } from 'next-auth/react'
 import { destroyCookie } from 'nookies'
 import { CartContext } from '../context/cart';
 import FormComponent from './form-component';
+import postcodes from '../utils/zedPostcodes/postcodes'
 export interface Product {
     _id: String,
     price: number,
@@ -39,6 +40,7 @@ interface UserSchema {
         secondLine: String,
         city: String,
         postcode: String,
+        phoneNumber:String
     },
     bAddress: {
         firstName: String,
@@ -47,6 +49,7 @@ interface UserSchema {
         secondLine: String,
         city: String,
         postcode: String,
+        phoneNumber:String
     },
     updates: Boolean,
 }
@@ -68,6 +71,8 @@ export default function CheckoutForm(props: any) {
     const [dCityVal, setDCityVal] = useState<boolean | null>(null);
     const [dPostcode, setDPostcode] = useState('');
     const [dPostcodeVal, setDPostcodeVal] = useState<boolean | null>(null);
+    const [dPhoneNumber,setDPhoneNumber]=useState('');
+    const [dPhoneNumberVal, setDPhoneNumberVal] = useState<boolean | null>(null);
     const [billingDelivery,setBillingDelivery]=useState<boolean | null>(false);
     const [bFirstName, setBFirstName] = useState('');
     const [bFirstNameVal, setBFirstNameVal] = useState<boolean | null>(null);
@@ -80,6 +85,8 @@ export default function CheckoutForm(props: any) {
     const [bCityVal, setBCityVal] = useState<boolean | null>(null);
     const [bPostcode, setBPostcode] = useState('');
     const [bPostcodeVal, setBPostcodeVal] = useState<boolean | null>(null);
+    const [bPhoneNumber,setBPhoneNumber]=useState('');
+    const [bPhoneNumberVal, setBPhoneNumberVal] = useState<boolean | null>(null);
     const [guestEmailAddress, setGuestEmailAddress] = useState('');
     const [guestEmailAddressVal, setGuestEmailAddressVal] = useState<boolean | null>(null)
     const [updates, setUpdates] = useState(false);
@@ -89,11 +96,47 @@ export default function CheckoutForm(props: any) {
     const [cardDetailsValid, setCardDetailsValid] = useState<boolean | null>(null);
     const [processing, setProcessing] = useState(false)
     const [errorMessage, setErrorMessage] = useState('');
+    const [validPostcodes,setValidPostcodes]=useState<any|null>(null)
+    const [deliveryHub,setDeliveryHub]=useState('');
+    const [deliveryHubVal,setDeliveryHubVal]=useState(false);
+
     const stripe = useStripe();
     const setComponentLoading = props.setComponentLoading;
     const elements: any = useElements();
+    const postCodeValidate=(formPostcode:string,validPostcodesArr:any)=>{
+        
+        const keys = Object.keys(validPostcodesArr)
+        let validPostcode=false
+        let postcodeArea=''
+        keys.forEach((key:string)=>{
+            if(!validPostcodesArr[key as string].every((el:string)=>!formPostcode.toLowerCase().trim().startsWith(el.toLowerCase()))){
+                validPostcode=true
+                postcodeArea=key
+            }
+        })
+        if(formPostcode.length>0){
+            validPostcode=true
+        }
+        if(validPostcode&&postcodeArea!==''){
+            setDeliveryHub(postcodeArea)
+            setDeliveryHubVal(true)
+            return true
+        }
+        else if(validPostcode){
+            setDeliveryHub('')
+            setDeliveryHubVal(true)
+            return true
+        }
+        else {
+            setDeliveryHub('')
+            setDeliveryHubVal(false)
+            return false
+        }
+        
+    }
     useEffect(() => {
         setComponentLoading(true)
+        setValidPostcodes(postcodes)
         const initiate = async () => {
             const session = await getSession()
             if (session?.user) {
@@ -107,6 +150,7 @@ export default function CheckoutForm(props: any) {
                     })
                     .then((res) => {
                         if (res.error) {
+                            console.log(res.error)
                             throw new Error('Unable to load user details')
                         }
                         if (res.user.dAddress.firstName && res.user.dAddress.firstName.length > 0) {
@@ -129,8 +173,18 @@ export default function CheckoutForm(props: any) {
                             setDCityVal(true)
                         }
                         if (res.user.dAddress.postcode && res.user.dAddress.postcode.length > 0) {
+                            if(postCodeValidate(res.user.dAddress.postcode,postcodes)){
+                                setDPostcodeVal(true)
+                            }
+                            else {
+                                setDPostcodeVal(false)
+                            }
+                            
                             setDPostcode(res.user.dAddress.postcode);
-                            setDPostcodeVal(true)
+                        }
+                        if (res.user.dAddress.phoneNumber && res.user.dAddress.phoneNumber.length > 0) {
+                            setDPhoneNumber(res.user.dAddress.phoneNumber);
+                            setDPhoneNumberVal(true)
                         }
                         if (res.user.bAddress.firstName && res.user.bAddress.firstName.length > 0) {
                             setBFirstName(res.user.bAddress.firstName);
@@ -157,10 +211,15 @@ export default function CheckoutForm(props: any) {
                             setBPostcode(res.user.bAddress.postcode);
                             setBPostcodeVal(true)
                         }
+                        if (res.user.bAddress.phoneNumber && res.user.bAddress.phoneNumber.length > 0) {
+                            setBPhoneNumber(res.user.bAddress.phoneNumber);
+                            setBPhoneNumberVal(true)
+                        }
                         setUpdates(res.user.updates)
                         setComponentLoading(false)
                     })
                     .catch((e: any) => {
+                        console.log(e)
                         setErrorMessage('Unable to load user details.')
 
                         setComponentLoading(false)
@@ -183,59 +242,78 @@ export default function CheckoutForm(props: any) {
         }
 
     }
-    const validate_form = () => {
-        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && (billingDelivery||(bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal)) && cardDetailsValid) {
-            if (guestEmailAddressVal || user) {
-                return true
+    const validate_form = async() => {
+        try{
+            if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal && (billingDelivery||(bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal)) && cardDetailsValid&&deliveryHubVal) {
+                if (guestEmailAddressVal || user) {
+                    return true
+                }
+                else {
+                    setCheckoutError('Please either sign in or provide a valid email for guest checkout')
+                    setFormPosition()
+                    return false
+                }
             }
             else {
-                setCheckoutError('Please either sign in or provide a valid email for guest checkout')
+                if (!dFirstNameVal) {
+                    setDFirstNameVal(false)
+                }
+                if (!dSurnameVal) {
+                    setDSurnameVal(false)
+                }
+                if (!dFirstLineVal) {
+                    setDFirstLineVal(false)
+                }
+                if (!dCityVal) {
+                    setDCityVal(false)
+                }
+                if (!dPostcodeVal) {
+                    setDPostcodeVal(false)
+                }
+                if (!dPhoneNumberVal) {
+                    setDPhoneNumberVal(false)
+                }
+    
+                if (!bFirstNameVal) {
+                    setBFirstNameVal(false)
+                }
+                if (!bSurnameVal) {
+                    setBSurnameVal(false)
+                }
+                if (!bFirstLineVal) {
+                    setBFirstLineVal(false)
+                }
+                if (!bCityVal) {
+                    setBCityVal(false)
+                }
+                if (!bPostcodeVal) {
+                    setBPostcodeVal(false)
+                }
+                if (!bPhoneNumberVal) {
+                    setBPhoneNumberVal(false)
+                }
+                if( dPostcodeVal && !deliveryHubVal){
+                    throw new Error('Delivery hub validation issue - order edit dpostcode = '+ dPostcode + ' deliveryHub= '+deliveryHub)
+                }
+                setCheckoutError('Please fill in all required fields')
                 setFormPosition()
                 return false
             }
         }
-        else {
-            if (!dFirstNameVal) {
-                setDFirstNameVal(false)
-            }
-            if (!dSurnameVal) {
-                setDSurnameVal(false)
-            }
-            if (!dFirstLineVal) {
-                setDFirstLineVal(false)
-            }
-            if (!dCityVal) {
-                setDCityVal(false)
-            }
-            if (!dPostcodeVal) {
-                console.log('possibly here')
-                setDPostcodeVal(false)
-            }
-
-            if (!bFirstNameVal) {
-                console.log('probably maybe here')
-                setBFirstNameVal(false)
-            }
-            if (!bSurnameVal) {
-                console.log('what the fuck')
-                setBSurnameVal(false)
-            }
-            if (!bFirstLineVal) {
-                console.log('oi')
-                setBFirstLineVal(false)
-            }
-            if (!bCityVal) {
-                console.log('slag')
-                setBCityVal(false)
-            }
-            if (!bPostcodeVal) {
-                console.log('ffs better be one of these')
-                setBPostcodeVal(false)
-            }
-            setCheckoutError('Please fill in all required fields')
-            setFormPosition()
-            return false
+        catch(error:any){
+            await fetch('/api/clientSideError',{
+                method:"POST",
+                headers: {
+                    "csrfToken": await getCsrfToken() as string,
+                    "client-error": "true"
+                },
+                body:JSON.stringify({
+                    error:error.message,
+                    stack:error.stack
+                })
+            })
         }
+        
 
     }
     const setFormPosition = () => {
@@ -260,6 +338,7 @@ export default function CheckoutForm(props: any) {
             }
         })
     }
+    
     const placeOrder = async (e: FormEvent) => {
         props.setComponentLoading(true)
         e.preventDefault()
@@ -268,10 +347,8 @@ export default function CheckoutForm(props: any) {
                 return setErrorMessage("Already processing order")
             }
             setProcessing(true)
-            let valid = validate_form()
+            let valid = await validate_form()
             let subValid = true;
-            console.log(subscription)
-            console.log(subscriptionInterval)
             if (subscription && subscriptionInterval === '') {
                 subValid = false
             }
@@ -300,27 +377,30 @@ export default function CheckoutForm(props: any) {
                 },
                 body: JSON.stringify({
                     userId: userId,
-                    email: emailAddress,
+                    email: emailAddress?.trim(),
                     guestCheckout: guestCheckout,
                     dAddress: {
-                        firstName: dFirstName,
-                        surname: dSurname,
-                        firstLine: dFirstLine,
-                        secondLine: dSecondLine,
-                        city: dCity,
-                        postcode: dPostcode,
+                        firstName: dFirstName.trim(),
+                        surname: dSurname.trim(),
+                        firstLine: dFirstLine.trim(),
+                        secondLine: dSecondLine.trim(),
+                        city: dCity.trim(),
+                        postcode: dPostcode.trim(),
+                        phoneNumber:dPhoneNumber.trim()
                     },
                     bAddress: {
-                        firstName: billingDelivery?dFirstName:bFirstName,
-                        surname: billingDelivery?dSurname:bSurname,
-                        firstLine: billingDelivery?dFirstLine:bFirstLine,
-                        secondLine: billingDelivery?dSecondLine:bSecondLine,
-                        city: billingDelivery?dCity:bCity,
-                        postcode: billingDelivery?dPostcode:bPostcode,
+                        firstName: billingDelivery?dFirstName.trim():bFirstName.trim(),
+                        surname: billingDelivery?dSurname.trim():bSurname.trim(),
+                        firstLine: billingDelivery?dFirstLine.trim():bFirstLine.trim(),
+                        secondLine: billingDelivery?dSecondLine.trim():bSecondLine.trim(),
+                        city: billingDelivery?dCity.trim():bCity.trim(),
+                        postcode: billingDelivery?dPostcode.trim():bPostcode.trim(),
+                        phoneNumber: billingDelivery?dPhoneNumber.trim():bPhoneNumber.trim(),
                     },
                     products: context.state.cart,
                     shippingCost: context.state.shipping,
                     shippingMethod: context.state.shippingMethod,
+                    deliveryHub:deliveryHub,
                     subtotal: context.state.subTotal,
                     total: context.state.total,
                     status: "INITIATED",
@@ -402,7 +482,6 @@ export default function CheckoutForm(props: any) {
             }
         }
         catch (e: any) {
-            console.log(e)
             setProcessing(false)
             setCheckoutError(e.message)
             props.setComponentLoading(false)
@@ -432,7 +511,7 @@ export default function CheckoutForm(props: any) {
             }
 
 {
-                context.state.cart.items.length<=0?
+                context.state.cart.items.length<=0&&!checkoutSuccess?
                 <div className="checkout-stock-message">
                 <p className="checkout-stock-lines">You have no items in your basket, please select some products from our <Link className="link" href="/products">store</Link> to make a purchase.</p>
                 </div>
@@ -456,8 +535,10 @@ export default function CheckoutForm(props: any) {
 
                 <FormComponent user={user} labelName={"2nd Line of address"} variable={dSecondLine} variableName={Object.keys({ dSecondLine })[0]} setVariable={setDSecondLine} inputType={"text"} required={false} />
                 <FormComponent user={user} labelName={"City"} variable={dCity} setVariable={setDCity} variableName={Object.keys({ dCity })[0]} variableVal={dCityVal} setVariableVal={setDCityVal} inputType={"text"} required={true} />
-                <FormComponent user={user} labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} />
-                
+                <FormComponent user={user} labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} callback={postCodeValidate} params={validPostcodes} />
+                <Link className="link" href="/delivery">See delivery postcodes available for fresh mushrooms here</Link>
+                <FormComponent user={user} labelName={"Phone Number"} variable={dPhoneNumber} variableName={Object.keys({ dPhoneNumber })[0]} setVariable={setDPhoneNumber} variableVal={dPhoneNumberVal} setVariableVal={setDPhoneNumberVal} inputType={"text"} required={true} />
+
                 <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
                     <label htmlFor="billingDelivery">Billing same as delivery:</label>
                     <input  autoComplete="complete" id="billingDelivery" type="checkbox" value={String(updates)} onChange={(e) => setBillingDelivery(!billingDelivery)} />
@@ -473,6 +554,8 @@ export default function CheckoutForm(props: any) {
                         <FormComponent user={user} labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
                         <FormComponent user={user} labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
                         <FormComponent user={user} labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
+                        <FormComponent user={user} labelName={"Phone Number"} variable={bPhoneNumber} variableName={Object.keys({ bPhoneNumber })[0]} setVariable={setBPhoneNumber} variableVal={bPhoneNumberVal} setVariableVal={setBPhoneNumberVal} inputType={"tel"} required={true} />
+
                     </>:
                 null
                 }

@@ -12,10 +12,19 @@ export const imageMap: {[mushroom:string]:ProductImage} = {
         name: 'Lions Mane',
         alt:'lions mane mushroom',
         path:'/products/mushrooms/lions_mane',
-        fileType:'jpeg',
+        fileType:'png',
         link: '/products/lions_mane',
-        width:334,
-        height:151
+        width:3500,
+        height:2500
+    },
+    'Ground Lion\'s Mane':{
+        name: "Ground Lions Mane",
+        alt:'ground lions mane mushroom',
+        path:'/products/mushrooms/ground_lions_mane',
+        fileType:'png',
+        link:'/products/ground_lions_mane',
+        width:3200,
+        height:3200
     },
     'Turkey Tail':{
         name: 'Turkey Tail',

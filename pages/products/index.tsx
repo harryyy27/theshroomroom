@@ -6,10 +6,12 @@ import {imageMap} from '../../utils/imageMap/imageMap'
 import Head from 'next/head';
 import {Metadata} from '../../utils/metadata/metadata'
 interface ProductInterface{
+    _id:String;
     name:String;
     description: String;
     price_fresh_100g: Number;
     quantity: Number;
+    new: Boolean;
     
 }
 export default function Product(props:{mushrooms:ProductInterface[]}){
@@ -43,9 +45,9 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
             <>
         <ul className="product-list">
         {
-            products.length?products.map(({_id,name,price}:any,idx)=>{
+            products.length?products.map(({_id,name,price,new_product}:any,idx)=>{
                 return(
-                    <li className="product" key={name}>
+                    <li className="product" key={idx}>
                         <Link  href={`/products/${name.replace(/[\s]/gi,'-')}`} >
                             <span>
                                 <h2 className="product-name">{name}</h2>
@@ -53,7 +55,7 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
                                 {
                                     name?
 
-                                    <Image className="product-image" priority blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} fill sizes={`(min-width:768px) ${imageMap[name].width}px, (max-width:767px): 40vw`} src={`${imageMap[name].path}.${imageMap[name].fileType}`} alt={name}/>
+                                    <Image className="product-image" priority blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} fill sizes={`(min-width:768px) ${imageMap[name].width}px, (max-width:767px): 40vw`} src={`${imageMap[name].path}.${imageMap[name].fileType}`} alt={name+ " mushrooms"}/>
                                     :
                                     null
                                 }
@@ -61,6 +63,11 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
 
                             </span>
                         </Link>
+                        {
+                            new_product?
+                            <h2 className="new">NEW!</h2>:
+                            null
+                        }
                             <p className="product-price">£{price}</p>
                         {/* <select className="product-quantity" id={`quantity${idx}`}name={"quantity"} >
                             {
@@ -106,7 +113,6 @@ export async function getServerSideProps(ctx:any){
     try {
         const data= await fetch(`http://${req.headers.host}/api/products/`)
         var response = await data.json()
-        console.log('OI')
         if(response){
             var resp = response.reduce((acc:any,b:any)=>{
                 for(var i = 0;i<acc.length;i++){
@@ -121,6 +127,9 @@ export async function getServerSideProps(ctx:any){
                 }
                 return [...acc,b]
             },[])
+            const prods=resp.map((el:any)=>{
+                el["new_product"]=el["new"]
+            })
     }
         
         else {

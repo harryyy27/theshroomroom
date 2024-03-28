@@ -3,6 +3,8 @@ import {useState,FormEvent,useEffect} from 'react';
 import authenticate from '../../utils/authenticationRequired';
 import FormComponent from '../../components/form-component';
 import styles from '../../styles/Components/Form.module.css'
+import Head from 'next/head'
+import {Metadata} from '../../utils/metadata/metadata'
 export default function ChangePassword({setComponentLoading}:any){
     const [currentPassword,setCurrentPassword] = useState<string>('');
     const [currentPasswordVal,setCurrentPasswordVal]=useState<boolean|undefined>(undefined);
@@ -65,6 +67,13 @@ export default function ChangePassword({setComponentLoading}:any){
     }
     return(
         <div className="static-container">
+
+<Head>
+            <title>{Metadata["general"]["title"]}</title>
+                <meta name="description" content={Metadata["general"]["description"]}/>
+                <meta property="og:title" content={Metadata["general"]["title"]}/>
+                <meta property="og:description" content={Metadata["general"]["description"]}/>
+            </Head>
         <h1 className="main-heading center">Reset your password</h1>
             <form className={styles["form"]}>
                 <FormComponent user={user} labelName={"Current Password"}variable={currentPassword} variableName={Object.keys({currentPassword})[0]} setVariable={setCurrentPassword} variableVal={currentPasswordVal} setVariableVal={setCurrentPasswordVal} inputType={"text"} required={true}/>

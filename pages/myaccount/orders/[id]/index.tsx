@@ -5,6 +5,9 @@ import { useEffect,useState,FormEvent } from "react";
 import authenticate from '../../../../utils/authenticationRequired';
 import Link from 'next/link';
 import FormComponent from "../../../../components/form-component";
+import Head from 'next/head'
+import {Metadata } from '../../../../utils/metadata/metadata'
+import postcodes from '../../../../utils/zedPostcodes/postcodes'
 export default function MyAccountOrders({setComponentLoading}:any){
     const [cancelOrderId,setCancelOrderId]=useState('');
     const [cancelError, setCancelError]=useState<string|null>(null)
@@ -23,6 +26,8 @@ export default function MyAccountOrders({setComponentLoading}:any){
     const [dCityVal, setDCityVal] = useState<boolean | null>(null);
     const [dPostcode, setDPostcode] = useState('');
     const [dPostcodeVal, setDPostcodeVal] = useState<boolean | null>(null);
+    const [dPhoneNumber,setDPhoneNumber]=useState('');
+    const [dPhoneNumberVal, setDPhoneNumberVal] = useState<boolean | null>(null);
     const [bFirstName, setBFirstName] = useState('');
     const [bFirstNameVal, setBFirstNameVal] = useState<boolean | null>(null);
     const [bSurname, setBSurname] = useState('');
@@ -34,101 +39,121 @@ export default function MyAccountOrders({setComponentLoading}:any){
     const [bCityVal, setBCityVal] = useState<boolean | null>(null);
     const [bPostcode, setBPostcode] = useState('');
     const [bPostcodeVal, setBPostcodeVal] = useState<boolean | null>(null);
+    const [bPhoneNumber,setBPhoneNumber]=useState('');
+    const [bPhoneNumberVal, setBPhoneNumberVal] = useState<boolean | null>(null);
     const [emailAddress, setEmailAddress] = useState('');
     const [status,setStatus]=useState('');
     const [err,setErr]=useState('')
     const [amendSuccess,setAmendSuccess]=useState(false)
-    useEffect(()=>{
-        async function getOrders(sesh:Session){
-            try{
-                setComponentLoading(true)
-                const order_id=window.location.href.split('/orders/')[1]
-                const orderData = await fetch(`/api/order/?order_id=${order_id}`,{
-                    method:"GET"
-                })
-                const orderDetails = await orderData.json()
-                const orderArr = orderDetails.orders
-                console.log(orderDetails)
+    const [validPostcodes,setValidPostcodes]=useState<any|null>(null)
+    const [deliveryHub,setDeliveryHub]=useState('');
+    const [deliveryHubVal,setDeliveryHubVal]=useState(false);
+    async function getOrders(sesh:Session){
+        try{
+            setComponentLoading(true)
+            console.log('oioio')
+            const order_id=window.location.href.split('/orders/')[1]
+            const orderData = await fetch(`/api/order/?order_id=${order_id}`,{
+                method:"GET"
+            })
+            const orderDetails = await orderData.json()
+            const orderArr = orderDetails.orders
 
-                setOrder(orderArr)
-                setComponentLoading(false)
-                console.log(order)
-                if(order){
-    
-                    setEmailAddress(orderArr[0].emailAddress)
-                    setStatus(orderArr[0].status)
-                    if (orderArr[0].dAddress.firstName && orderArr[0].dAddress.firstName.length > 0) {
-                        setDFirstName(orderArr[0].dAddress.firstName);
-                        setDFirstNameVal(true)
-                    }
-                    if (orderArr[0].dAddress?.surname && orderArr[0].dAddress?.surname.length > 0) {
-                        setDSurname(orderArr[0].dAddress.surname);
-                        setDSurnameVal(true)
-                    }
-                    if (orderArr[0].dAddress.firstLine && orderArr[0].dAddress.firstLine.length > 0) {
-                        setDFirstLine(orderArr[0].dAddress.firstLine);
-                        setDFirstLineVal(true)
-                    }
-                    if (orderArr[0].dAddress.secondLine) {
-                        setDSecondLine(orderArr[0].dAddress.secondLine);
-                    }
-                    if (orderArr[0].dAddress.city && orderArr[0].dAddress.city.length > 0) {
-                        setDCity(orderArr[0].dAddress.city);
-                        setDCityVal(true)
-                    }
-                    if (orderArr[0].dAddress.postcode && orderArr[0].dAddress.postcode.length > 0) {
-                        setDPostcode(orderArr[0].dAddress.postcode);
-                        setDPostcodeVal(true)
-                    }
-                    if (orderArr[0].bAddress.firstName && orderArr[0].bAddress.firstName.length > 0) {
-                        setBFirstName(orderArr[0].bAddress.firstName);
-                        setBFirstNameVal(true)
-                    }
-                    if (orderArr[0].bAddress.surname && orderArr[0].bAddress.surname.length > 0) {
-                        setBSurname(orderArr[0].bAddress.surname);
-                        setBSurnameVal(true)
-                    }
-                    if (orderArr[0].bAddress.firstLine && orderArr[0].bAddress.firstLine.length > 0) {
-                        setBFirstLine(orderArr[0].bAddress.firstLine);
-                        setBFirstLineVal(true)
-                    }
-                    if (orderArr[0].bAddress.secondLine) {
-                        setBSecondLine(orderArr[0].bAddress.secondLine);
-    
-                    }
-                    if (orderArr[0].bAddress.city && orderArr[0].bAddress.city.length > 0) {
-                        setBCity(orderArr[0].bAddress.city);
-                        setBCityVal(true)
-    
-                    }
-                    if (orderArr[0].bAddress.postcode && orderArr[0].bAddress.postcode.length > 0) {
-                        setBPostcode(orderArr[0].bAddress.postcode);
-                        setBPostcodeVal(true)
-                    }
+            setOrder(orderArr)
+            setComponentLoading(false)
+            if(order){
+
+                setEmailAddress(orderArr[0].emailAddress)
+                setStatus(orderArr[0].status)
+                if (orderArr[0].dAddress.firstName && orderArr[0].dAddress.firstName.length > 0) {
+                    setDFirstName(orderArr[0].dAddress.firstName);
+                    setDFirstNameVal(true)
                 }
-    
+                if (orderArr[0].dAddress?.surname && orderArr[0].dAddress?.surname.length > 0) {
+                    setDSurname(orderArr[0].dAddress.surname);
+                    setDSurnameVal(true)
+                }
+                if (orderArr[0].dAddress.firstLine && orderArr[0].dAddress.firstLine.length > 0) {
+                    setDFirstLine(orderArr[0].dAddress.firstLine);
+                    setDFirstLineVal(true)
+                }
+                if (orderArr[0].dAddress.secondLine) {
+                    setDSecondLine(orderArr[0].dAddress.secondLine);
+                }
+                if (orderArr[0].dAddress.city && orderArr[0].dAddress.city.length > 0) {
+                    setDCity(orderArr[0].dAddress.city);
+                    setDCityVal(true)
+                }
+                if (orderArr[0].dAddress.postcode && orderArr[0].dAddress.postcode.length > 0) {
+                    setDPostcode(orderArr[0].dAddress.postcode);
+                    setDPostcodeVal(true)
+
+                }
+                if (orderArr[0].dAddress.phoneNumber && orderArr[0].dAddress.phoneNumber.length > 0) {
+                    setDPhoneNumber(orderArr[0].dAddress.phoneNumber);
+                    setDPhoneNumberVal(true)
+                }
+                if (orderArr[0].bAddress.firstName && orderArr[0].bAddress.firstName.length > 0) {
+                    setBFirstName(orderArr[0].bAddress.firstName);
+                    setBFirstNameVal(true)
+                }
+                if (orderArr[0].bAddress.surname && orderArr[0].bAddress.surname.length > 0) {
+                    setBSurname(orderArr[0].bAddress.surname);
+                    setBSurnameVal(true)
+                }
+                if (orderArr[0].bAddress.firstLine && orderArr[0].bAddress.firstLine.length > 0) {
+                    setBFirstLine(orderArr[0].bAddress.firstLine);
+                    setBFirstLineVal(true)
+                }
+                if (orderArr[0].bAddress.secondLine) {
+                    setBSecondLine(orderArr[0].bAddress.secondLine);
+
+                }
+                if (orderArr[0].bAddress.city && orderArr[0].bAddress.city.length > 0) {
+                    setBCity(orderArr[0].bAddress.city);
+                    setBCityVal(true)
+
+                }
+                if (orderArr[0].bAddress.postcode && orderArr[0].bAddress.postcode.length > 0) {
+                    setBPostcode(orderArr[0].bAddress.postcode);
+                    setBPostcodeVal(true)
+                }
+                if (orderArr[0].bAddress.phoneNumber && orderArr[0].bAddress.phoneNumber.length > 0) {
+                    setBPhoneNumber(orderArr[0].bAddress.phoneNumber);
+                    setBPhoneNumberVal(true)
+                }
+
+                if(orderArr[0].deliveryHub&& orderArr[0].deliveryHub.length>0){
+                    setDeliveryHub(orderArr[0].deliveryHub)
+                    setDeliveryHubVal(true)
+                }
             }
-            catch(e:any){
-                await fetch('/api/clientSideError',{
-                    method:"POST",
-                    headers: {
-                        "csrfToken": await getCsrfToken() as string,
-                        "client-error": "true"
-                    },
-                    body:JSON.stringify({
-                        error:e.message,
-                        stack:e.stack
-                    })
-                })
-                setComponentLoading(false)
-                setError(e)
-    
-            }
-    
+
         }
+        catch(e:any){
+            await fetch('/api/clientSideError',{
+                method:"POST",
+                headers: {
+                    "csrfToken": await getCsrfToken() as string,
+                    "client-error": "true"
+                },
+                body:JSON.stringify({
+                    error:e.message,
+                    stack:e.stack
+                })
+            })
+            setComponentLoading(false)
+            setError(e)
+
+        }
+
+    }
+    useEffect(()=>{
+        
         const initiate=async()=>{
             try{
                 const sesh = await getSession()
+                setValidPostcodes(postcodes)
                 if(!sesh){
                     throw new Error("You should be logged in to view this page")
                 }
@@ -141,13 +166,14 @@ export default function MyAccountOrders({setComponentLoading}:any){
             }
         }
         initiate()
-    },[order,router,setComponentLoading])
+    },[setComponentLoading])
     
 
             
         
-    const validate_form = () => {
-        if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal) {
+    const validate_form = async() => {
+        try{
+            if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal&&deliveryHubVal) {
             
                 return true
         }
@@ -168,6 +194,10 @@ export default function MyAccountOrders({setComponentLoading}:any){
             if (!dPostcodeVal) {
                 setDPostcodeVal(false)
             }
+            if (!dPhoneNumberVal) {
+                setDPhoneNumberVal(false)
+            }
+
 
             if (!bFirstNameVal) {
                 setBFirstNameVal(false)
@@ -184,13 +214,34 @@ export default function MyAccountOrders({setComponentLoading}:any){
             if (!bPostcodeVal) {
                 setBPostcodeVal(false)
             }
+            if (!bPhoneNumberVal) {
+                setBPhoneNumberVal(false)
+            }
+            if (dPostcodeVal&&!deliveryHubVal){
+                throw new Error('Delivery hub validation issue - order edit dpostcode = '+ dPostcode + ' deliveryHub= '+deliveryHub)
+            }
             return false
         }
+        }
+        catch(error:any){
+            await fetch('/api/clientSideError',{
+                method:"POST",
+                headers: {
+                    "csrfToken": await getCsrfToken() as string,
+                    "client-error": "true"
+                },
+                body:JSON.stringify({
+                    error:error.message,
+                    stack:error.stack
+                })
+            })
+        }
+        
 
     }
     async function amendOrder(e:FormEvent) {
         e.preventDefault()
-        const valid = validate_form()
+        const valid = await validate_form()
         if(valid){
             const csrftoken=await getCsrfToken()
             if(!csrftoken){
@@ -212,6 +263,8 @@ export default function MyAccountOrders({setComponentLoading}:any){
                         secondLine: dSecondLine,
                         city: dCity,
                         postcode: dPostcode,
+                        phoneNumber:dPhoneNumber
+
                     },
                     bAddress: {
                         firstName: bFirstName,
@@ -220,7 +273,9 @@ export default function MyAccountOrders({setComponentLoading}:any){
                         secondLine: bSecondLine,
                         city: bCity,
                         postcode: bPostcode,
-                    }, 
+                        phoneNumber:bPhoneNumber
+                    },
+                    deliveryHub:deliveryHub
                     }
                 )
             })
@@ -274,7 +329,6 @@ export default function MyAccountOrders({setComponentLoading}:any){
 
     }
     function showModal(open:boolean,id:string,idx:number){
-        console.log(id)
         try{
             let modal = document.querySelectorAll(`.ORDER_RECEIVED${idx} .cancel-modal`)[0]
             if(open){
@@ -311,8 +365,47 @@ export default function MyAccountOrders({setComponentLoading}:any){
             setError(e)
         }
     }
+    const postCodeValidate=(formPostcode:string,validPostcodesArr:any)=>{
+        
+        const keys = Object.keys(validPostcodesArr)
+        let validPostcode=false
+        let postcodeArea=''
+        keys.forEach((key:string)=>{
+            if(!validPostcodesArr[key as string].every((el:string)=>!formPostcode.toLowerCase().trim().startsWith(el.toLowerCase()))){
+                validPostcode=true
+                postcodeArea=key
+            }
+        })
+        if(formPostcode.length>0){
+            validPostcode=true
+        }
+        if(validPostcode&&postcodeArea!==''){
+            setDeliveryHub(postcodeArea)
+            setDeliveryHubVal(true)
+            return true
+        }
+        else if(validPostcode){
+            setDeliveryHub('')
+            setDeliveryHubVal(true)
+            return true
+        }
+        else {
+            setDeliveryHub('')
+            setDeliveryHubVal(false)
+            return false
+        }
+        
+    }
+    
     return(
         <div className="static-container">
+
+<Head>
+            <title>{Metadata["general"]["title"]}</title>
+                <meta name="description" content={Metadata["general"]["description"]}/>
+                <meta property="og:title" content={Metadata["general"]["title"]}/>
+                <meta property="og:description" content={Metadata["general"]["description"]}/>
+            </Head>
         {/* {
         error?
             <p>{error}</p>:
@@ -351,7 +444,10 @@ export default function MyAccountOrders({setComponentLoading}:any){
 
                             <FormComponent labelName={"2nd Line of address"} variable={dSecondLine} variableName={Object.keys({ dSecondLine })[0]} setVariable={setDSecondLine} inputType={"text"} required={false} />
                             <FormComponent labelName={"City"} variable={dCity} setVariable={setDCity} variableName={Object.keys({ dCity })[0]} variableVal={dCityVal} setVariableVal={setDCityVal} inputType={"text"} required={true} />
-                            <FormComponent labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} required={true} />
+                            <FormComponent labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} callback={postCodeValidate} params={validPostcodes} required={true} />
+                            <Link className="link" href="/delivery">See available delivery postcodes here</Link>
+
+                            <FormComponent labelName={"Phone Number"} variable={dPhoneNumber} variableName={Object.keys({ dPhoneNumber })[0]} setVariable={setDPhoneNumber} variableVal={dPhoneNumberVal} setVariableVal={setDPhoneNumberVal} inputType={"text"} required={true} />
 
                             <h2>Billing Address</h2>
                             <FormComponent labelName={"First Name"} variable={bFirstName} variableName={Object.keys({ bFirstName })[0]} setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true} />
@@ -361,6 +457,8 @@ export default function MyAccountOrders({setComponentLoading}:any){
                             <FormComponent labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
                             <FormComponent labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
                             <FormComponent labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
+                            <FormComponent labelName={"Phone Number"} variable={bPhoneNumber} variableName={Object.keys({ bPhoneNumber })[0]} setVariable={setBPhoneNumber} variableVal={bPhoneNumberVal} setVariableVal={setBPhoneNumberVal} inputType={"text"} required={true} />
+
                             <button type="submit" className="cta" onClick={(e)=>{amendOrder(e)}}>Amend Order</button>
                             {
                                 amendSuccess?

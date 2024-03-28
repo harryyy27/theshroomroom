@@ -37,7 +37,7 @@ export default function Benefits(){
                     </figure>
                     <div className={homeStyles["card-text-wrap"]}>
                         <h2 className={`bullet-heading ${homeStyles["benefit-heading"]}`}>Delicious!</h2>
-                        <p className="bullet-margin">They are quite easy to add to your diet as they complemement the flavour of most meals we've tried them with! They can also be dried and made into teas or seasonings of your own choosing</p>
+                        <p className="bullet-margin">They are quite easy to add to your diet as they complemement the flavour of most meals! They can also be used just as effectively in teas or seasonings of your own choosing after drying and blending.</p>
                     </div>
                 </li>
                     

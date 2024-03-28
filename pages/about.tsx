@@ -23,7 +23,7 @@ export default function Mushrooms(){
                     <li>
                         <h3>Revolutionizing Diets:</h3>
 
-                        <p>With an increasingly large body of evidence backing the nutritional and medical benefits of these mushrooms; we envision a future in which our our diets will be loaded with mushrooms (much akin to the 5 a day principle for vegetables). Meals should not only be delicious but also nourishing and our mushrooms can contribute to improved cognitive function, immune systems, and overall well-being.</p>
+                        <p>With an increasingly large body of evidence backing the nutritional and medical benefits of these mushrooms; we envision a future in which our our diets will be loaded with mushrooms (much akin to the 5 a day principle for fruit and veg). Meals should not only be delicious but also nourishing and our mushrooms can contribute to improved cognitive function, immune systems and overall well-being.</p>
                     </li>
                     <li>
                         <h3>Growth:</h3>
@@ -35,7 +35,7 @@ export default function Mushrooms(){
                     </li>
                     <li>
                         <h3>Knowledge:</h3>
-                        <p>Mycology is a treasure trove of knowledge just waiting to be discovered. It is very much a frontier science partly as the scientific community have not given it the attention it deserves. Our team is dedicated to learning everything there is to know about these remarkable organisms. We experiment, learn from scientific literature and share our knowledge to inspire a new generation of mycologists.</p>
+                        <p>Mycology is a treasure trove of knowledge just waiting to be discovered. It is very much a frontier science partly as the scientific community have not given it the attention it deserves. Our team is dedicated to learning everything there is to know about these remarkable organisms. We experiment, learn from scientific literature and update our methods as we relentlessly improve.</p>
                     </li>
                 </ul>
             </section>
@@ -50,7 +50,7 @@ export default function Mushrooms(){
                     </li>
                     <li>
                         <h3>Waste Reduction:</h3> 
-                        <p>We're passionate about waste reduction and ultimately aim to be a zero waste operation. Our current packaging materials are carefully chosen to be reusable, recyclable or biodegradable. We are now in the process of reducing this waste further by moving away from the traditional filter patch bags in favour of more economic and reusable silicone boxes.</p>
+                        <p>We're passionate about waste reduction and ultimately aim to be a zero waste operation. We are now in the process of reducing this waste further by moving away from the traditional filter patch bags in favour of more economic and reusable silicone boxes.</p>
                     </li>
                 </ul>
             </section>

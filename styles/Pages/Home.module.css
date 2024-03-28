@@ -4,6 +4,10 @@
   font-size:2.8rem;
   font-weight:400;
 }
+.shadow {
+  background: rgba(0,0,0,0.2);
+  padding:1rem;
+}
 .benefit-heading {
   text-align:center;
   margin:0.5rem 0rem;
@@ -168,7 +172,11 @@
   padding:0;
   width:100%;
 }
-
+@media(max-width:1024px){
+  .hero-sub-heading {
+    display:none
+  }
+}
 @media(max-width:767px){
   .hero-heading {
     font-size:1.6rem;
