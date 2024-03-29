@@ -244,13 +244,19 @@ export default function ProductDetails({setComponentLoading}:any){
                 <div>
                     <label htmlFor={"productQuantity"}>Qty: </label>
                     <input id={`productQuantity`} className="form-input"name={"quantity"} type="number" value={qty} onChange={(e)=>{
-                        setQty(Number(e.target.value))
+                        if(e.target.value==''||e.target.value=="0"){
+                            setQty(0)
+                        }
+                        else{
+                            e.target.value=e.target.value.replace(/^0+/, '')
+                            setQty(parseInt(e.target.value.replace(/^0+/, ''),10))
                         var freshLabel = fresh?true:false
                         if(size!==''){
 
                             const chosenProduct:Product=product.filter((prod:any)=>{
-                                return freshLabel===true&&prod.mass===size
+                                return prod.fresh===freshLabel&&prod.mass===size
                             })[0]
+                            console.log(chosenProduct)
                             if(chosenProduct.stock_available>=Number(e.target.value)){
                                 setProductAvailable(true)
                                 setErr('');
@@ -267,9 +273,12 @@ export default function ProductDetails({setComponentLoading}:any){
 
                             }
                         }
+                        }
+                        
                         
                     }
-                    }/>
+                    }
+                    />
                                  
                 </div></>:
                     <p>This product is currently unavailable. We will have more available in the coming days :).</p>
