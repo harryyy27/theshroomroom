@@ -51,7 +51,7 @@ colour scheme - turkey tail */
   position:relative;
   margin:0;
   padding:0;
-  display:inline;
+  display:inline-block;
 }
 .new {
   top: 25%;
