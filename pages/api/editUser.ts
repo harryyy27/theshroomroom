@@ -21,6 +21,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         await connect()
 
         const body = JSON.parse(req.body);
+        const companyEmail=process.env.COMPANY_EMAIL
         if(body.subscription){
             if(body.user){
                     const user =await User().findOne({username:body.email})
@@ -28,7 +29,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                         throw new Error('This user was not found')
                     }
                     await User().findOneAndUpdate({username:body.email},{updates:body.subscribe})
-                    await receiveUpdatesHandler(body.email,true,process.env.WEBSITE_NAME)
+                    await receiveUpdatesHandler(body.email,true,process.env.WEBSITE_NAME,companyEmail)
             }
             else {
                 let userExists = await User().findOne({username:body.email})
@@ -44,7 +45,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 var subscription = new (ReceiveUpdates() as any)(body);
                 subscription.save()
 
-                await receiveUpdatesHandler(body.email,false,process.env.WEBSITE_NAME)
+                await receiveUpdatesHandler(body.email,false,process.env.WEBSITE_NAME,companyEmail)
             }
         }
         else{
