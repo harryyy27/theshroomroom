@@ -26,6 +26,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             var body:any|undefined;
             var subBody:any|undefined;
             var websiteName=process.env.WEBSITE_NAME
+            var companyEmail=process.env.COMPANY_EMAIL
             switch (event.type){
                 case "payment_intent.succeeded":
                     console.log("payment_intent.succeeded")
@@ -52,7 +53,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     }
                     if(order){
                         success=true
-                        await orderHandler(order,websiteName)
+                        await orderHandler(order,websiteName,companyEmail)
                     }
                     else {
                         throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
@@ -118,7 +119,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
                     if(subscription){
                         success=true
-                        await subscriptionHandler(subscription,websiteName)
+                        await subscriptionHandler(subscription,websiteName,companyEmail)
                     }
                     else {
                         throw new Error(`Subscription update failed Subscription ID: ${subBody.subscriptionId}`)
@@ -195,7 +196,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     var object = JSON.parse(payload).data.object
                     var attemptCount=object.attemptCount
                     var order = await Order().findOneAndUpdate({paymentIntentId:object.payment_intent},{status:"PAYMENT_NOT_RECEIVED"})
-                    await invoiceFailHandler(attemptCount,order.email,true,websiteName)
+                    await invoiceFailHandler(attemptCount,order.email,true,websiteName,companyEmail)
                     success=true;
                     break;
                 case "invoice.payment_failed":
@@ -203,7 +204,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     var object = JSON.parse(payload).data.object
                     var attemptCount=object.attemptCount
                     var order = await Order().findOneAndUpdate({paymentIntentId:object.payment_intent},{status:"PAYMENT_NOT_RECEIVED"})
-                    await invoiceFailHandler(attemptCount,order.email,false,websiteName)
+                    await invoiceFailHandler(attemptCount,order.email,false,websiteName,companyEmail)
                     // await Order().findOneAndUpdate({paymentIntentId:JSON.parse(payload).data.object.payment_intent},{...body})
                     success=true
                     break;
@@ -251,30 +252,30 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     var date = Date.now()
                     var dispute = new (Dispute())({reason:object.reason,paymentIntentId:object.payment_intent,disputeId:object.id, status:"OPEN",dateReceived:date,dateUpdated:date});
                     await dispute.save()
-                    await disputeHandler(object,"created",websiteName)
+                    await disputeHandler(object,"created",websiteName,companyEmail)
                     
                     success=true
                     break;
                 case "charge.dispute.updated":
                     var object = JSON.parse(payload).data.object
                     await Dispute().findOneAndUpdate({disputeID:object.id},{status:object.status,dateUpdated:Date.now()})
-                    await disputeHandler(object,"updated",websiteName)
+                    await disputeHandler(object,"updated",websiteName,companyEmail)
                     success=true
                     break;
                 case "charge.dispute.closed":
                     var object = JSON.parse(payload).data.object
 
                     await Dispute().findOneAndUpdate({disputeID:object.id},{status:"CLOSED",dateUpdated:Date.now()})
-                    await disputeHandler(object,"closed",websiteName)
+                    await disputeHandler(object,"closed",websiteName,companyEmail)
                     success=true
                     break;
                 case "payout.paid":
                     var object = JSON.parse(payload).data.object
-                    await payoutHandler(true,object)
+                    await payoutHandler(true,object,companyEmail)
                     success=true
                 case "payout.failed":
                     var object = JSON.parse(payload).data.object
-                    await payoutHandler(false,object)
+                    await payoutHandler(false,object,companyEmail)
                     success=true
                     break;
                 case "charge.refunded":
@@ -286,7 +287,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     
                     var object = JSON.parse(payload).data.object
                     if(object.status==="failed"){
-                        await refundHandler(object)
+                        await refundHandler(object,companyEmail)
 
 
                     }

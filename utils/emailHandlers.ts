@@ -104,7 +104,7 @@ export async function errorHandler(headers:string,body:string|undefined,method:s
     }
 
 }
-export async function receiveUpdatesHandler(email:string,user:boolean,websiteName:string|undefined){
+export async function receiveUpdatesHandler(email:string,user:boolean,websiteName:string|undefined,companyEmail:string|undefined){
     try{
         const content =receiveUpdateString(user,email)
 
@@ -112,7 +112,7 @@ export async function receiveUpdatesHandler(email:string,user:boolean,websiteNam
             subject: "Thank you for subscribing to Mega Mushrooms!",
             html:template(content,websiteName),
             to:`${email}`,
-            from: `${process.env.COMPANY_EMAIL}`,
+            from: `${companyEmail}`,
             attachments:[
               {
                 filename:'logo_small.jpg',
@@ -128,7 +128,7 @@ export async function receiveUpdatesHandler(email:string,user:boolean,websiteNam
     }
 
 }
-export async function orderHandler(order:any,websiteName:string|undefined){
+export async function orderHandler(order:any,websiteName:string|undefined,companyEmail:string|undefined){
     try{
         const content = orderString(order)
         const imageAttach = [
@@ -141,7 +141,7 @@ export async function orderHandler(order:any,websiteName:string|undefined){
             subject: `Mega Mushrooms - order`,
             html:template(content,websiteName),
             to:`${order.email}`,
-            from: `${process.env.COMPANY_EMAIL}`,
+            from: `${companyEmail}`,
             attachments:imageAttach
         })
 
@@ -151,7 +151,7 @@ export async function orderHandler(order:any,websiteName:string|undefined){
     }
 
 }
-export async function subscriptionHandler(subscription:any,websiteName:string|undefined){
+export async function subscriptionHandler(subscription:any,websiteName:string|undefined,companyEmail:string|undefined){
     try{
         const content = subscriptionString(subscription);
         const imageAttach = [
@@ -164,7 +164,7 @@ export async function subscriptionHandler(subscription:any,websiteName:string|un
             subject: `Subscription confirmation`,
             html:template(content,websiteName),
             to:`${subscription.email}`,
-            from: `${process.env.COMPANY_EMAIL}`,
+            from: `${companyEmail}`,
             attachments:imageAttach
         })
 
@@ -174,14 +174,14 @@ export async function subscriptionHandler(subscription:any,websiteName:string|un
     }
 
 }
-export async function registerHandler(email:string,user:any,websiteName:string|undefined){
+export async function registerHandler(email:string,user:any,websiteName:string|undefined,companyEmail:string|undefined){
     try{
         const content = registerString(user,email)
         sendEmail({
             subject: `Welcome to Mega Mushrooms`,
             html:template(content,websiteName),
             to:email,
-            from: `${process.env.COMPANY_EMAIL}`,
+            from: `${companyEmail}`,
             attachments:[
               {
                 filename:'logo_small.jpg',
@@ -197,14 +197,14 @@ export async function registerHandler(email:string,user:any,websiteName:string|u
     }
 
 }
-export async function deleteAccountHandler(email:string,websiteName:string|undefined){
+export async function deleteAccountHandler(email:string,websiteName:string|undefined,companyEmail:string|undefined){
     try{
         const content = deleteAccountString();
         sendEmail({
             subject: "We are sorry to see you go",
             html: template(content,websiteName),
             to: email,
-            from: `${process.env.COMPANY_EMAIL}`,
+            from: `${companyEmail}`,
             attachments:[
               {
                 filename:'logo_small.jpg',
@@ -220,14 +220,14 @@ export async function deleteAccountHandler(email:string,websiteName:string|undef
     }
 
 }
-export async function disputeHandler(object:any,status:string,websiteName:string|undefined){
+export async function disputeHandler(object:any,status:string,websiteName:string|undefined,companyEmail:string|undefined){
   try{
       const content = disputeString(object,status);
       sendEmail({
           subject: "New Dispute",
           html: template(content,websiteName),
-          to: `${process.env.COMPANY_EMAIL}`,
-          from: `${process.env.COMPANY_EMAIL}`,
+          to: `${companyEmail}`,
+          from: `${companyEmail}`,
           attachments:[
             {
               filename:'logo_small.jpg',
@@ -243,14 +243,14 @@ export async function disputeHandler(object:any,status:string,websiteName:string
   }
 
 }
-export async function invoiceFailHandler(attemptCount:number,email:string,finalizationFailure:boolean,websiteName:string|undefined){
+export async function invoiceFailHandler(attemptCount:number,email:string,finalizationFailure:boolean,websiteName:string|undefined,companyEmail:string|undefined){
   try{
     const content = invoiceFailString();
     sendEmail({
         subject: "Your subscription payment has failed",
         html: template(content,websiteName),
         to: email,
-        from: `${process.env.COMPANY_EMAIL}`,
+        from: `${companyEmail}`,
         attachments:[
           {
             filename:'logo_small.jpg',
@@ -266,24 +266,24 @@ catch(e){
 }
 
 }
-export async function refundHandler(object:any){
+export async function refundHandler(object:any,companyEmail:string|undefined){
   sendEmail({
       subject: `Refund status`,
       html: `<h1>refund status</h1>
         <p>refund status: ${object.status}</p>
         <p>refund id: ${object.id}</p>
       `,
-      to: `${process.env.COMPANY_EMAIL}`,
-      from: `${process.env.COMPANY_EMAIL}`,
+      to: `${companyEmail}`,
+      from: `${companyEmail}`,
   })
 
 }
-export async function payoutHandler(paid:boolean,obj:any){
+export async function payoutHandler(paid:boolean,obj:any,companyEmail:string|undefined){
   sendEmail({
       subject: `${paid?"Payout paid":"Payout failed"}`,
       html: `<h1>${paid?"PAYOUT PAID":"PAYOUT FAILED"} - ${obj.id}</h1>`,
-      to: `${process.env.COMPANY_EMAIL}`,
-      from: `${process.env.COMPANY_EMAIL}`,
+      to: `${companyEmail}`,
+      from: `${companyEmail}`,
   })
   
 }
