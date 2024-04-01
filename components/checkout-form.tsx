@@ -108,13 +108,14 @@ export default function CheckoutForm(props: any) {
         const keys = Object.keys(validPostcodesArr)
         let validPostcode=false
         let postcodeArea=''
+        const containsFresh = !context.state.cart.items.every((el:any)=>el.fresh===false)
         keys.forEach((key:string)=>{
             if(!validPostcodesArr[key as string].every((el:string)=>!formPostcode.toLowerCase().trim().startsWith(el.toLowerCase()))){
                 validPostcode=true
                 postcodeArea=key
             }
         })
-        if(formPostcode.length>0){
+        if(containsFresh===false&&formPostcode.length>0){
             validPostcode=true
         }
         if(validPostcode&&postcodeArea!==''){
