@@ -26,7 +26,7 @@ export default function Delivery(){
                 {
                     ZedPostcodes.bristol.map((el:any,idx)=>{
                         return(
-                            <span>{el}  </span>
+                            <span key={idx}>{el}  </span>
                         )
                     })
                 }
@@ -38,7 +38,7 @@ export default function Delivery(){
                     {
                     ZedPostcodes.brighton.map((el:any,idx)=>{
                         return(
-                            <span>{el}  </span>
+                            <span key={idx}>{el}  </span>
                         )
                     })
                 }
@@ -51,20 +51,20 @@ export default function Delivery(){
                     {
                     ZedPostcodes.hoxton.map((el:any,idx)=>{
                         return(
-                            <span>{el} </span>
+                            <span key={idx}>{el} </span>
                         )
                     })
                 }
                 {
                     ZedPostcodes.battersea.map((el:any,idx)=>{
                         return(
-                            <span>{el} </span>
+                            <span key={idx}>{el} </span>
                         )
                     })
                 }
                 {ZedPostcodes.waltham_forest.map((el:any,idx)=>{
                         return(
-                            <span>{el} </span>
+                            <span key={idx}>{el} </span>
                         )
                     })}
                     </p>
@@ -77,7 +77,7 @@ export default function Delivery(){
                     {
                         ZedPostcodes.norwich.map((el:any,idx)=>{
                             return(
-                                <span>{el} </span>
+                                <span key={idx}>{el} </span>
                             )
                         })
                     }
@@ -90,7 +90,7 @@ export default function Delivery(){
                     {
                         ZedPostcodes.manchester.map((el:any,idx)=>{
                             return(
-                                <span>{el} </span>
+                                <span key={idx}>{el} </span>
                             )
                         })
                     }
@@ -102,7 +102,7 @@ export default function Delivery(){
                     {
                         ZedPostcodes.cambridge.map((el:any,idx)=>{
                             return(
-                                <span>{el} </span>
+                                <span key={idx}>{el} </span>
                             )
                         })
                     }
