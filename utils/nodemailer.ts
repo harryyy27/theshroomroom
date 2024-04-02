@@ -38,7 +38,7 @@ const createTransporter = async () => {
         service: "gmail",
         auth: {
           type: "OAuth2",
-          user: process.env.BACKEND_EMAIL,
+          user: process.env.COMPANY_EMAIL,
           accessToken,
           clientId: process.env.GOOGLEAPI_OAUTH_CLIENT_ID,
           clientSecret: process.env.GOOGLEAPI_OAUTH_CLIENT_SECRET,
