@@ -13,7 +13,7 @@ export default function Returns(){
         <h1 className="main-heading">Returns</h1>
         <section>
         <h2>Perishable goods</h2>
-        <p>Refunds are not offered on perishable goods</p>
+        <p>Refunds are not offered on perishable goods.</p>
         <ul>
             <li>Mushies</li>
             {/* <li>Spore syringes</li> */}

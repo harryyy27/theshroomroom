@@ -119,7 +119,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                                 interval: body.subscription==="weekly"?"week":"month",
                                 interval_count:1,
                             },
-                            unit_amount:500
+                            unit_amount:1
                         },
                         quantity:1,
                     })

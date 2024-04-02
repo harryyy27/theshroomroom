@@ -9,7 +9,7 @@ const config = [
     },
     {
         question: "How long can I store them for?",
-        answer:"Fresh mushrooms last approximately approximately 7 days from being picked. However, dried they can last for years as long as they are stored properly in sealable packaging or an airtight jar in a cool / dry place. They must however remain dry. The low water potential of dried mushrooms leads to absorption of water vapour. This is because mushrooms have high osmotic potential."
+        answer:"Fresh mushrooms last approximately 7 days from being picked. However, dried they can last for years as long as they are stored properly in sealable packaging or an airtight jar in a cool / dry place. They must however remain dry. The low water potential of dried mushrooms leads to absorption of water vapour. This is because mushrooms have high osmotic potential."
     }
 ]
 
