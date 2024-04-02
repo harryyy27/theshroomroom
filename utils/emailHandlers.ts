@@ -182,13 +182,13 @@ export async function registerHandler(email:string,user:any,websiteName:string|u
             html:template(content,websiteName),
             to:email,
             from: `${companyEmail}`,
-            attachments:[
-              {
-                filename:'logo_small.jpg',
-                path:process.cwd()+'/public/logo_small.jpg',
-                cid:'logo',
-              }
-            ]
+            // attachments:[
+            //   {
+            //     filename:'logo_small.jpg',
+            //     path:process.cwd()+'/public/logo_small.jpg',
+            //     cid:'logo',
+            //   }
+            // ]
         })
 
     }
