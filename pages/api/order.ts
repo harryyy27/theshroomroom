@@ -226,8 +226,9 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
 
     }
     catch(e:any){
-        
+        console.log(e)
         console.error(e)
+        console.log('oioioi')
         await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.toString(),false)
         return res.status(500).json({success:false,error:e.toString(),transactionFailure:e.cause==="transaction"?true:false})
     }
