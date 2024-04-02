@@ -113,13 +113,13 @@ export async function receiveUpdatesHandler(email:string,user:boolean,websiteNam
             html:template(content,websiteName),
             to:`${email}`,
             from: `${companyEmail}`,
-            attachments:[
-              {
-                filename:'logo_small.jpg',
-                path:process.cwd()+'/public/logo_small.jpg',
-                cid:'logo',
-              }
-            ]
+            // attachments:[
+            //   {
+            //     filename:'logo_small.jpg',
+            //     path:process.cwd()+'/public/logo_small.jpg',
+            //     cid:'logo',
+            //   }
+            // ]
         })
 
     }
@@ -142,7 +142,7 @@ export async function orderHandler(order:any,websiteName:string|undefined,compan
             html:template(content,websiteName),
             to:`${order.email}`,
             from: `${companyEmail}`,
-            attachments:imageAttach
+            // attachments:imageAttach
         })
 
     }
@@ -165,7 +165,7 @@ export async function subscriptionHandler(subscription:any,websiteName:string|un
             html:template(content,websiteName),
             to:`${subscription.email}`,
             from: `${companyEmail}`,
-            attachments:imageAttach
+            // attachments:imageAttach
         })
 
     }
@@ -205,13 +205,13 @@ export async function deleteAccountHandler(email:string,websiteName:string|undef
             html: template(content,websiteName),
             to: email,
             from: `${companyEmail}`,
-            attachments:[
-              {
-                filename:'logo_small.jpg',
-                path:process.cwd()+'/public/logo_small.jpg',
-                cid:'logo',
-              }
-            ]
+            // attachments:[
+            //   {
+            //     filename:'logo_small.jpg',
+            //     path:process.cwd()+'/public/logo_small.jpg',
+            //     cid:'logo',
+            //   }
+            // ]
         })
 
     }
@@ -228,13 +228,13 @@ export async function disputeHandler(object:any,status:string,websiteName:string
           html: template(content,websiteName),
           to: `${companyEmail}`,
           from: `${companyEmail}`,
-          attachments:[
-            {
-              filename:'logo_small.jpg',
-              path:process.cwd()+'/public/logo_small.jpg',
-              cid:'logo',
-            }
-          ]
+          // attachments:[
+          //   {
+          //     filename:'logo_small.jpg',
+          //     path:process.cwd()+'/public/logo_small.jpg',
+          //     cid:'logo',
+          //   }
+          // ]
       })
 
   }
@@ -251,13 +251,13 @@ export async function invoiceFailHandler(attemptCount:number,email:string,finali
         html: template(content,websiteName),
         to: email,
         from: `${companyEmail}`,
-        attachments:[
-          {
-            filename:'logo_small.jpg',
-            path:process.cwd()+'/public/logo_small.jpg',
-            cid:'logo',
-          }
-        ]
+        // attachments:[
+        //   {
+        //     filename:'logo_small.jpg',
+        //     path:process.cwd()+'/public/logo_small.jpg',
+        //     cid:'logo',
+        //   }
+        // ]
     })
 
 }
