@@ -37,7 +37,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse) {
             user.subscriptions=[]
             const companyEmail=process.env.COMPANY_EMAIL
             await user.save()
-            await registerHandler(body.username,user,process.env.WEBSITE_URL,companyEmail)
+            await registerHandler(body.username,user,process.env.WEBSITE_NAME,companyEmail)
             res.status(200).json({message: 'Registered successfully'})
 
         }

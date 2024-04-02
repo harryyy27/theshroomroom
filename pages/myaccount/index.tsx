@@ -24,11 +24,12 @@ export default function MyAccount({setComponentLoading}:any){
                     })
                 })
                 const resp=await res.json();
-                if(resp.body.error){
-                    updateDeleted("Sorry we were unable to delete your account, please try again later.")
+                if(resp?.message){
+                    updateDeleted("Your account was successfully deleted.")
+                    
                 }
                 else {
-                    updateDeleted("Your account was successfully deleted.")
+                    updateDeleted("Sorry we were unable to delete your account, please try again later.")
                 }
                 signOut({
                     callbackUrl: `${window.location.origin}`
