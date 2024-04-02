@@ -60,10 +60,8 @@ export default function ProductDetails({setComponentLoading}:any){
                     dryList.push(el.mass)
                 }
             })
-            console.log(freshList)
-            console.log(dryList)
+            
             if(freshList.length>0){
-                console.log('eh')
                 setFresh(true)
             }
             freshList.sort((a:string,b:string)=>{
