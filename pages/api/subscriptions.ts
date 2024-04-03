@@ -9,11 +9,13 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         await connect()
         if(req.method!=='GET'){
             if(!req.headers.csrftoken){
-                throw new Error('No csrf header found.')
+                var e= new Error('No csrf header found.')
+                return res.status(500).json({success:false,error:e.toString()})
             }
             const csrftoken = await getCsrfToken({req:{headers:req.headers}})
             if(req.headers.csrftoken!==csrftoken){
-                throw new Error('CSRF authentication failed.')
+                var e= new Error('CSRF authentication failed.')
+                return res.status(500).json({success:false,error:e.toString()})
             }
         }
         
@@ -29,7 +31,8 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 return res.status(200).json({subscriptions:subscriptions})
             }
             else {
-                throw new Error('No id provided')
+                var e= new Error('No id provided')
+                return res.status(500).json({success:false,error:e.toString()})
 
             }
             
@@ -56,7 +59,9 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 return res.status(200).json({success:true})
             }
             else {
-                throw new Error(`Subscription update unsuccessfull: Subscription ID ${body.subscriptionId}`)
+                
+                var e=new Error(`Subscription update unsuccessfull: Subscription ID ${body.subscriptionId}`)
+                return res.status(500).json({success:false,error:e.toString()})
             }
         }
         else if(req.method==='DELETE'){

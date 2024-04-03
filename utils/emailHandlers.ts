@@ -90,18 +90,18 @@ export async function errorHandler(headers:string,body:string|undefined,method:s
         timestamp: Date.now()
     })
     await error.save()
-    try{
-        sendEmail({
-            subject: client?"Client Side Error":"Server Side Error",
-            text:"New error mate",
-            to:"theshroomroomdev@gmail.com",
-            from: "ServerSideError@theshroomroomdev.com"
-        })
+    // try{
+    //     sendEmail({
+    //         subject: client?"Client Side Error":"Server Side Error",
+    //         text:"New error mate",
+    //         to:"theshroomroomdev@gmail.com",
+    //         from: "ServerSideError@theshroomroomdev.com"
+    //     })
 
-    }
-    catch(e){
-        console.log(e)
-    }
+    // }
+    // catch(e){
+    //     console.log(e)
+    // }
 
 }
 export async function receiveUpdatesHandler(email:string,user:boolean,websiteName:string|undefined,companyEmail:string|undefined){

@@ -6,16 +6,24 @@ import signInUser from "../../../utils/nextAuthUtils";
 import {UserSchema} from '../../../utils/types'
 import {Session} from 'next-auth';
 import {errorHandler} from '../../../utils/emailHandlers';
-export async function findUser(credentials:Record<string,string>|undefined):Promise<{user?:UserSchema,error?:string,password?:string}|undefined>{
+export async function findUser(credentials:Record<string,string>|undefined):Promise<{user?:UserSchema,error?:string,password?:string,frontEndError?:string}|undefined>{
     try{
         if(!credentials){
-            throw new Error('Credentials not provided.')
+            return {
+                frontEndError:"No credentials provided"
+            }
         }
         if(!credentials.username){
-            throw new Error('No username provided.')
+            
+            return {
+                frontEndError:"No username provided"
+            }
         }
         if(!credentials.password){
-            throw new Error('No password provided.')
+            
+            return {
+                frontEndError:"No password provided"
+            }
         }
         const username= credentials?.username;
         const password = credentials?.password;
@@ -25,7 +33,10 @@ export async function findUser(credentials:Record<string,string>|undefined):Prom
         }
         else {
             
-            throw new Error("You haven't registered yet.")
+            
+            return {
+                frontEndError:"Not registered yet..."
+            }
         }
 
     }
@@ -89,13 +100,17 @@ export async function setupSession(session: Session){
 export async function getUser(creds:{user?:UserSchema,error?:any,password?:string}|undefined){
     try{
         if(creds?.error){
-            throw new Error(creds.error)
+            return {
+                frontEndError:"Find user function failed"
+            }
         }
         if(creds?.user&&creds?.password){
             var {user,password}=creds;
         }
         else {
-            throw new Error('Creds wrong')
+            return {
+                frontEndError:'Creds wrong'
+            }
         }
         if(password&&user.password){
             const confirmedUser= await signInUser(user.password,password)
@@ -105,12 +120,16 @@ export async function getUser(creds:{user?:UserSchema,error?:any,password?:strin
                 }
             }
             else {
-                throw new Error("Sign in failed.")
+                return {
+                    frontEndError:"Password incorrect"
+                }
             }
 
         }
         else {
-            throw new Error("No password detected.")
+            return {
+                frontEndError:"No password detected."
+            } 
         }
         
 
@@ -132,10 +151,16 @@ export const authOptions={
                         await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,creds.error,false)
                         throw new Error(creds.error)
                     }
+                    else if(creds?.frontEndError){
+                        throw new Error(creds.frontEndError)
+                    }
                     const user = await (getUser(creds) as any)
                     if(user.error){
                         await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,user.error,false)
                         throw new Error(user.error)
+                    }
+                    else if(user.frontEndError){
+                        throw new Error(user.frontEndError)
                     }
                     else {
                         return user

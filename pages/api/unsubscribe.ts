@@ -8,11 +8,13 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     
     try{
         if(req.method!=="DELETE"){
-            throw new Error('Not delete request.')
+            var e= new Error('Not delete request.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         const csrftoken = await getCsrfToken({req:{headers:req.headers}})
         if(req.headers.csrftoken!==csrftoken){
-            throw new Error('CSRF authentication failed.')
+            var e=new Error('CSRF authentication failed.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         await connect()
 
@@ -21,14 +23,15 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 const existsSubscribe = await ReceiveUpdates().findOne({email:body.email})
                 if(!existsSubscribe){
                     var error= new Error('This email is not in our subscription list. If you have an account, log in and unsubscribe under edit user in your account settings.')
-                    throw error
+                    return res.status(500).json({success:false,error:error.toString()})
                 }
                 var subscription = new (ReceiveUpdates() as any)(body);
                 await subscription.save()
             
         }
         else{
-            throw new Error('This route is for unsubscribing')
+            var e= new Error('This route is for unsubscribing')
+            return res.status(500).json({success:false,error:e.toString()})
 
 
         }

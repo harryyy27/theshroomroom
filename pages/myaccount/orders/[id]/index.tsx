@@ -51,7 +51,6 @@ export default function MyAccountOrders({setComponentLoading}:any){
     async function getOrders(sesh:Session){
         try{
             setComponentLoading(true)
-            console.log('oioio')
             const order_id=window.location.href.split('/orders/')[1]
             const orderData = await fetch(`/api/order/?order_id=${order_id}`,{
                 method:"GET"

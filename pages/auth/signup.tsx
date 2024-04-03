@@ -21,12 +21,12 @@ export default function SignUp({setComponentLoading}:any){
             e.preventDefault();
             const csrftoken = await getCsrfToken()
             if(!csrftoken){
-                throw new Error('No csurfin')
+                setMessage('No csurfin')
             }
             const res = await fetch('/api/register', {
                 method:"POST",
                 headers: {
-                    "csrftoken":csrftoken,
+                    "csrftoken":csrftoken as string,
                     "Content-Type":'appication/json'
                 },
                 body: JSON.stringify({name,username,password})
@@ -43,7 +43,6 @@ export default function SignUp({setComponentLoading}:any){
             }
             else {
                 setMessage(data.error)
-                throw new Error(data.error)
             }
         }
         catch(error:any){

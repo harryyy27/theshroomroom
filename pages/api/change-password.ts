@@ -7,14 +7,17 @@ import bcrypt from 'bcrypt';
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
     try{
         if(req.method!=="PUT"){
-            throw new Error('Not post request.')
+            var e= new Error('Not post request.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         if(!req.headers.csrftoken){
-            throw new Error('No csrf header found.')
+            var e= new Error('No csrf header found.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         const csrftoken = await getCsrfToken({req})
         if(req.headers.csrftoken!==csrftoken){
-            throw new Error('CSRF authentication failed.')
+            var e= new Error('CSRF authentication failed.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         
         await connect()

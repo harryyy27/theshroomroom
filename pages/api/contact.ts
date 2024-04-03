@@ -6,11 +6,13 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     try{
         if(req.method==='POST'){
             if(!req.headers.csrftoken){
-                throw new Error('No csrf header found.')
+                var e= new Error('No csrf header found.')
+                return res.status(500).json({success:false,error:e.toString()})
             }
             const csrftoken = await getCsrfToken({req:{headers:req.headers}})
             if(req.headers.csrftoken!==csrftoken){
-                throw new Error('CSRF authentication failed.')
+                var e= new Error('CSRF authentication failed.')
+                return res.status(500).json({success:false,error:e.toString()})
             }
             
             const body = JSON.parse(req.body);
@@ -24,7 +26,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             res.status(200).json({success: true})
         }
         else {
-            throw new Error('Only post requests for this route');
+            var e=new Error('Only post requests for this route');
+            return res.status(500).json({success:false,error:e.toString()})
         }
     }
     catch(e:any){

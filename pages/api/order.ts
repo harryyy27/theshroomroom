@@ -14,11 +14,13 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
 
         if(req.method!=='GET'){
             if(!req.headers.csrftoken){
-                throw new Error('No csrf header found.')
+                var e=new Error('No csrf header found.')
+                return res.status(500).json({success:false,error:e.toString()})
             }
             const csrftoken = await getCsrfToken({req:{headers:req.headers}})
             if(req.headers.csrftoken!==csrftoken){
-                throw new Error('CSRF authentication failed.')
+                var e= new Error('CSRF authentication failed.')
+                return res.status(500).json({success:false,error:e.toString()})
             }
         }
         if(req.method==='POST'){
@@ -48,7 +50,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             }
             catch(e:any){
                 e.cause="transaction"
-                throw(e)
+                return res.status(500).json({success:false,error:e.toString()})
             }
             finally{
                 if(dbSession!==null){
@@ -75,7 +77,8 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 if(body.subscription){
                     var session = await getServerSession(req,res,authOptions);
                     if(!session?.user){
-                        throw new Error('You need to be signed in to subscribe.')
+                        const error= new Error('You need to be signed in to subscribe.')
+                        return res.status(500).json({success:false,error:error.toString()})
                     }
                     var stripeCustomerId= session?.user.stripeCustomerId||undefined
                     var subscriptionObj = {...body}
@@ -154,7 +157,8 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                         })
                 }
                 else {
-                    throw new Error('Missing fields')
+                    const error= new Error('Missing fields')
+                    return res.status(500).json({success:false,error:error.toString()})
 
                 }
                     
@@ -173,7 +177,8 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
 
             }
             else {
-                throw new Error('No id provided')
+                const error= new Error('No id provided')
+                return res.status(500).json({success:false,error:error.toString()})
             }
             
             return res.status(200).json({orders:orders})
@@ -195,7 +200,8 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 return res.status(200).json({success:true})
             }
             else {
-                throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                const e = new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                return res.status(500).json({success:false,error:e.toString()})
             }
         }
         else if(req.method==='DELETE'){
@@ -220,15 +226,14 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             }
 
             else {
-                throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                const e = new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
+                return res.status(500).json({success:false,error:e.toString()})
             }
         }
 
     }
     catch(e:any){
-        console.log(e)
         console.error(e)
-        console.log('oioioi')
         await errorHandler(JSON.stringify(req.headers),JSON.stringify(req.body),req.method as string,e.toString(),false)
         return res.status(500).json({success:false,error:e.toString(),transactionFailure:e.cause==="transaction"?true:false})
     }

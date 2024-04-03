@@ -9,14 +9,17 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     
     try{
         if(req.method!=="PUT"&&req.method!=="POST"){
-            throw new Error('Not put request.')
+            var e= new Error('Not put request.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         if(req.method==="POST"&&!req.headers.csrftoken){
-            throw new Error('No csrf header found.')
+            var e= new Error('No csrf header found.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         const csrftoken = await getCsrfToken({req:{headers:req.headers}})
         if(req.headers.csrftoken!==csrftoken){
-            throw new Error('CSRF authentication failed.')
+            var e= new Error('CSRF authentication failed.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         await connect()
 
@@ -26,7 +29,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             if(body.user){
                     const user =await User().findOne({username:body.email})
                     if(!user){
-                        throw new Error('This user was not found')
+                        const error= new Error('This user was not found')
+                        return res.status(500).json({success:false,error:error.toString()})
                     }
                     await User().findOneAndUpdate({username:body.email},{updates:body.subscribe})
                     await receiveUpdatesHandler(body.email,true,process.env.WEBSITE_NAME,companyEmail)
@@ -35,12 +39,12 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 let userExists = await User().findOne({username:body.email})
                 if(userExists){
                     var error= new Error('A user with this email already exists, log in to subscribe')
-                    throw error;
+                    return res.status(500).json({success:false,error:error.toString()})
                 }
                 const existsSubscribe = await ReceiveUpdates().findOne({email:body.email})
                 if(existsSubscribe){
                     var error= new Error('A user with this email is already subscribed')
-                    throw error
+                    return res.status(500).json({success:false,error:error.toString()})
                 }
                 var subscription = new (ReceiveUpdates() as any)(body);
                 subscription.save()
@@ -51,7 +55,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         else{
             const messageToClient=await User().findOneAndUpdate({username:body.username},{...body})
             if(!messageToClient){
-                throw new Error('Computer says no')
+                const error= new Error('Computer says no')
+                return res.status(500).json({success:false,error:error.toString()})
             }
 
 
