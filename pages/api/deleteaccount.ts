@@ -6,15 +6,19 @@ import {deleteAccountHandler, errorHandler} from '../../utils/emailHandlers'
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
     try{
         if(req.method!=="DELETE"){
-            throw new Error('Not delete request.')
+            var e= new Error('Not delete request.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         if(!req.headers.csrftoken){
-            throw new Error('No csrf header found.')
+            var e =new Error('No csrf header found.')
+            return res.status(500).json({success:false,error:e.toString()})
+            
         }
         const csrfClient=req.headers.csrftoken;
         const csrfServer = await getCsrfToken({req:{headers:req.headers}});
         if(csrfClient !== csrfServer){
-            throw new Error('CSRF authentication failed.')
+            var e= new Error('CSRF authentication failed.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         const email = JSON.parse(req.body)
         const emailStr=email.email

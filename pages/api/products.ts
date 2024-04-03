@@ -31,7 +31,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     }
     
     if(!response){
-      throw new Error('No products found.')
+      const error= new Error('No products found.')
+      return res.status(500).json({success:false,error:error.toString()})
+
     }
     else {
       res.status(200).json(response)
@@ -39,11 +41,14 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
   }
   else if(req.method==='PUT'){
     if(!req.headers.csrftoken){
-      throw new Error('No csrf header found.')
+      const error= new Error('No csrf header found.')
+
+      return res.status(500).json({success:false,error:error.toString()})
     }
     const csrftoken = await getCsrfToken({req:{headers:req.headers}})
     if(req.headers.csrftoken!==csrftoken){
-        throw new Error('CSRF authentication failed.')
+        const error = new Error('CSRF authentication failed.')
+        return res.status(500).json({success:false,error:error.toString()})
     }
     var body = JSON.parse(req.body);
     for(var i=0;i<body.products.items.length; i++){
@@ -52,7 +57,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     return res.status(200).json({success:true})
   }
   else {
-    throw Error('Unhandled method')
+    const error = new Error('Unhandled method')
+
+    return res.status(500).json({success:false,error:error.toString()})
   }
 
   }

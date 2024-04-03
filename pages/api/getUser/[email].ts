@@ -5,13 +5,16 @@ import {errorHandler} from '../../../utils/emailHandlers';
 export default async function handler(req:NextApiRequest,res:NextApiResponse) {
     try{
         if(req.method!=="GET"){
-            throw new Error('Not GET request.')
+            const e= new Error('Not GET request.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         if(!req.url){
-            throw new Error('No req url.')
+            const e= new Error('No req url.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         if(req.url.split('/').length<=3){
-            throw new Error('Url split error.')
+            const e = new Error('Url split error.')
+            return res.status(500).json({success:false,error:e.toString()})
         }
         await connect()
         const email = req.url.split('/')[3]
