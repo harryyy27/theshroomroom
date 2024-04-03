@@ -70,7 +70,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
     } ,
     total:5,
     subTotal:0,
-    shipping:5,
+    shipping:0.01,
     shippingMethod:"Standard",
     totalQuantity:0
 
