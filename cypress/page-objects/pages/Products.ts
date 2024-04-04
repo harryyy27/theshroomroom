@@ -32,7 +32,6 @@ export class Products extends BasePage {
                 const length = el.length
     
                 var wrapped = cy.wrap(el)
-                console.log(wrapped)
                 wrapped.get('.product-image')
                 .should('have.length',length)
                 wrapped.get('.product-description')

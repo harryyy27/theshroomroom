@@ -173,7 +173,7 @@ export default function MyAccountOrders({setComponentLoading}:any){
     const validate_form = async() => {
         try{
             if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal && bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal) {
-                console.log('oi')
+                
                 return true
         }
         
@@ -236,10 +236,8 @@ export default function MyAccountOrders({setComponentLoading}:any){
 
     }
     async function amendOrder(e:FormEvent) {
-        console.log('oi slag')
         e.preventDefault()
         const valid = await validate_form()
-        console.log(valid)
         if(valid){
             const csrftoken=await getCsrfToken()
             if(!csrftoken){
@@ -277,7 +275,6 @@ export default function MyAccountOrders({setComponentLoading}:any){
                     }
                 )
             })
-            console.log(res)
             setAmendSuccess(true)
         }
         else{

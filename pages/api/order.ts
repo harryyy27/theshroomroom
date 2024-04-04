@@ -96,7 +96,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                     const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
     
                     });
-                    console.log(body.paymentIntentId)
                     const paymentIntent = await stripe.paymentIntents.retrieve(
                         body.paymentIntentId
                       );
@@ -104,7 +103,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                     order.subscriptionId=body.subscription
                     order.stripeCustomerId=stripeCustomerId
                     order.invoiceId=paymentIntent.invoice
-                    console.log(paymentIntent)
                 }
                 var validated= await order.save()
                 if(validated){

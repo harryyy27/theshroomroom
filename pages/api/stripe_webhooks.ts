@@ -30,9 +30,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             switch (event.type){
                 case "payment_intent.succeeded":
                     console.log("payment_intent.succeeded")
-                    console.log(JSON.parse(payload).data.object)
                     if(JSON.parse(payload).data.object.description==="Subscription update"){
-                        console.log(JSON.parse(payload).data.object)
                         var sub_body={
                             paymentIntentId: JSON.parse(payload).data.object.id,
                             status:"ORDER_RECEIVED",
@@ -52,7 +50,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
                         }
                         var order = await Order().findOneAndUpdate({invoiceId:sub_body.invoiceId},{...sub_body})
-                        console.log(order)
                         var subscription = await Subscription().findOneAndUpdate({subscriptionId:order.subscriptionId},{dateLastPaid:Date.now(),status:"SUBSCRIPTION_ACTIVE"})
                         await subscriptionHandler(subscription,websiteName,companyEmail,false)
                     }
