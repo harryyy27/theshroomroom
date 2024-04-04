@@ -59,6 +59,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 }
             }
                 var checkOrderExists = await Order().findOne({paymentIntentId:body.paymentIntentId})
+                
                 if(checkOrderExists){
                     var order = checkOrderExists
                 }
@@ -92,10 +93,18 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                         subscriptionNew.dateLastPaid=date
                         var subValidated=await subscriptionNew.save()
                     }
-                    
+                    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
+    
+                    });
+                    console.log(body.paymentIntentId)
+                    const paymentIntent = await stripe.paymentIntents.retrieve(
+                        body.paymentIntentId
+                      );
                     
                     order.subscriptionId=body.subscription
                     order.stripeCustomerId=stripeCustomerId
+                    order.invoiceId=paymentIntent.invoice
+                    console.log(paymentIntent)
                 }
                 var validated= await order.save()
                 if(validated){

@@ -37,12 +37,11 @@ export default function Cart({setComponentLoading}:any){
                     <h1 className="main-heading center">Cart</h1>
                         <div className="cart-summary">
                             <p><b>Sub-total: </b>{"£"+String(context.state.subTotal)}</p>
-                            <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkoutSide">Checkout</span></Link></button>
+                            <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkoutSide">One Time Purchase</span></Link></button>
                             {
                                 user?
                                 <>
-                                <p>Receive monthly?</p>
-                                <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout?subscription=true"><span id="subscriptionSide">Subscription</span></Link></button>
+                                <button style={{"marginTop":"1rem"}}disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout?subscription=true"><span id="subscriptionSide">Receive monthly</span></Link></button>
                                 </>:
                                 null
                             }
