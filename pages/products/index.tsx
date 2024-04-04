@@ -113,6 +113,7 @@ export async function getServerSideProps(ctx:any){
     try {
         const data= await fetch(`http://${req.headers.host}/api/products/`)
         var response = await data.json()
+        response=response.filter((el:any)=>el.name!=="Shipping")
         if(response){
             var resp = response.reduce((acc:any,b:any)=>{
                 for(var i = 0;i<acc.length;i++){

@@ -34,8 +34,9 @@ interface useReducerState {
 interface actionInterface {
   type:String,
   payload: {
-    items: Product[]
+    items: Product[]|[]
   }
+  shipping:number|undefined
 }
 function reducer(state:useReducerState,action:actionInterface){
   switch(action.type){
@@ -50,11 +51,12 @@ function reducer(state:useReducerState,action:actionInterface){
       return {
         cart: action.payload,
         subTotal: subTotal,
-        shipping:state.shipping,
+        shipping:action.shipping?action.shipping:state.shipping,
         shippingMethod:"Standard",
         total: subTotal+state.shipping,
         totalQuantity:totalQuantity
       }
+    
     default:
       return state
   }
@@ -70,7 +72,7 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
     } ,
     total:5,
     subTotal:0,
-    shipping:0.01,
+    shipping:0,
     shippingMethod:"Standard",
     totalQuantity:0
 
@@ -85,10 +87,19 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
         const initializeCart=async()=>{
           try {
             const data=await getSession()
+            const shippingJson = await fetch(`/api/products?product=${"Shipping"}`)
+            const shippingDetails = await shippingJson.json()
+            console.log(shippingDetails)
+            dispatch({
+              type:"UPDATE_CART",
+              payload:{items:[]},
+              shipping: shippingDetails[0].price_standard
+            })
             if(data&&data.user&&data.user.cart){
                 dispatch({
                   type:"UPDATE_CART",
-                  payload:data.user.cart
+                  payload:data.user.cart,
+                  shipping: shippingDetails[0].price_standard
                 })
                
             }
@@ -107,7 +118,8 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                       }
                       dispatch(({
                         type:"UPDATE_CART",
-                        payload: cartItems
+                        payload: cartItems,
+                        shipping:shippingDetails[0].price_standard
                       }))
                     }
                     
@@ -169,14 +181,16 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
                     }
                     dispatch({
                       type:"UPDATE_CART",
-                      payload:newCart
+                      payload:newCart,
+                      shipping:undefined
                     })
                 }
                 else{
                     setCookie({},"Cart",JSON.stringify(newCart))
                     dispatch({
                       type:"UPDATE_CART",
-                      payload:newCart
+                      payload:newCart,
+                      shipping:undefined
                     })
                 }
               }
@@ -212,7 +226,8 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
             })
             dispatch({
               type:"UPDATE_CART",
-              payload:newCart
+              payload:newCart,
+              shipping:undefined
             })
             
             }
@@ -279,3 +294,4 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
 }
 
 export default MyApp
+

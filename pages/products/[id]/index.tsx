@@ -15,6 +15,7 @@ interface Product {
     mass:string,
     price:number,
     stripe_product_id:string,
+    stripe_id:string,
     fresh:boolean,
 }
 export default function ProductDetails({setComponentLoading}:any){
@@ -35,6 +36,7 @@ export default function ProductDetails({setComponentLoading}:any){
     const [qty,setQty]=useState(1);
     const [user,setUser]=useState(false);
     const [stripeProductId,setStripeProductId]=useState('');
+    const [stripeId,setStripeId]=useState('');
     const [itemsAvailable,setItemsAvailable]=useState(false);
     const [err,setErr]=useState('');
 
@@ -159,6 +161,7 @@ export default function ProductDetails({setComponentLoading}:any){
                         setPrice('');
                         setSize('');
                         setStripeProductId('');
+                        setStripeId('')
                         setProductAvailable(true);
                         toggleBackground(e.target as HTMLElement,"fresh-dry")
                         toggleBackground(null,"size-select")
@@ -171,6 +174,7 @@ export default function ProductDetails({setComponentLoading}:any){
                     setPrice('');
                     setSize('');
                     setStripeProductId('');
+                    setStripeId('')
                     setProductAvailable(true);
                     toggleBackground(e.target as HTMLElement,"fresh-dry")
                     toggleBackground(null,"size-select")
@@ -204,6 +208,7 @@ export default function ProductDetails({setComponentLoading}:any){
                                     setStockAvailable(chosenProduct.stock_available)
                                     setPrice(chosenProduct.price.toString())
                                     setStripeProductId(chosenProduct.stripe_product_id)
+                                    setStripeId(chosenProduct.stripe_id)
                                     setSize(el)
                                     toggleBackground(e.target as HTMLElement,"size-select")
 
@@ -229,6 +234,7 @@ export default function ProductDetails({setComponentLoading}:any){
                                     setStockAvailable(chosenProduct.stock_available)
                                     setPrice(chosenProduct.price.toString())
                                     setStripeProductId(chosenProduct.stripe_product_id)
+                                    setStripeId(chosenProduct.stripe_id)
                                     setSize(el)
                                     toggleBackground(e.target as HTMLElement,"size-select")
 
@@ -299,6 +305,7 @@ export default function ProductDetails({setComponentLoading}:any){
                                         quantity:Number(input.value),
                                         price: Number(price),
                                         stripeProductId:stripeProductId,
+                                        stripeId:stripeId,
                                         stockAvailable:stockAvailable
                                     }):null}
                                     setComponentLoading(false)
