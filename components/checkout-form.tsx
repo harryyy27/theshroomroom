@@ -136,7 +136,6 @@ export default function CheckoutForm(props: any) {
         
     }
     useEffect(() => {
-        console.log("SUBSCRIPTION ISSSSSSS "+props.subscriptionId)
         setComponentLoading(true)
         setValidPostcodes(postcodes)
         setSubscription(props.subscriptionId)
@@ -153,7 +152,6 @@ export default function CheckoutForm(props: any) {
                     })
                     .then((res) => {
                         if (res.error) {
-                            console.log(res.error)
                             throw new Error('Unable to load user details')
                         }
                         if (res.user.dAddress.firstName && res.user.dAddress.firstName.length > 0) {

@@ -62,8 +62,6 @@ export default function Checkout(props:any){
     )
 }
 async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippingCost:number,ctx:any,start:any){
-    console.log('im in')
-    console.log("6: " +(start-Date.now())/1000)
     var stripeCustomerId= sesh?.user.stripeCustomerId||undefined
     var standardShippingPriceId = process.env.STRIPE_SHIPPING_ID;
     let items
@@ -86,7 +84,6 @@ async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippin
     }
     else if(Cart) {
         items = await JSON.parse(Cart).items.map(async(el:any)=>{
-            console.log(el.stripeId)
             return {
                 price_data:{
                     product: el.stripeId,
@@ -102,7 +99,6 @@ async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippin
         })
     }
 
-    console.log("7: " +(start-Date.now())/1000)
     if(!sesh&&!Cart){
         return {
             props:{
@@ -125,7 +121,6 @@ async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippin
 
     items= await Promise.all(items) as any
 
-    console.log("8: " +(start-Date.now())/1000)
     var checkoutSession = await stripe.subscriptions.create({
         customer: sesh?.user.stripeCustomerId as string,
         items: items,
@@ -137,15 +132,12 @@ async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippin
         expand:["latest_invoice.payment_intent"]
     })
 
-    console.log("9: " +(start-Date.now())/1000)
     var subscription_id=checkoutSession.id;
     var latestInvoice = checkoutSession.latest_invoice as any
     setCookie(ctx,'checkoutDetails',JSON.stringify({paymentIntentId:latestInvoice.payment_intent.id as string,subscriptionId:subscription_id}),{
         path:'/checkout'
     })
 
-    console.log("10: " +(start-Date.now())/1000)
-    console.log(latestInvoice.payment_intent.client_secret)
     return {
         props: {
             paymentIntent:latestInvoice.payment_intent,
@@ -156,7 +148,6 @@ async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippin
 export const getServerSideProps =  async(ctx:any) => {
     const {req,res} = ctx;
     try {
-        console.log('here we go')
         var start = Date.now()
         const secret_key = process.env.STRIPE_SECRET_KEY as string;
         var stripe = new Stripe(secret_key,{
@@ -170,13 +161,10 @@ export const getServerSideProps =  async(ctx:any) => {
         const {Cart}= parseCookies(ctx,{
             path:"/"
         })
-        console.log(Cart)
-        console.log("1: " +(start-Date.now())/1000)
         let subscriptionCheckout = req.url.split('?subscription=').length>1
         let shippingCost = price as number
         let total;
 
-        console.log("2: " +(start-Date.now())/1000)
         if(sesh&&sesh.user&&sesh.user.cart){
             total = sesh.user.cart.items.reduce((a:number,b:Product)=>{
                 return a+b.price*b.quantity
@@ -188,9 +176,7 @@ export const getServerSideProps =  async(ctx:any) => {
                 return a+b.price*b.quantity
             },0)
         }
-        console.log(total)
         if(!sesh&&!Cart){
-            console.log('no cart?!')
             return {
                 props:{
                     refresh:true
@@ -198,14 +184,12 @@ export const getServerSideProps =  async(ctx:any) => {
                 };
         }
         
-        console.log("3: " +(start-Date.now())/1000)
         let paymentIntent;
         const {checkoutDetails} = parseCookies(ctx,{
             path:"/checkout"
         })
         if(checkoutDetails){
 
-        console.log("4: " +(start-Date.now())/1000)
             var paymentIntentId=JSON.parse(checkoutDetails).paymentIntentId
             var subscriptionId=JSON.parse(checkoutDetails).subscriptionId
 
@@ -216,7 +200,6 @@ export const getServerSideProps =  async(ctx:any) => {
                 (subscriptionId===''&&subscriptionCheckout===true)||
                 (subscriptionId!==''&&subscriptionCheckout===false)
                 ){
-                    console.log('cookie destroyer')
                     destroyCookie(ctx,"checkoutDetails")
                     if(subscriptionId!==''){
                         await stripe.subscriptions.del(
@@ -225,15 +208,12 @@ export const getServerSideProps =  async(ctx:any) => {
                     }
             }
             else{
-                console.log('else..')
                 if(subscriptionId===''&&subscriptionCheckout===false){
                     
-                    console.log('subid and subscriptioncheckout both false')
                     if(paymentIntent.amount!==((total*100)+shippingCost*100)){
                         paymentIntent=await stripe.paymentIntents.update(paymentIntentId,{
                             amount:total*100+shippingCost*100
                         })
-                        console.log('update pi')
                     }
                         return {
                             props: {
@@ -244,9 +224,6 @@ export const getServerSideProps =  async(ctx:any) => {
                     
                 }
                 else if (subscriptionId!==''&&subscriptionCheckout==true) {
-                    console.log("5: " +(start-Date.now())/1000)
-                    console.log(total)
-                    console.log(paymentIntent.amount)
                     if(paymentIntent.amount!==(total*100+shippingCost*100)){
                         destroyCookie(ctx,"checkoutDetails")
                         await stripe.subscriptions.del(
@@ -254,7 +231,6 @@ export const getServerSideProps =  async(ctx:any) => {
                         )
                     }
                     else {
-                        console.log('subid and subpage')
                         return {
                             props: {
                                 paymentIntent:paymentIntent,
@@ -265,7 +241,6 @@ export const getServerSideProps =  async(ctx:any) => {
 
                 }
                 else {
-                    console.log('weirdness')
                     return {
                         props:{
                             refresh:true

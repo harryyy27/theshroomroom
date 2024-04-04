@@ -260,7 +260,6 @@ export default function ProductDetails({setComponentLoading}:any){
                             const chosenProduct:Product=product.filter((prod:any)=>{
                                 return prod.fresh===freshLabel&&prod.mass===size
                             })[0]
-                            console.log(chosenProduct)
                             if(chosenProduct.stock_available>=Number(e.target.value)){
                                 setProductAvailable(true)
                                 setErr('');

@@ -151,9 +151,9 @@ export async function orderHandler(order:any,websiteName:string|undefined,compan
     }
 
 }
-export async function subscriptionHandler(subscription:any,websiteName:string|undefined,companyEmail:string|undefined){
+export async function subscriptionHandler(subscription:any,websiteName:string|undefined,companyEmail:string|undefined,renewal:boolean){
     try{
-        const content = subscriptionString(subscription);
+        const content = subscriptionString(subscription,renewal);
         const imageAttach = [
           {
             filename:'logo_small.jpg',

@@ -77,7 +77,6 @@ export default function Edit({setComponentLoading}:any){
                     return res.json()
                 })
                 .then((res)=>{
-                    console.log(res)
                         setUser(res.user)
                         if(res.user.dAddress.firstName){
                             setDFirstName(res.user.dAddress.firstName);

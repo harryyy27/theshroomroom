@@ -89,7 +89,6 @@ function MyApp({ Component, pageProps: {session,...pageProps} }: AppProps) {
             const data=await getSession()
             const shippingJson = await fetch(`/api/products?product=${"Shipping"}`)
             const shippingDetails = await shippingJson.json()
-            console.log(shippingDetails)
             dispatch({
               type:"UPDATE_CART",
               payload:{items:[]},
