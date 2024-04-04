@@ -181,11 +181,11 @@ const UserSchema=new Schema({
             type: String,
             required: false,
             default: '',
-            phoneNumber: {
-                type: String,
-                required: false,
-                default: ''
-            }
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     updates: {
