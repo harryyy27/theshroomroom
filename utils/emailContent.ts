@@ -182,7 +182,7 @@ export function receiveUpdateString(user:any,email:string){
     </tbody>
     </table>`
 }
-export function subscriptionString(subscription:any){
+export function subscriptionString(subscription:any,renewal:boolean){
     return `
         <!-- Content -->
         <table cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; text-align:left; border-width: 1px; border-color:#ddd; border-style:solid;color:#343434;" width="700">
@@ -194,8 +194,8 @@ export function subscriptionString(subscription:any){
             <tr>
               <td style="padding:15px 30px;width:640px;background-color:#FFF;">
                 <p>Dear ${subscription.bAddress.firstName + " " + subscription.bAddress.surname} </p>
-                <p style="margin:0;">Thank you for placing starting a ${subscription.interval}ly subscription with Mega Mushrooms.</p>
-                <p style="margin:0;">Your subscription id is ${subscription.subscriptionId}, placed ${subscription.dateOfPurchase}.</p>
+                <p style="margin:0;">Thank you for ${renewal?"continuing your":"starting a"} monthly subscription with Mega Mushrooms.</p>
+                <p style="margin:0;">Your subscription id is ${subscription.subscriptionId}, and was initially placed on ${subscription.dateOfPurchase}.</p>
                 
                 <p style="margin:0;">Your order details are below.</p>
               </td>
