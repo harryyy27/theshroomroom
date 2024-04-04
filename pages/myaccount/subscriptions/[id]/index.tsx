@@ -171,7 +171,7 @@ export default function Subscription({setComponentLoading}:any){
         
     const validate_form = async() => {
         try{
-            if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal&&bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal&&deliveryHubVal) {
+            if (dFirstNameVal && dSurnameVal && dFirstLineVal && dCityVal && dPostcodeVal && dPhoneNumberVal&&bFirstNameVal && bSurnameVal && bFirstLineVal && bCityVal && bPostcodeVal && bPhoneNumberVal) {
                 
                     return true
             }
@@ -213,9 +213,6 @@ export default function Subscription({setComponentLoading}:any){
                 }
                 if (!bPhoneNumberVal) {
                     setBPhoneNumber
-                }
-                if(dPostcodeVal&&!deliveryHubVal){
-                    throw new Error('Delivery Hub fail - subscriptions dPostcode = '+ dPostcode + ' deliveryHub= '+deliveryHub)
                 }
                 return false
             }
