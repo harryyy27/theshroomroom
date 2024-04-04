@@ -34,7 +34,7 @@ interface useReducerState {
 interface actionInterface {
   type:String,
   payload: {
-    items: Product[]|[]
+    items: Product[]
   }
   shipping:number|undefined
 }
