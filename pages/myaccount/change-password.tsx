@@ -76,11 +76,11 @@ export default function ChangePassword({setComponentLoading}:any){
             </Head>
         <h1 className="main-heading center">Reset your password</h1>
             <form className={styles["form"]}>
-                <FormComponent user={user} labelName={"Current Password"}variable={currentPassword} variableName={Object.keys({currentPassword})[0]} setVariable={setCurrentPassword} variableVal={currentPasswordVal} setVariableVal={setCurrentPasswordVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"Current Password"}variable={currentPassword} variableName={Object.keys({currentPassword})[0]} setVariable={setCurrentPassword} variableVal={currentPasswordVal} setVariableVal={setCurrentPasswordVal} inputType={"password"} required={true}/>
                 
-                <FormComponent user={user} labelName={"New Password"}variable={newPassword} variableName={Object.keys({newPassword})[0]} setVariable={setNewPassword} variableVal={newPasswordVal} setVariableVal={setNewPasswordVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"New Password"}variable={newPassword} variableName={Object.keys({newPassword})[0]} setVariable={setNewPassword} variableVal={newPasswordVal} setVariableVal={setNewPasswordVal} inputType={"password"} required={true}/>
 
-                <FormComponent user={user} labelName={"Confirm Password"}variable={confirmPassword} variableName={Object.keys({confirmPassword})[0]} setVariable={setConfirmPassword} variableVal={confirmPasswordVal} setVariableVal={setConfirmPasswordVal} inputType={"text"} required={true}/>
+                <FormComponent user={user} labelName={"Confirm Password"}variable={confirmPassword} variableName={Object.keys({confirmPassword})[0]} setVariable={setConfirmPassword} variableVal={confirmPasswordVal} setVariableVal={setConfirmPasswordVal} inputType={"password"} required={true}/>
 
                 
 
