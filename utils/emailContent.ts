@@ -195,7 +195,7 @@ export function subscriptionString(subscription:any,renewal:boolean){
               <td style="padding:15px 30px;width:640px;background-color:#FFF;">
                 <p>Dear ${subscription.bAddress.firstName + " " + subscription.bAddress.surname} </p>
                 <p style="margin:0;">Thank you for ${renewal?"continuing your":"starting a"} monthly subscription with Mega Mushrooms.</p>
-                <p style="margin:0;">Your subscription id is ${subscription.subscriptionId}, and was initially placed on ${subscription.dateOfPurchase}.</p>
+                <p style="margin:0;">Your subscription id is ${subscription.subscriptionId}, and your subscription started on ${subscription.dateOfPurchase}.</p>
                 
                 <p style="margin:0;">Your order details are below.</p>
               </td>

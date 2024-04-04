@@ -42,7 +42,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                         var order = await Order().findOneAndUpdate({invoiceId:sub_body.invoiceId},{...sub_body})
                         
                         var subscription = await Subscription().findOneAndUpdate({subscriptionId:order.subscriptionId},{dateLastPaid:Date.now()})
-                        await subscriptionHandler(subscription,websiteName,companyEmail)
+                        await subscriptionHandler(subscription,websiteName,companyEmail,true)
                     }
                     else if(JSON.parse(payload).data.object.description==="Subscription creation"){
                         var sub_body={
@@ -54,7 +54,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                         var order = await Order().findOneAndUpdate({invoiceId:sub_body.invoiceId},{...sub_body})
                         console.log(order)
                         var subscription = await Subscription().findOneAndUpdate({subscriptionId:order.subscriptionId},{dateLastPaid:Date.now(),status:"SUBSCRIPTION_ACTIVE"})
-                        await subscriptionHandler(subscription,websiteName,companyEmail)
+                        await subscriptionHandler(subscription,websiteName,companyEmail,false)
                     }
                     else {
                         body={
