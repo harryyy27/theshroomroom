@@ -93,7 +93,7 @@ export function orderString(order:any){
                   <tbody style="color:#343434;">
                     <!--  Start of order items list-->
                     ${
-                        order.products.items.map(({_id,name,quantity,price,fresh,size,stripeProductId}:Product,idx:number)=>{
+                        order.products.items.map(({_id,name,quantity,price,fresh,size,stripeProductId,stripeId}:Product,idx:number)=>{
                             return`
                                     <tr>
                                     <td class="image" style="text-align:left; padding:20px 10px 20px 0; vertical-align:top;">
@@ -272,7 +272,7 @@ export function subscriptionString(subscription:any){
                   <tbody>
                     <!--  Start of order items list-->
                     ${
-                        subscription.products.items.map(({_id,name,quantity,price,fresh,size,stripeProductId}:Product,idx:number)=>{
+                        subscription.products.items.map(({_id,name,quantity,price,fresh,size,stripeProductId,stripeId}:Product,idx:number)=>{
                             return`
                                     <tr>
                                     <td style="text-align:left; padding:20px 10px; vertical-align:top;">

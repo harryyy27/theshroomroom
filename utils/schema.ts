@@ -29,6 +29,10 @@ const ProductSchema = new Schema({
         type: Number,
         required:true
     },
+    price_standard:{
+        type:Number,
+        required:false,
+    },
     fresh: {
         type:Boolean,
         required:true
@@ -40,6 +44,10 @@ const ProductSchema = new Schema({
     },
     new: {
         type: Boolean,
+        required:true
+    },
+    stripe_id: {
+        type:String,
         required:true
     }
     
@@ -92,6 +100,10 @@ const UserSchema=new Schema({
                     required:true
                 },
                 stripeProductId: {
+                    type:String,
+                    required:true
+                },
+                stripeId: {
                     type:String,
                     required:true
                 },
@@ -169,11 +181,11 @@ const UserSchema=new Schema({
             type: String,
             required: false,
             default: '',
-            phoneNumber: {
-                type: String,
-                required: false,
-                default: ''
-            }
+        },
+        phoneNumber: {
+            type: String,
+            required: false,
+            default: ''
         }
     },
     updates: {
@@ -304,6 +316,10 @@ const OrderSchema=new Schema({
                 required:true
             },
             stripeProductId: {
+                type:String,
+                required:true,
+            },
+            stripeId:{
                 type:String,
                 required:true
             }
@@ -463,6 +479,10 @@ const SubscriptionSchema=new Schema({
                 required:true
             },
             stripeProductId: {
+                type:String,
+                required:true
+            },
+            stripeId:{
                 type:String,
                 required:true
             }

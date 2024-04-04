@@ -24,6 +24,7 @@ export interface Product {
   quantity: number,
   name: string,
   stripeProductId:string,
+  stripeId:string,
   stockAvailable:number
 }
 

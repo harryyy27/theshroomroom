@@ -39,6 +39,15 @@ export default function Cart({setComponentLoading}:any){
                             <p><b>Sub-total: </b>{"£"+String(context.state.subTotal)}</p>
                             <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkoutSide">Checkout</span></Link></button>
                             {
+                                user?
+                                <>
+                                <p>Receive monthly?</p>
+                                <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout?subscription=true"><span id="subscriptionSide">Subscription</span></Link></button>
+                                </>:
+                                null
+                            }
+                            
+                            {
                                 !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?<p>Please delete the unavailable items from your cart</p>:null
                             }
                 
@@ -53,9 +62,9 @@ export default function Cart({setComponentLoading}:any){
                         <div className="cart-container">
                             { 
                             context&&context.state.cart&&context.state.cart.items?
-                                context.state.cart.items.map(({_id,name,quantity,price,fresh,size,stripeProductId,stockAvailable},idx:number)=>{
+                                context.state.cart.items.map(({_id,name,quantity,price,fresh,size,stripeProductId,stripeId,stockAvailable},idx:number)=>{
                                     return(
-                                        <CartElement key={idx} _id={_id} idx={idx} name={name}quantity={quantity} price={price} fresh={fresh} size={size} stripeProductId={stripeProductId} stockAvailable={stockAvailable}  />
+                                        <CartElement key={idx} _id={_id} idx={idx} name={name}quantity={quantity} price={price} fresh={fresh} size={size} stripeProductId={stripeProductId} stripeId={stripeId} stockAvailable={stockAvailable}  />
                                     )}
                                 )
                                 :null

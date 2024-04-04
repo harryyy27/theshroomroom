@@ -58,12 +58,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
 
                 }
             }
-                
-            
-                
-                
-
-            
                 var checkOrderExists = await Order().findOne({paymentIntentId:body.paymentIntentId})
                 if(checkOrderExists){
                     var order = checkOrderExists
@@ -74,7 +68,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                     
                 var date = Date.now();
                 order.dateOfPurchase= date;
-                if(body.subscription){
+                if(body.subscription!==''){
                     var session = await getServerSession(req,res,authOptions);
                     if(!session?.user){
                         const error= new Error('You need to be signed in to subscribe.')
@@ -82,7 +76,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                     }
                     var stripeCustomerId= session?.user.stripeCustomerId||undefined
                     var subscriptionObj = {...body}
-                    var standardShippingPriceId = "prod_P32r7gtFljcJHc";
                     if(order.subscriptionId){
                         var subValidated= await Subscription().findOneAndUpdate({subscriptionId:order.subscriptionId},{dateOfPurchase:date,dateLastPaid:date})
                     }
@@ -90,9 +83,9 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                         var subscriptionNew = new (Subscription())(
                             {
                                 ...subscriptionObj,
-                                status:"SUBSCRIPTION_INITIATED",
-                                subscriptionId:'PENDING',
-                                interval:body.subscription,
+                                status:"SUBSCRIPTION_CREATED",
+                                subscriptionId:body.subscription,
+                                interval:"monthly",
                                 stripeCustomerId:session?.user.stripeCustomerId
                             })
                         subscriptionNew.dateOfPurchase=date
@@ -100,48 +93,8 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                         var subValidated=await subscriptionNew.save()
                     }
                     
-                    var items = subscriptionObj.products.items.map((el:any)=>{
-                        return {
-                            price_data:{
-                                product: "prod_MbjrXeSU0a3Ii0",
-                                currency:"GBP",
-                                recurring:{
-                                    interval: body.subscription==="weekly"?"week":"month",
-                                    interval_count:1,
-                                },
-                                unit_amount:Math.round(el.price*100)
-                            },
-                            quantity:el.quantity
-                        }
-                    })
-                    items.push({
-                        price_data:{
-                            product: standardShippingPriceId,
-                            currency:"GBP",
-                            recurring:{
-                                interval: body.subscription==="weekly"?"week":"month",
-                                interval_count:1,
-                            },
-                            unit_amount:1
-                        },
-                        quantity:1,
-                    })
-                    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
-        
-                    });
-                    var checkoutSession = await stripe.subscriptions.create({
-                        customer: session?.user.stripeCustomerId,
-                        items: items,
-                        payment_behavior:"default_incomplete",
-                        payment_settings:{
-                            payment_method_types:["card"],
-                            save_default_payment_method:"on_subscription"
-                        },
-                        expand:["latest_invoice.payment_intent"]
-                    })
-                    var subscription_id=checkoutSession.id;
-                    const subscription=await Subscription().findOneAndUpdate({_id:subValidated._id},{status:"SUBSCRIPTION_CREATED",subscriptionId:subscription_id,stripeCustomerId:stripeCustomerId,interval:items[0].subscription==="weekly"?"week":"month"})
-                    order.subscriptionId=subscription_id
+                    
+                    order.subscriptionId=body.subscription
                     order.stripeCustomerId=stripeCustomerId
                 }
                 var validated= await order.save()
@@ -151,9 +104,8 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                             success:true, 
                             date:order.dateOfPurchase, 
                             id:order._id,
-                            subscription_id:subscription_id?subscription_id:null,
-                            stripeCustomerId:order.stripeCustomerId?order.stripeCustomerId:null,
-                            client_secret:checkoutSession?checkoutSession.latest_invoice.payment_intent.client_secret:null
+                            subscription_id:body.subscription?body.subscription:null,
+                            stripeCustomerId:order.stripeCustomerId?order.stripeCustomerId:null
                         })
                 }
                 else {

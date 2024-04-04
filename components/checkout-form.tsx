@@ -22,6 +22,7 @@ export interface Product {
     size: string,
     fresh: boolean,
     stripeProductId: string,
+    stripeId:string,
     subscription: string,
 }
 interface UserSchema {
@@ -57,8 +58,7 @@ export default function CheckoutForm(props: any) {
 
     const context = useContext(CartContext);
     const [subscription, setSubscription] = useState(false);
-    const [oneTimePurchase, setOneTimePurchase] = useState(true);
-    const [subscriptionInterval, setSubscriptionInterval] = useState('');
+    const [subscriptionInterval, setSubscriptionInterval] = useState('monthly');
     const router = useRouter();
     const [dFirstName, setDFirstName] = useState('');
     const [dFirstNameVal, setDFirstNameVal] = useState<boolean | null>(null);
@@ -136,8 +136,10 @@ export default function CheckoutForm(props: any) {
         
     }
     useEffect(() => {
+        console.log("SUBSCRIPTION ISSSSSSS "+props.subscriptionId)
         setComponentLoading(true)
         setValidPostcodes(postcodes)
+        setSubscription(props.subscriptionId)
         const initiate = async () => {
             const session = await getSession()
             if (session?.user) {
@@ -293,9 +295,7 @@ export default function CheckoutForm(props: any) {
                 if (!bPhoneNumberVal) {
                     setBPhoneNumberVal(false)
                 }
-                if( dPostcodeVal && !deliveryHubVal){
-                    throw new Error('Delivery hub validation issue - order edit dpostcode = '+ dPostcode + ' deliveryHub= '+deliveryHub)
-                }
+                
                 setCheckoutError('Please fill in all required fields')
                 setFormPosition()
                 return false
@@ -408,7 +408,7 @@ export default function CheckoutForm(props: any) {
                     error: 'None',
                     paymentIntentId: props.paymentIntent.id,
                     updates: updates,
-                    subscription: subscriptionInterval
+                    subscription: subscription
                 })
             })
             const order = await eventInitiated.json()
@@ -451,7 +451,7 @@ export default function CheckoutForm(props: any) {
                 throw new Error(errMsg)
             }
             else {
-                destroyCookie({}, "paymentIntentId", {
+                destroyCookie({}, "checkoutDetails", {
                     path: '/checkout'
                 })
                 await fetch('/api/order', {
@@ -496,7 +496,7 @@ export default function CheckoutForm(props: any) {
             null
         }
         
-            <h1 className="main-heading center">Checkout</h1>
+            <h1 className="main-heading center">{props.subscriptionId!==''?"Subscription ":""}Checkout</h1>
             {
                 errorMessage !== '' ?
                     <p>{errorMessage}</p> :
@@ -578,40 +578,9 @@ export default function CheckoutForm(props: any) {
 
                     </div>
                 }
-                <fieldset>
-                    <div>
-                        <p>Would you like to receive these products regularly? {user ? "Click below to pay a weekly or monthly subscription" : "Log in to subscribe"} </p>
-                        <label htmlFor="oneTimePurchase">One time purchase</label>
-                        <input id="oneTimePurchase" type="radio" name="oneTimePurchase" checked={oneTimePurchase} onChange={(e) => {
-                            setOneTimePurchase(!oneTimePurchase)
-                            setSubscription(!subscription)
-                            setSubscriptionInterval('')
-                        }}
+                
 
-                        />
-
-                    </div>
-
-                    {user ?
-                        <div>
-
-                            <label htmlFor="subscription">Subscription</label>
-                            <input id="subscription" type="radio" checked={subscription} onChange={(e) => {
-                                setOneTimePurchase(!oneTimePurchase)
-                                setSubscription(!subscription)
-                            }} />
-                            {
-                                subscription ?
-                                    <>
-                                        <p>Deliver:</p>
-                                        <Dropdown selected={subscriptionInterval} setSelected={setSubscriptionInterval} dropList={["monthly"]} />
-                                    </>
-                                    : null
-                            }
-
-                        </div> :
-                        <p>Log in for subscriptions</p>}
-                </fieldset>
+                    
 
                 <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
                     <label htmlFor="updates">Receive updates</label>

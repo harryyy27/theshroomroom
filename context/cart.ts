@@ -15,6 +15,7 @@ interface ContextInterface {
     dispatch: Dispatch<{
         type: String,
         payload: { items:Product[]}
+        shipping:number|undefined
     }>|undefined,
     setCartLoaded:Dispatch<SetStateAction<boolean>>|undefined,
     saveCart?: (product?:Product)=>Promise<void>|undefined,
@@ -25,8 +26,8 @@ const defaultState={
             items:[]
         },
         subTotal:0,
-        total:5,
-        shipping:5,
+        total:0,
+        shipping:0,
         shippingMethod:"Standard",
         totalQuantity:0,
     },
