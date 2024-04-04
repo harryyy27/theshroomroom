@@ -106,29 +106,11 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     break;
                 case "customer.subscription.created":
                     console.log("customer.subscription.created")
-                    subBody={
-                        stripeCustomerId:JSON.parse(payload).data.object.customer,
-                        isActive:true,
-                        subscriptionId: JSON.parse(payload).data.object.id,
-                        status:"SUBSCRIPTION_ACTIVE"
-                    }
-                    var subscription = await Subscription().findOneAndUpdate({subscriptionId:subBody.subscriptionId},{...subBody})
-                    
-                    var user = await User().findOneAndUpdate({stripeCustomerId:subBody.stripeCustomerId},{$push:{subscriptions:{subscriptionId:subBody.subscriptionId}}})
-                    
-
-                    if(subscription){
-                        success=true
-                        await subscriptionHandler(subscription,websiteName,companyEmail)
-                    }
-                    else {
-                        throw new Error(`Subscription update failed Subscription ID: ${subBody.subscriptionId}`)
-                    }
+                    success=true
                     break;
                 case "customer.subscription.updated":
                     console.log("customer.subscription.updated")
                     let subscription_renewal:boolean|null|undefined;
-                    
                     if(JSON.parse(payload).data.object.canceled_at!==null){    
                         subBody={
                             stripeCustomerId:JSON.parse(payload).data.object.customer,
@@ -137,22 +119,21 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                             status:"SUBSCRIPTION_CANCELLED"
                         }
                         var date = Date.now()
-
+                        
                         var subscription = await Subscription().findOneAndUpdate({subscriptionId:subBody.subscriptionId},{status:subBody.status,dateCancelled:date})
                         
-                        var user = await User().findOneAndUpdate({stripeCustomerId:subBody.stripeCustomerId},{$pull:{ subscriptions:{subscriptionId:subBody.subscriptionId}}})
-                        
+                        if(subscription){
+                            var user = await User().findOneAndUpdate({stripeCustomerId:subBody.stripeCustomerId},{$pull:{ subscriptions:{subscriptionId:subBody.subscriptionId}}})
+
+                        }
+                        success=true
                     
                     }
                     else{
                         await User().findOneAndUpdate({currentSubscription:JSON.parse(payload).data.object})
                         subscription_renewal=true;
-                    }
-                    if(subscription||subscription_renewal){
                         success=true
-                    }
-                    else {
-                        throw new Error(`Subscription cancellation failed for subscription id: ${subBody.subscriptionId}`)
+                        
                     }
                     break;
                 case "customer.subscription.deleted":
@@ -177,7 +158,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     break;
                 case "invoice.finalized":
                     console.log("invoice.finalized")
-                    var sub = JSON.parse(payload).data.object.subscription
+                    var object = JSON.parse(payload).data.object
+                    if(!(object.billing_reason==="subscription_create")){
+                        var sub = object.subscription
                     var subscription = await stripe.subscriptions.retrieve(
                         sub
                     )
@@ -190,6 +173,11 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     else {
                         success=false
                     }
+                    }
+                    else{
+                        success=true
+                    }
+                    
                     break;
                 case "invoice.finalization_failed":
                     console.log("invoice.finaliazation_failed")
@@ -207,6 +195,11 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     await invoiceFailHandler(attemptCount,order.email,false,websiteName,companyEmail)
                     // await Order().findOneAndUpdate({paymentIntentId:JSON.parse(payload).data.object.payment_intent},{...body})
                     success=true
+                    break;
+                case "invoice.payment_succeeded":
+                    
+                    console.log("invoice.payment.succeeded")
+                    success=true;
                     break;
                 case "invoice.created":
                     

@@ -295,9 +295,7 @@ export default function CheckoutForm(props: any) {
                 if (!bPhoneNumberVal) {
                     setBPhoneNumberVal(false)
                 }
-                if( dPostcodeVal && !deliveryHubVal){
-                    throw new Error('Delivery hub validation issue - order edit dpostcode = '+ dPostcode + ' deliveryHub= '+deliveryHub)
-                }
+                
                 setCheckoutError('Please fill in all required fields')
                 setFormPosition()
                 return false

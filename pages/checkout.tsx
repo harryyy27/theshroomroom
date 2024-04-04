@@ -61,7 +61,7 @@ export default function Checkout(props:any){
             </>
     )
 }
-async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippingCost:number,subscriptionId:string,ctx:any,start:any){
+async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippingCost:number,ctx:any,start:any){
     console.log('im in')
     console.log("6: " +(start-Date.now())/1000)
     var stripeCustomerId= sesh?.user.stripeCustomerId||undefined
@@ -149,7 +149,7 @@ async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippin
     return {
         props: {
             paymentIntent:latestInvoice.payment_intent,
-            subscriptionId:subscriptionId
+            subscriptionId:subscription_id
         }
     }
 }
@@ -298,7 +298,7 @@ export const getServerSideProps =  async(ctx:any) => {
                 }
             }
             else{
-                var props = await getPaymentIntentSubscription(sesh,stripe,Cart,shippingCost,subscriptionId,ctx,start)
+                var props = await getPaymentIntentSubscription(sesh,stripe,Cart,shippingCost,ctx,start)
                 return props
         }
         
