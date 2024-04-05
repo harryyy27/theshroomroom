@@ -103,6 +103,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                     order.subscriptionId=body.subscription
                     order.stripeCustomerId=stripeCustomerId
                     order.invoiceId=paymentIntent.invoice
+                    order.status="ORDER_PENDING"
                 }
                 var validated= await order.save()
                 if(validated){
