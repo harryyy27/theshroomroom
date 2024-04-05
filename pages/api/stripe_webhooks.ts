@@ -204,10 +204,15 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     break;
                 case "invoice.payment_failed":
                     console.log("invoice.payment.failed")
+                    
                     var object = JSON.parse(payload).data.object
-                    var attemptCount=object.attemptCount
-                    var order = await Order().findOneAndUpdate({paymentIntentId:object.payment_intent},{status:"PAYMENT_NOT_RECEIVED"})
-                    await invoiceFailHandler(attemptCount,order.email,false,websiteName,companyEmail)
+                    if(object.billing_reason!=="subscription_create"){
+                        var attemptCount=object.attemptCount
+                        var order = await Order().findOneAndUpdate({paymentIntentId:object.payment_intent},{status:"PAYMENT_NOT_RECEIVED"})
+                        await invoiceFailHandler(attemptCount,order.email,false,websiteName,companyEmail)
+                        success=false
+                    }
+                    
                     // await Order().findOneAndUpdate({paymentIntentId:JSON.parse(payload).data.object.payment_intent},{...body})
                     success=true
                     break;
