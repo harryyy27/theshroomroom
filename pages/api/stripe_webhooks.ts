@@ -1,17 +1,20 @@
 import {NextApiRequest,NextApiResponse} from 'next'
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
-    
-});
+
 import {buffer } from '../../utils/stripe_webhook'
 import connect from "../../utils/connection" 
 import {errorHandler,subscriptionHandler,orderHandler,disputeHandler,refundHandler,invoiceFailHandler,payoutHandler} from '../../utils/emailHandlers'
 import {Order,Subscription,User,Dispute} from '../../utils/schema';
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
 
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
-    var payload:string|undefined;
+    
     try{
+        const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
+    
+        });
+        var payload:string|undefined;
+        const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
         await connect()
         if(req.method==="POST"){
             if(!req.headers["stripe-signature"]){
@@ -30,6 +33,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             switch (event.type){
                 case "payment_intent.succeeded":
                     console.log("payment_intent.succeeded")
+                    console.log(JSON.parse(payload).data.object)
                     if(JSON.parse(payload).data.object.description==="Subscription update"){
                         var sub_body={
                             paymentIntentId: JSON.parse(payload).data.object.id,

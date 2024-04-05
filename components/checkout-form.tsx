@@ -57,6 +57,7 @@ interface UserSchema {
 export default function CheckoutForm(props: any) {
 
     const context = useContext(CartContext);
+    console.log(context)
     const [subscription, setSubscription] = useState(false);
     const [subscriptionInterval, setSubscriptionInterval] = useState('monthly');
     const router = useRouter();
@@ -452,16 +453,7 @@ export default function CheckoutForm(props: any) {
                 destroyCookie({}, "checkoutDetails", {
                     path: '/checkout'
                 })
-                await fetch('/api/order', {
-                    method: "PUT",
-                    headers: {
-                        csrftoken: await getCsrfToken() as string
-                    },
-                    body: JSON.stringify({
-                        paymentIntentId: props.paymentIntent.id,
-                        status: 'ORDER_PENDING'
-                    })
-                })
+                
                 setProcessing(false)
                 if (context && context.dispatch) {
                     setCheckoutSuccess(true)
