@@ -24,16 +24,14 @@ async function generateSiteMap(ctx:any): Promise<string>{
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url><loc>${process.env.WEBSITE_NAME}</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/about</loc></url>
-    <url><loc>${process.env.WEBSITE_NAME}/cookies</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/delivery</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/wholesale</loc></url>
-    <url><loc>${process.env.WEBSITE_NAME}/privacy</loc></url>
-    <url><loc>${process.env.WEBSITE_NAME}/products/all</loc></url>
+    <url><loc>${process.env.WEBSITE_NAME}/products</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/what-we-grow</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/returns</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/contact-us</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/products</loc></url>
-    ${product_pages.map((el:any)=>{
+    ${product_pages.filter((el:any)=>el.name!=="Shipping").map((el:any)=>{
         var productName=el.name.replace(/[\s]/gi,'-').replace(/['\'']/gi,'&apos;');
         return `<url>
 
