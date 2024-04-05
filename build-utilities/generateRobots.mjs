@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 function generateRobotTxt(){
     var robotText=""
-    if(process.env.NODE_ENV=="production"){
+    if(process.env.WEBSITE_NAME.indexOf("test")===-1){
 
         robotText=`
         User-agent: *
@@ -16,7 +16,6 @@ function generateRobotTxt(){
         Disallow:*.png
         Disallow:*.webp
         Disallow:*.jpeg
-        
         Sitemap:${process.env.WEBSITE_NAME}/sitemap.xml
         `
     }
