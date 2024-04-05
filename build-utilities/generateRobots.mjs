@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 function generateRobotTxt(){
     var robotText=""
-    if(process.env.WEBSITE_NAME==="https://megamushrooms.uk"){
+    if(process.env.WEBSITE_NAME!=="https://megamushrooms.uk"){
 
         robotText=`
         User-agent: *
