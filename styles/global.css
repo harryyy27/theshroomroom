@@ -73,6 +73,16 @@ colour scheme - turkey tail */
   width:100%;
   text-align:center;
 }
+.coming-soon-message {
+  position:absolute;
+  display:block;
+  color:var(--sec);
+  left:50%;
+  top:50%;
+  transform:translate(-50%,60%);
+  width:100%;
+  text-align:center;
+}
 .stock-error {
   color:red;
 }

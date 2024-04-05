@@ -19,7 +19,6 @@ const ProductSchema = new Schema({
         required:true,
         min:0
     },
-    
     mass: {
         type:String,
         required:true,
@@ -48,6 +47,10 @@ const ProductSchema = new Schema({
     },
     stripe_id: {
         type:String,
+        required:true
+    },
+    coming_soon: {
+        type:Boolean,
         required:true
     }
     

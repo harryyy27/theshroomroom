@@ -17,6 +17,7 @@ interface Product {
     stripe_product_id:string,
     stripe_id:string,
     fresh:boolean,
+    coming_soon:boolean,
 }
 export default function ProductDetails({setComponentLoading}:any){
     const context = useContext(CartContext);
@@ -191,7 +192,7 @@ export default function ProductDetails({setComponentLoading}:any){
                         fresh&&freshSizeList.length>0?freshSizeList.map((el:string,idx:number)=>{
                             return(
                                 <div key={idx}className={"size-button-wrapper"}>
-                                <button key={idx} className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0?'button-disabled':''}`} role="option" aria-selected={false}
+                                <button key={idx} className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0||product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].coming_soon?'button-disabled':''}`} role="option" aria-selected={false}
                                 onClick={(e)=>{
                                     var text=(e.target as HTMLInputElement).textContent as string;
                                     const chosenProduct:Product=product.filter((prod:any)=>{
@@ -212,7 +213,7 @@ export default function ProductDetails({setComponentLoading}:any){
                                     setSize(el)
                                     toggleBackground(e.target as HTMLElement,"size-select")
 
-                                }}>{el}</button>{product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0?<span className="size-btn-message">Out of stock</span>:null}</div>
+                                }}>{el}</button>{product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].coming_soon? <span className="coming-soon-message">Coming soon!</span>: product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0?<span className="size-btn-message">Out of stock</span>:null}</div>
                             )
                         })
                         :
