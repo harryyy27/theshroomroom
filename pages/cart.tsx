@@ -9,6 +9,7 @@ import CartElement from '../components/cartElement'
 
 export default function Cart({setComponentLoading}:any){
     let context=useContext(CartContext)
+    console.log(context)
     const [user,setUser]=useState(false);
     useEffect(()=>{
         setComponentLoading(true)
