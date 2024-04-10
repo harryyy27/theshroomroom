@@ -59,7 +59,7 @@ export default function MyAccount({setComponentLoading}:any){
         <div className="static-container">
 
             <Head>
-                <title>Mega Mushrooms - Cultivators of lions mane mjushrooms</title>
+                <title>Mega Mushrooms - Cultivators of lions mane mushrooms</title>
                 <meta name="description" content="Update account details or orders here."/>
                 <meta property="og:title" content="Mega Mushrooms - buy our high quality lion's mane mushrooms here"/>
                 <meta property="og:description" content="Update account details or orders here."/>
