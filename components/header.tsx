@@ -160,7 +160,7 @@ export default function Header(){
                         </ul>
                     </li> */}
                 </ul>
-                <BreadCrumbs homeElement={'Home'} separator={' > '}/>
+                <BreadCrumbs homeElement={'Home'} separator={' > '} capitalizeLinks={true}/>
 
                 <span className={styles["title-bar-element"]+ " " + styles["hidden-mobile"]+ " " + styles["cart-container"]} aria-hidden={width>1024?true:false}>
                         <Link href="/cart" passHref replace><span id="cart" className={context.state.totalQuantity?styles["cart-glow"]+" "+styles["cart-writing"]:styles["cart-writing"]}><Image id="cartIcon"  className={styles["shopping-cart-icon"]}src={'/shopping_cart_icon.jpg'} alt="shopping cart icon" width="50" height="50" /><span className={styles["shopping-cart-quantity"]}>{`${context.state.totalQuantity}`}</span></span></Link>
