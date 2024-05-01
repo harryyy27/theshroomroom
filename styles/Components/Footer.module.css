@@ -21,3 +21,9 @@
   cursor:pointer;
   text-shadow: 1px 1px 1px var(--ter2), -1px -1px 1px var(--ter2), 1px -1px 1px var(--ter2),-1px 1px 1px var(--ter2);
 }
+.social-media-list {
+    display:flex;
+    position:absolute;
+    bottom:0;
+    right:0;
+}

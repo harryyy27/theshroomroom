@@ -42,7 +42,7 @@ export default function Benefits(){
                 </li>
                     
             </ul>
-            <h3 className="sub-sub-heading center">Learn more about <a className="link"href="/whatwegrow">lion's mane</a>.</h3>
+            <h3 className="sub-sub-heading center">Learn more about <a className="link"href="/what-we-grow">lion's mane</a>.</h3>
             </div>
         </section>
     )
