@@ -213,7 +213,8 @@
 }
 @media(max-width:370px){
   .text-section {
-    width:40%
+    width:40%;
+    padding:0.5rem;
   }
   .hero-heading {
     font-size: 1.2rem;

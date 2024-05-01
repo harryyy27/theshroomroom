@@ -1,5 +1,6 @@
 import homeStyles from '../../styles/Pages/Home.module.css'
 import Image from 'next/image';
+import Link from 'next/link'
 // MUSHROOOOOM BULLET POINTS!!!!!
 export default function Benefits(){
     return(
@@ -42,7 +43,7 @@ export default function Benefits(){
                 </li>
                     
             </ul>
-            <h3 className="sub-sub-heading center">Learn more about <a className="link"href="/whatwegrow">lion's mane</a>.</h3>
+            <h3 className="sub-sub-heading center">Learn more about <Link className="link"href="/what-we-grow">lion's mane</Link>.</h3>
             </div>
         </section>
     )

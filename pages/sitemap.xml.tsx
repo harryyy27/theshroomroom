@@ -19,6 +19,11 @@ async function generateSiteMap(ctx:any): Promise<string>{
     const {req,res}=ctx;
     const data= await fetch(`http://${req.headers.host}/api/products/`);
     var product_pages = await data.json();
+    var product_pages_arr=Array.from(new Set(product_pages.map((el:any)=>{
+        return el.name
+    })))
+
+
     // const productPages =await 
     return `<xml version="1.0" encoding="UTF-8">
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -31,8 +36,8 @@ async function generateSiteMap(ctx:any): Promise<string>{
     <url><loc>${process.env.WEBSITE_NAME}/returns</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/contact-us</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/products</loc></url>
-    ${product_pages.filter((el:any)=>el.name!=="Shipping").map((el:any)=>{
-        var productName=el.name.replace(/[\s]/gi,'-').replace(/['\'']/gi,'&apos;');
+    ${product_pages_arr.filter((el:any)=>el!=="Shipping").map((el:any)=>{
+        var productName=el.replace(/[\s]/gi,'-').replace(/['\'']/gi,'&apos;');
         return `<url>
 
                     <loc>${process.env.WEBSITE_NAME}/products/${productName}</loc>

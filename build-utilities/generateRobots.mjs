@@ -11,7 +11,7 @@ function generateRobotTxt(){
         Disallow:/cart
         Disallow:/myaccount/*
         Disallow:/checkout*
-        Disallow:/thank-you/*
+        Disallow:/thank-you*
         Disallow:*.jpg
         Disallow:*.png
         Disallow:*.webp
