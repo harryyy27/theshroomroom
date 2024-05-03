@@ -8,6 +8,8 @@ export default function Subscribe(){
     const [user,setUser]=useState(false);
     const [updates,setUpdates]=useState(false);
     const [emailVal,setEmailVal]=useState<boolean|null>(null);
+    const [success,setSuccess]=useState<boolean|null>(null)
+    const [subscriptionError,setSubscriptionError]=useState('')
     useEffect(()=>{
         async function initiate(){
             const session = await getSession()
@@ -29,23 +31,35 @@ export default function Subscribe(){
             false
         }
     }
-    async function handleSubscribe(subscribe:boolean){
+    async function handleSubscribe(subscribe:boolean,e:any){
         try{
+            e.preventDefault()
             if(validate()){
-                await fetch('/api/editUser',{
-                    method: "POST",
-                    headers: {
-                        csrftoken: await getCsrfToken() as string
-                    },
-                    
-                    body: JSON.stringify({
-                        user:user,
-                        email:email,
-                        subscription:true,
-                        subscribe:subscribe,
-        
+                    const res=await fetch('/api/editUser',{
+                        method: "POST",
+                        headers: {
+                            csrftoken: await getCsrfToken() as string
+                        },
+                        
+                        body: JSON.stringify({
+                            user:user,
+                            email:email,
+                            subscription:true,
+                            subscribe:subscribe,
+            
+                        })
                     })
-                })
+                    const resJson=await res.json()
+                    console.log(resJson)
+                    if(resJson.success){
+                        setSuccess(true)
+                    }
+                    else{
+                        setSuccess(false)
+                        setSubscriptionError(resJson.error)
+                    }
+                
+                
             }
             else {
                 setErr('Please enter a valid email address')
@@ -80,10 +94,17 @@ export default function Subscribe(){
             </div>
             {
                     user&&updates?
-                <button type="submit"className="cta" onClick={()=>handleSubscribe(false)}>Unsubscribe</button>:
-                <button id="subscriptionBtn" type="submit"className="cta" onClick={()=>handleSubscribe(true)}>Keep me updated</button>
+                <button type="submit"className="cta" onClick={(e)=>handleSubscribe(false,e)}>Unsubscribe</button>:
+                <button id="subscriptionBtn" type="submit"className="cta" onClick={(e)=>handleSubscribe(false,e)} disabled={success!==null?success:false}>Keep me updated</button>
+                
             }
-            
+            {
+                    success!==null&&success===true?
+                    <p style={{"color":"green"}}>You have successfully added yourself to our email list</p>
+                    :success!==null&&success===false?
+                    <p style={{"color":"red"}}>{subscriptionError}</p>:
+                    null
+                }
         </form>
     )
 }
