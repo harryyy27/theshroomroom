@@ -15,7 +15,7 @@ export default function SignUp({setComponentLoading}:any){
     const [passwordVal,setPasswordVal]=useState('');
     const [message,setMessage]=useState('');
     const [user,setUser]=useState('');
-    const [updates,setUpdates]=useState(false)
+    const [updates,setUpdates]=useState(true)
     const signupUser=async(e:FormEvent)=>{
         try{
             setComponentLoading(true)
