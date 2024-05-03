@@ -15,6 +15,7 @@ export default function SignUp({setComponentLoading}:any){
     const [passwordVal,setPasswordVal]=useState('');
     const [message,setMessage]=useState('');
     const [user,setUser]=useState('');
+    const [updates,setUpdates]=useState(false)
     const signupUser=async(e:FormEvent)=>{
         try{
             setComponentLoading(true)
@@ -29,7 +30,7 @@ export default function SignUp({setComponentLoading}:any){
                     "csrftoken":csrftoken as string,
                     "Content-Type":'appication/json'
                 },
-                body: JSON.stringify({name,username,password})
+                body: JSON.stringify({name,username,password,updates})
             })
             let data=await res.json()
             setComponentLoading(false)
@@ -77,7 +78,10 @@ export default function SignUp({setComponentLoading}:any){
             <FormComponent user={user} labelName={"Name"}variable={name} variableName={Object.keys({name})[0]} setVariable={setName} variableVal={nameVal} setVariableVal={setNameVal} inputType={"text"} required={true}/>
             <FormComponent user={user} labelName={"Email"}variable={username} variableName={Object.keys({username})[0]} setVariable={setUsername} variableVal={usernameVal} setVariableVal={setUsernameVal} inputType={"email"} required={true}/>
             <FormComponent user={user} labelName={"Password"}variable={password} variableName={Object.keys({password})[0]} setVariable={setPassword} variableVal={passwordVal} setVariableVal={setPasswordVal} inputType={"password"} required={true}/>
-
+            <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
+                    <label className={styles["form-label"]} style={{"display":"inline-block"}} htmlFor="updates">Receive updates</label>
+                    <input  autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e) => setUpdates(e.target.checked)} />
+                </div>
             <button id="signUp" className="cta" type="submit" value="submit" >Submit</button>
             {/* <button id="googleSignUp">Sign up with Google</button> */}
             <p>
