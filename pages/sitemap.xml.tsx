@@ -27,7 +27,7 @@ async function generateSiteMap(ctx:any): Promise<string>{
     // const productPages =await 
     return `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url><loc>${process.env.WEBSITE_NAME}</loc></url>
+    <url><loc>${process.env.WEBSITE_NAME}/</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/about</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/delivery</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/wholesale</loc></url>
