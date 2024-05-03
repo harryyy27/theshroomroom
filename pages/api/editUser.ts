@@ -39,12 +39,12 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 let userExists = await User().findOne({username:body.email})
                 if(userExists){
                     var error= new Error('A user with this email already exists, log in to subscribe')
-                    return res.status(500).json({success:false,error:error.toString()})
+                    return res.status(500).json({success:false,error:'A user with this email already exists, log in to subscribe'})
                 }
                 const existsSubscribe = await ReceiveUpdates().findOne({email:body.email})
                 if(existsSubscribe){
                     var error= new Error('A user with this email is already subscribed')
-                    return res.status(500).json({success:false,error:error.toString()})
+                    return res.status(500).json({success:false,error:'A user with this email is already subscribed'})
                 }
                 var subscription = new (ReceiveUpdates() as any)(body);
                 subscription.save()
@@ -61,7 +61,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
 
         }
-        return res.status(200).json({message:"User successfully updated"})
+        return res.status(200).json({success:true})
         
 
     }
