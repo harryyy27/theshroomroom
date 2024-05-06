@@ -8,17 +8,26 @@ interface ProductImage {
     height: number
 }
 export const imageMap: {[mushroom:string]:ProductImage} = {
-    'Lion\'s Mane':{
-        name: 'Lions Mane',
-        alt:'lions mane mushroom',
-        path:'/products/mushrooms/lions_mane',
+    'Fresh Lion\'s Mane':{
+        name: 'Fresh Lions Mane',
+        alt:'fresh lions mane mushroom',
+        path:'/products/mushrooms/lions_mane_fresh',
         fileType:'png',
-        link: '/products/lions_mane',
-        width:3500,
+        link: '/products/fresh_lions_mane',
+        width:2500,
         height:2500
     },
-    'Ground Lion\'s Mane':{
-        name: "Ground Lions Mane",
+    'Dried Lion\'s Mane':{
+        name: 'Dried Lions Mane',
+        alt:'dried lions mane mushroom',
+        path:'/products/mushrooms/lions_mane_dry',
+        fileType:'png',
+        link: '/products/dried_lions_mane',
+        width:2500,
+        height:2500
+    },
+    'Dried Ground Lion\'s Mane':{
+        name: "Dried Ground Lions Mane",
         alt:'ground lions mane mushroom',
         path:'/products/mushrooms/ground_lions_mane',
         fileType:'png',

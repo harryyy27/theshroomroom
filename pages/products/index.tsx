@@ -45,17 +45,20 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
             <>
         <ul className="product-list">
         {
-            products.length?products.map(({_id,name,price,new_product}:any,idx)=>{
+            products.length?products.map(({_id,name,price,fresh,new_product}:any,idx)=>{
+                var fullName=(fresh?"Fresh ":"Dried ")+name
+                console.log(fullName)
+                console.log(imageMap[fullName].fileType)
                 return(
                     <li className="product" key={idx}>
-                        <Link  href={`/products/${name.replace(/[\s]/gi,'-')}`} >
+                        <Link  href={`/products/${fullName.replace(/[\s]/gi,'-')}`} >
                             <span>
-                                <h2 className="product-name">{name}</h2>
+                                <h2 className="product-name">{fullName}</h2>
                                 <figure className="plp-image-wrapper">
                                 {
-                                    name?
+                                    name&&imageMap[fullName]!==undefined?
 
-                                    <Image className="product-image" priority blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} fill sizes={`(min-width:768px) ${imageMap[name].width}px, (max-width:767px): 40vw`} src={`${imageMap[name].path}.${imageMap[name].fileType}`} alt={name+ " mushrooms"}/>
+                                    <Image className="product-image" priority blurDataURL={`${imageMap[fullName].path}.${imageMap[fullName].fileType}`} fill sizes={`(min-width:768px) ${imageMap[fullName].width}px, (max-width:767px): 40vw`} src={`${imageMap[fullName].path}.${imageMap[fullName].fileType}`} alt={fullName+ " mushrooms"}/>
                                     :
                                     null
                                 }
@@ -117,7 +120,9 @@ export async function getServerSideProps(ctx:any){
         if(response){
             var resp = response.reduce((acc:any,b:any)=>{
                 for(var i = 0;i<acc.length;i++){
-                    if(acc[i].name===b.name){
+                    var acc_name = (acc[i].fresh?"Fresh ":"Dried ")+acc[i].name
+                    var b_name = (b.fresh?"Fresh ":"Dried ")+b.name
+                    if(acc_name===b_name){
                         if(acc[i].price>b.price){
                             return [...acc.slice(0,i),b,...acc.slice(i+1,acc.length)]
                         }

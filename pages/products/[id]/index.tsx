@@ -6,6 +6,10 @@ import Head from 'next/head';
 import {Metadata} from '../../../utils/metadata/metadata';
 import Link from 'next/link'
 import {getSession,getCsrfToken}from 'next-auth/react'
+import {notFound} from 'next/navigation';
+
+import {Product} from '../../../utils/schema';
+import connect from '../../../utils/connection'
 interface Product {
     _id:string,
     name:string,
@@ -19,10 +23,10 @@ interface Product {
     fresh:boolean,
     coming_soon:boolean,
 }
-export default function ProductDetails({setComponentLoading}:any){
+export default function ProductDetails(props:any){
     const context = useContext(CartContext);
     const [product,setProduct]=useState<Product[]>([])
-    const [freshSizeList,setFreshSizeList]=useState<string[]>([])
+    const [productSizeList,setProductSizeList]=useState<string[]>([])
     const [drySizeList,setDrySizeList]=useState<string[]>([])
     const [name,setName]=useState('');
     const [description,setDescription]=useState('');
@@ -42,66 +46,60 @@ export default function ProductDetails({setComponentLoading}:any){
     const [err,setErr]=useState('');
 
     useEffect(()=>{
-        setComponentLoading(true)
-        const urlArr =window.location.href.split('/')
-        const productName = urlArr[urlArr.length-1].replace(/[\-]/gi,' ').replace('\&apos','\'');
-        setImageUrl(urlArr[urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
+        props.setComponentLoading(true)
+        setImageUrl(props.urlArr[props.urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
         const initiate = async()=>{
             const session = await getSession()
             if(session?.user){
                 setUser(true)
             }
-            const productDetailsJson = await fetch(`/api/products?product=${productName}`)
-            const productDetails = await productDetailsJson.json()
-            const freshList:string[] = []
-            const dryList:string[] = []
+            setFresh(props.freshUrl)
+            const productDetails=props.productDetails
+            if(productDetails.length===0){
+                notFound()
+                return
+            }
+            const productList:string[] = []
             productDetails.forEach((el:any)=>{
-                if(el.fresh){
-                    freshList.push(el.mass);
+                    productList.push(el.mass)
+                
+            })
+            
+            productList.sort((a:string,b:string)=>{
+                if(a.slice(-2)==='kg'&&b.slice(-2)==='kg'){
+                    return Number(a.slice(0,a.length-2))-Number(b.slice(0,b.length-2))
+                }
+                else if(a.slice(-2)==='kg'&&b.slice(-2)!=='kg'){
+                    return Number(a.slice(0,a.length-2))*1000-Number(b.slice(0,b.length-1))
+                }
+                else if(a.slice(-2)!=='kg'&&b.slice(-2)==='kg'){
+                    return Number(a.slice(0,a.length-1))-Number(b.slice(0,b.length-2))*1000
+
                 }
                 else {
-                    dryList.push(el.mass)
+
+                    return Number(a.slice(0,a.length-1))-Number(b.slice(0,b.length-1))
+                }
+            })
+            productDetails.sort((a:any,b:any)=>{
+                if(a.mass.slice(-2)==='kg'&&b.mass.slice(-2)==='kg'){
+                    return Number(a.mass.slice(0,a.mass.length-2))-Number(b.mass.slice(0,b.mass.length-2))
+                }
+                else if(a.mass.slice(-2)==='kg'&&b.mass.slice(-2)!=='kg'){
+                    return Number(a.mass.slice(0,a.mass.length-2))*1000-Number(b.mass.slice(0,b.mass.length-1))
+                }
+                else if(a.mass.slice(-2)!=='kg'&&b.mass.slice(-2)==='kg'){
+                    return Number(a.mass.slice(0,a.mass.length-1))-Number(b.mass.slice(0,b.mass.length-2))*1000
+
+                }
+                else {
+
+                    return Number(a.mass.slice(0,a.mass.length-1))-Number(b.mass.slice(0,b.mass.length-1))
                 }
             })
             
-            if(freshList.length>0){
-                setFresh(true)
-            }
-            freshList.sort((a:string,b:string)=>{
-                if(a.slice(-2)==='kg'&&b.slice(-2)==='kg'){
-                    return Number(a.slice(0,a.length-2))-Number(b.slice(0,b.length-2))
-                }
-                else if(a.slice(-2)==='kg'&&b.slice(-2)!=='kg'){
-                    return Number(a.slice(0,a.length-2))*1000-Number(b.slice(0,b.length-1))
-                }
-                else if(a.slice(-2)!=='kg'&&b.slice(-2)==='kg'){
-                    return Number(a.slice(0,a.length-1))-Number(b.slice(0,b.length-2))*1000
-
-                }
-                else {
-
-                    return Number(a.slice(0,a.length-1))-Number(b.slice(0,b.length-1))
-                }
-            })
-            dryList.sort((a:string,b:string)=>{
-                if(a.slice(-2)==='kg'&&b.slice(-2)==='kg'){
-                    return Number(a.slice(0,a.length-2))-Number(b.slice(0,b.length-2))
-                }
-                else if(a.slice(-2)==='kg'&&b.slice(-2)!=='kg'){
-                    return Number(a.slice(0,a.length-2))*1000-Number(b.slice(0,b.length-1))
-                }
-                else if(a.slice(-2)!=='kg'&&b.slice(-2)==='kg'){
-                    return Number(a.slice(0,a.length-1))-Number(b.slice(0,b.length-2))*1000
-
-                }
-                else {
-
-                    return Number(a.slice(0,a.length-1))-Number(b.slice(0,b.length-1))
-                }
-            })
-            setFreshSizeList(freshList)
-            setDrySizeList(dryList)
-            if(productDetails.every((el:string)=>productDetails.stock_available===0)){
+            setProductSizeList(productList)
+            if(productDetails.every((el:string)=>productDetails.stock_available===0||productDetails.coming_soon)){
                 setItemsAvailable(false)
                 setProductAvailable(false)
             }
@@ -109,18 +107,33 @@ export default function ProductDetails({setComponentLoading}:any){
                 setItemsAvailable(true)
             }
             setProduct(productDetails)
-            setName(productDetails[0].name);
+            setName((props.freshUrl?"Fresh ":"Dried ")+productDetails[0].name);
             setDescription(productDetails[0].description);
             setType(productDetails[0].type)
-            setComponentLoading(false)
+            props.setComponentLoading(false)
+            var i = 0;
+            var productSet=false;
+            while(i<productDetails.length&&productSet===false){
 
+                if((productDetails[i] as any)["stock_available"]!==0&&productDetails[i].coming_soon!==true){
+                    setId((productDetails[i] as any)._id)
+                    setStockAvailable((productDetails[i] as any).stock_available)
+                    setPrice((productDetails[i] as any).price.toString())
+                    setStripeProductId((productDetails[i] as any).stripe_product_id)
+                    setStripeId((productDetails[i] as any).stripe_id)
+                    setSize((productDetails[i] as any).mass)
+                    setProductAvailable(true)
+                    productSet=true
+                }
+                i++
+            }
 
 
         }
         initiate()
 
 
-    },[setComponentLoading])
+    },[props.setComponentLoading])
     function toggleBackground(button:HTMLElement | null,targetClass:string){
         const buttons= document.querySelectorAll('.'+targetClass);
         buttons.forEach((el)=>el.classList.remove('select-active'));
@@ -142,7 +155,7 @@ export default function ProductDetails({setComponentLoading}:any){
                 {
                     name?
 
-                    <Image id="productImage" fill src={`${imageMap[name].path}_${fresh?"fresh":"dry"}.${imageMap[name].fileType}`} alt={name} sizes="(min-width:1025px) 40vw, (max-width:767px) 80vw"priority placeholder="blur" blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} />
+                    <Image id="productImage" fill src={`${imageMap[name].path}.${imageMap[name].fileType}`} alt={name} sizes="(min-width:1025px) 40vw, (max-width:767px) 80vw"priority placeholder="blur" blurDataURL={`${imageMap[name].path}.${imageMap[name].fileType}`} />
                     :
                     null
                 }
@@ -155,48 +168,21 @@ export default function ProductDetails({setComponentLoading}:any){
                     itemsAvailable?
 
                     <>
-                <div role="listbox" aria-label="select fresh or dry">{
-                    freshSizeList.length>0?
-                    <button role="option"className={`select-custom fresh-dry ${fresh?"select-active":""}`} aria-selected={true}onClick={(e)=>{
-                        setFresh(true);
-                        setPrice('');
-                        setSize('');
-                        setStripeProductId('');
-                        setStripeId('')
-                        setProductAvailable(true);
-                        toggleBackground(e.target as HTMLElement,"fresh-dry")
-                        toggleBackground(null,"size-select")
-                    }}>Fresh</button>
-                    :null
-                }
-                {drySizeList.length>0?
-                <button role="option" className={`select-custom fresh-dry ${fresh?"":"select-active"}`} aria-selected={false} onClick={(e)=>{
-                    setFresh(false)
-                    setPrice('');
-                    setSize('');
-                    setStripeProductId('');
-                    setStripeId('')
-                    setProductAvailable(true);
-                    toggleBackground(e.target as HTMLElement,"fresh-dry")
-                    toggleBackground(null,"size-select")
-                    }}>Dry</button>:
-                    null
-                }
-                </div>
+                
                 
                 
 
                 <p id="sizeLabel">Select a size:</p>
                 <div role="listbox" aria-labelledby="sizeLabel">
                     {
-                        fresh&&freshSizeList.length>0?freshSizeList.map((el:string,idx:number)=>{
+                        productSizeList.length>0?productSizeList.map((el:string,idx:number)=>{
                             return(
                                 <div key={idx}className={"size-button-wrapper"}>
-                                <button key={idx} className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0||product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].coming_soon?'button-disabled':''}`} role="option" aria-selected={false}
+                                <button key={idx} className={`select-custom size-select ${el===size?"select-active":""} ${product.filter((prod:any)=>{return prod.mass===el})[0].stock_available<=0||product.filter((prod:any)=>{return prod.mass===el})[0].coming_soon?'button-disabled':''}`} role="option" aria-selected={false}
                                 onClick={(e)=>{
                                     var text=(e.target as HTMLInputElement).textContent as string;
                                     const chosenProduct:Product=product.filter((prod:any)=>{
-                                        return prod.fresh===true&&prod.mass===el
+                                        return prod.mass===el
                                     })[0]
                                     if(chosenProduct.stock_available as number>=qty){
                                         setProductAvailable(true)
@@ -213,37 +199,12 @@ export default function ProductDetails({setComponentLoading}:any){
                                     setSize(el)
                                     toggleBackground(e.target as HTMLElement,"size-select")
 
-                                }}>{el}</button>{product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].coming_soon? <span className="coming-soon-message">Coming soon!</span>: product.filter((prod:any)=>{return prod.fresh===true&&prod.mass===el})[0].stock_available<=0?<span className="size-btn-message">Out of stock</span>:null}</div>
+                                }}>{el}</button>{product.filter((prod:any)=>{return prod.mass===el})[0].coming_soon? <span className="coming-soon-message">Coming soon!</span>: product.filter((prod:any)=>{return prod.mass===el})[0].stock_available<=0?<span className="size-btn-message">Out of stock</span>:null}</div>
                             )
                         })
-                        :
-                        drySizeList.length?drySizeList.map((el:string)=>{
-                            return(
-                            <div key={el}className={"size-button-wrapper"}>
-                                <button key={el} disabled={product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0}className={`select-custom size-select ${product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0?'button-disabled':''}`} role="option"aria-selected={false}
-                                onClick={(e)=>{
-                                    const chosenProduct:Product=product.filter((prod:any)=>{
-                                        return prod.fresh===false&&prod.mass===el
-                                    })[0]
-                                    if(chosenProduct.stock_available as number>=qty){
-                                        setProductAvailable(true)
-                                    }
-                                    else {
-                                        setProductAvailable(false)
-                                    }
-                                    setId(chosenProduct._id)
-                                    setStockAvailable(chosenProduct.stock_available)
-                                    setPrice(chosenProduct.price.toString())
-                                    setStripeProductId(chosenProduct.stripe_product_id)
-                                    setStripeId(chosenProduct.stripe_id)
-                                    setSize(el)
-                                    toggleBackground(e.target as HTMLElement,"size-select")
-
-                                }}>{el}</button>{product.filter((prod:any)=>{return prod.fresh===false&&prod.mass===el})[0].stock_available<=0?<span className="size-btn-message">Out of stock</span>:null}</div>
-                            )
-                        }):
-                        null
+                        :null
                     }
+                    
                 </div>
                 <p id="productPrice"> Price: £{price?qty*Number(price):null}</p>
                 <div>
@@ -255,11 +216,10 @@ export default function ProductDetails({setComponentLoading}:any){
                         else{
                             e.target.value=e.target.value.replace(/^0+/, '')
                             setQty(parseInt(e.target.value.replace(/^0+/, ''),10))
-                        var freshLabel = fresh?true:false
                         if(size!==''){
 
                             const chosenProduct:Product=product.filter((prod:any)=>{
-                                return prod.fresh===freshLabel&&prod.mass===size
+                                return prod.mass===size
                             })[0]
                             if(chosenProduct.stock_available>=Number(e.target.value)){
                                 setProductAvailable(true)
@@ -294,7 +254,7 @@ export default function ProductDetails({setComponentLoading}:any){
                }
                 <button id="productAddToCart" disabled={!productAvailable}className="cta"onClick={async(e)=>{
                             try{
-                                setComponentLoading(true)
+                                props.setComponentLoading(true)
                                 const input = document.getElementById(`productQuantity`) as HTMLInputElement;
                                 if(size!==''&&input.value!==''){
                                     context.saveCart? context.saveCart({
@@ -308,12 +268,12 @@ export default function ProductDetails({setComponentLoading}:any){
                                         stripeId:stripeId,
                                         stockAvailable:stockAvailable
                                     }):null}
-                                    setComponentLoading(false)
+                                    props.setComponentLoading(false)
                                 }
                 
                             catch(e){
                                 console.log(e)
-                                setComponentLoading(false)
+                                props.setComponentLoading(false)
                             }
                         }
                             
@@ -325,8 +285,36 @@ export default function ProductDetails({setComponentLoading}:any){
 
     )
 }
-export async function getServerSideProps(ctx:any){
-    return {
-        props:{}
+export async function getServerSideProps({req,res,resolvedUrl}:any){
+    const urlArr =resolvedUrl.split('/')
+    const freshUrl = urlArr[urlArr.length-1].includes("Fresh");
+    let productDetailsDb:any;
+
+    if(!urlArr[urlArr.length-1].includes("Shipping")){
+        const productName = urlArr[urlArr.length-1].replace(/[\-]/gi,' ').replace('\&apos','\'').replace('Fresh ','').replace('Dried ','');
+        await connect()
+        productDetailsDb=await Product().find({name:productName,fresh:freshUrl}).lean()
+        productDetailsDb.forEach((el:any)=>{
+            el._id=el._id.toString()
+            el.price=Number(el.price)
+        })
     }
+    if(productDetailsDb.length===0){
+        return {
+                notFound:true
+            
+
+        }
+        
+    }
+    else{
+        return {
+            props:{
+                urlArr:urlArr,
+                freshUrl:freshUrl,
+                productDetails:productDetailsDb
+            }
+        }
+    }
+    
 }
