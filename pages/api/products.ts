@@ -15,8 +15,16 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     await connect()
     var response;
     if(RegExp('product=').test(req.url as string)===true){
-      const product =req.url?.split('product=')[1].replaceAll('%27','\'').replaceAll('%20',' ')
-      response = await Product().find({name:product})
+      console.log(req.url)
+      const product =req.url?.split('product=')[1].split('&')[0].replaceAll('%27','\'').replaceAll('%20',' ')
+      if(req.url?.includes("fresh=")){
+        const fresh = (req.url?.split("fresh=")[1]==="true"?true:false)
+        response = await Product().find({name:product,fresh:fresh})
+      }
+      else{
+        response = await Product().find({name:product})
+      }
+      
     }
     else if(RegExp('type=').test(req.url as string)===true){
       response = await Product().find({"product_type":req.url?.split('type=')[1]},{})

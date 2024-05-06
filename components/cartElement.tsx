@@ -25,14 +25,14 @@ export default function CartElement({_id,idx,name,quantity,price,fresh,size,stri
                 
                 {
                     name?
-                    <Link  href={`/products/${name.replace(/[\s]/gi,'-')}`} ><Image className="cart-product-image"  fill sizes={`(max-width:767px) 50vw,(min-width:768px) ${imageMap[name].width}px`} src={`${imageMap[name].path}_${fresh?"fresh":"dry"}.${imageMap[name].fileType}`} priority alt={name}/></Link>
+                    <Link  href={`/products/${name.replace(/[\s]/gi,'-')}`} ><Image className="cart-product-image"  fill sizes={`(max-width:767px) 50vw,(min-width:768px) ${imageMap[name].width}px`} src={`${imageMap[name].path}.${imageMap[name].fileType}`} priority alt={name}/></Link>
                     :
                     null
                 }
             </div>
             <div className="cart-right">
 
-                <h2 className="cart-product-name col-1">{fresh?"Fresh ":"Dry "}{name}{` ${size}`}</h2>
+                <h2 className="cart-product-name col-1">{name}{` ${size}`}</h2>
                 <div className="quantity-wrapper col-2">
                 <select className="product-quantity col-3"id={`quantity${idx}`}name={"quantity"} defaultValue={String(quantity)} onChange={(e)=>{
                     if(context.saveCart){
