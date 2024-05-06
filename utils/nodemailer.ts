@@ -13,7 +13,8 @@ interface mailOptions {
     to: string|undefined,
     from: string|undefined,
     html?:string|undefined,
-    attachments?:attachmentOptions[]|undefined
+    attachments?:attachmentOptions[]|undefined,
+    bcc?:string|undefined
 
 }
 const createTransporter = async () => {

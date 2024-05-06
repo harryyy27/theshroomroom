@@ -128,7 +128,7 @@ export async function receiveUpdatesHandler(email:string,user:boolean,websiteNam
     }
 
 }
-export async function orderHandler(order:any,websiteName:string|undefined,companyEmail:string|undefined){
+export async function orderHandler(order:any,websiteName:string|undefined,companyEmail:string|undefined,trustPilotEmail:string|undefined){
     try{
         const content = orderString(order)
         const imageAttach = [
@@ -142,6 +142,7 @@ export async function orderHandler(order:any,websiteName:string|undefined,compan
             html:template(content,websiteName),
             to:`${order.email}`,
             from: `${companyEmail}`,
+            bcc: `${trustPilotEmail}`
             // attachments:imageAttach
         })
 

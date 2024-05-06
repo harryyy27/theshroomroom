@@ -67,7 +67,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     }
                     if(order){
                         success=true
-                        await orderHandler(order,websiteName,companyEmail)
+                        var trustPilotEmail=process.env.TRUST_PILOT_EMAIL
+                        await orderHandler(order,websiteName,companyEmail,trustPilotEmail)
                     }
                     else {
                         throw new Error(`No paymentIntentId available for this particular number. Payment intent ID: ${body.paymentIntentId}`)
