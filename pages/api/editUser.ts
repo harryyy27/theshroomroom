@@ -47,7 +47,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     return res.status(500).json({success:false,error:'A user with this email is already subscribed'})
                 }
                 var subscription = new (ReceiveUpdates() as any)(body);
-                subscription.save()
+                await subscription.save()
 
                 await receiveUpdatesHandler(body.email,false,process.env.WEBSITE_NAME,companyEmail)
             }

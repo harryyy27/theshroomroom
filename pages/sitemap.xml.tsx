@@ -20,7 +20,7 @@ async function generateSiteMap(ctx:any): Promise<string>{
     const data= await fetch(`http://${req.headers.host}/api/products/`);
     var product_pages = await data.json();
     var product_pages_arr=Array.from(new Set(product_pages.map((el:any)=>{
-        return el.name
+        return (el.fresh?"Fresh ":"Dried ")+el.name 
     })))
 
 
