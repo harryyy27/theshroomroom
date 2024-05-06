@@ -297,6 +297,7 @@ export async function getServerSideProps({req,res,resolvedUrl}:any){
         productDetailsDb.forEach((el:any)=>{
             el._id=el._id.toString()
             el.price=Number(el.price)
+            el.stock_available=Number(el.stock_available)
         })
     }
     if(productDetailsDb.length===0){
