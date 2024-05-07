@@ -163,7 +163,7 @@ export default function ProductDetails(props:any){
                 <meta property="og:type" content="product"></meta>
                 <meta property="product:price:amount" content={price}></meta>
                 <meta property="product:price:currency" content="GBP"></meta>
-                <meta property="og:availability" content={stockAvailable?"Available":"Out of stock"}></meta>
+                <meta property="og:availability" content={stockAvailable?"InStock":"oos"}></meta>
                 </>:
                 null
             }
