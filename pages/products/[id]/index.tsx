@@ -304,7 +304,7 @@ export default function ProductDetails(props:any){
 }
 export async function getServerSideProps({req,res,resolvedUrl}:any){
     const urlArr =resolvedUrl.split('/')
-    const freshUrl = urlArr[urlArr.length-1].split('?')[0].includes("Fresh");
+    const freshUrl = urlArr[urlArr.length-1].split('?')[0].includes("Fresh")?true:urlArr[urlArr.length-1].split('?')[0].includes("Dried")?false:undefined;
     let productDetailsDb:any;
     if(!urlArr[urlArr.length-1].includes("Shipping")){
         const productName = urlArr[urlArr.length-1].split('?')[0].replace(/[\-]/gi,' ').replace('\&apos','\'').replace('Fresh ','').replace('Dried ','');
