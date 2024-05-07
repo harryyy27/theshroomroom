@@ -47,8 +47,6 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
         {
             products.length?products.map(({_id,name,price,fresh,new_product}:any,idx)=>{
                 var fullName=(fresh?"Fresh ":"Dried ")+name
-                console.log(fullName)
-                console.log(imageMap[fullName].fileType)
                 return(
                     <li className="product" key={idx}>
                         <Link  href={`/products/${fullName.replace(/[\s]/gi,'-')}`} >

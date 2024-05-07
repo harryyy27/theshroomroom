@@ -116,9 +116,16 @@ export default function ProductDetails(props:any){
             while(i<productDetails.length&&productSet===false){
 
                 if((productDetails[i] as any)["stock_available"]!==0&&productDetails[i].coming_soon!==true){
+                    let priceString = (productDetails[i] as any).price.toString()
+                    if(!priceString.includes('.')){
+                        priceString+='.00'
+                    }
+                    else if (priceString.split('.')[1].length===1){
+                        priceString+='0'
+                    }
                     setId((productDetails[i] as any)._id)
                     setStockAvailable((productDetails[i] as any).stock_available)
-                    setPrice((productDetails[i] as any).price.toString())
+                    setPrice(priceString)
                     setStripeProductId((productDetails[i] as any).stripe_product_id)
                     setStripeId((productDetails[i] as any).stripe_id)
                     setSize((productDetails[i] as any).mass)
@@ -146,10 +153,20 @@ export default function ProductDetails(props:any){
     return(
         <div className="product-container">
         <Head>
-            <title>{Metadata["pdp"]["title"]}</title>
             <meta name="description" content={Metadata["pdp"]["description"]}/>
-            <meta property="og:title" content={Metadata["pdp"]["title"]}/>
-            <meta property="og:description" content={Metadata["pdp"]["description"]}/>
+            {
+                name&&description&&price&&stockAvailable?
+                <>
+                <meta property="og:title" content={`Buy ${name} mushrooms UK`}/>
+                <title>Buy {name} mushrooms UK</title>
+                <meta property="og:description" content={description}/>
+                <meta property="og:type" content="product"></meta>
+                <meta property="product:price:amount" content={price}></meta>
+                <meta property="product:price:currency" content="GBP"></meta>
+                <meta property="og:availability" content={stockAvailable?"Available":"Out of stock"}></meta>
+                </>:
+                null
+            }
         </Head>
             <section className="image-section">
                 {
