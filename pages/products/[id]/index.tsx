@@ -306,7 +306,7 @@ export async function getServerSideProps({req,res,resolvedUrl}:any){
     const urlArr =resolvedUrl.split('/')
     const freshUrl = urlArr[urlArr.length-1].includes("Fresh");
     let productDetailsDb:any;
-
+    console.log(resolvedUrl)
     if(!urlArr[urlArr.length-1].includes("Shipping")){
         const productName = urlArr[urlArr.length-1].replace(/[\-]/gi,' ').replace('\&apos','\'').replace('Fresh ','').replace('Dried ','');
         await connect()
