@@ -155,7 +155,7 @@ export default function ProductDetails(props:any){
         <Head>
             <meta name="description" content={Metadata["pdp"]["description"]}/>
             {
-                name&&description&&price&&stockAvailable?
+                name&&description&&price?
                 <>
                 <meta property="og:title" content={`Buy ${name} mushrooms UK`}/>
                 <title>Buy {name} mushrooms UK</title>
@@ -306,7 +306,6 @@ export async function getServerSideProps({req,res,resolvedUrl}:any){
     const urlArr =resolvedUrl.split('/')
     const freshUrl = urlArr[urlArr.length-1].split('?')[0].includes("Fresh");
     let productDetailsDb:any;
-    console.log(resolvedUrl)
     if(!urlArr[urlArr.length-1].includes("Shipping")){
         const productName = urlArr[urlArr.length-1].split('?')[0].replace(/[\-]/gi,' ').replace('\&apos','\'').replace('Fresh ','').replace('Dried ','');
         await connect()
