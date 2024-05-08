@@ -10,7 +10,7 @@ import Contact from '../components/home_page/contact';
 
 import Head from 'next/head';
 import {Metadata}from '../utils/metadata/metadata';
-const Home: NextPage = () => {
+const Home: NextPage = (props:any) => {
   // useEffect(()=>{
   //   const initiateSession=async()=>{
   //     const session = await getSession()
@@ -26,7 +26,7 @@ const Home: NextPage = () => {
         <meta name="description" content={Metadata["home"]["description"]}/>
         <meta property="og:title" content={Metadata["home"]["title"]}/>
         <meta property="og:description" content={Metadata["home"]["description"]}/>
-        <link rel="canonical" href={`${process.env.WEBSITE_NAME}/`} />
+        <link rel="canonical" href={`${props.website_name}/`} />
 
       </Head>
       <Hero />
@@ -37,5 +37,12 @@ const Home: NextPage = () => {
     </>
   )
 }
-
+export async function getServerSideProps({req,res}:any){
+  const url = process.env.WEBSITE_NAME
+  return {
+    props:{
+      website_name:url
+    }
+  }
+}
 export default Home
