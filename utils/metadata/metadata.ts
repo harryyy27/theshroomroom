@@ -7,16 +7,12 @@ interface WholeMeta {
 }
 const Metadata:WholeMeta = {
     home:{
-        title:"Mega Mushrooms - Home of Premium Lion's Mane Mushrooms",
-        description:"Explore the power of lion's mane mushrooms at Mega Mushrooms. Discover premium, sustainably cultivated Lion's Mane known for enhancing cognition and overall well-being."
+        title:"🍄 Mega Mushrooms 🍄 - Home of UK Grown Lion's Mane Mushrooms",
+        description:"We are a small mushroom farm based in South East London and a producer of lion's mane mushrooms. Buy now!"
     },
     plp:{
-        title:"Mega Mushrooms - Premium Mushrooms",
-        description:"Explore the magic of lion's mane mushrooms at Mega Mushrooms. Our premium lion's mane strains are expertly cultivated for optimal flavor and health benefits. Stay tuned for the diverse range of exotic mushrooms that will soon be hitting our shelves."
-    },
-    pdp:{
-        title:"Mega Mushrooms - Premium Lions Mane Mushrooms - \"smart mushrooms\" ",
-        description: "Discover nature's brain booster: premium lion's mane mushrooms 🍄. Packed with natural brain-boosting compounds, our lion's mane mushrooms are an excellent choice for mental clarity and focus. Experience the power of this extraordinary fungi - your path to enhanced cognition starts here."
+        title:"🍄 Mega Mushrooms 🍄 - Premium Mushrooms",
+        description:"Explore the magic of lion's mane mushrooms at Mega Mushrooms. Considered a nootropic by some, lion's mane is known for enhancing brain health and reducing oxidative stress in the body. Stay tuned for the diverse range of exotic mushrooms that will soon be hitting our shelves."
     },
     about:{
         title:"Mega Mushrooms - cultivating nature's medical marvels",
@@ -24,7 +20,7 @@ const Metadata:WholeMeta = {
     },
     contact:{
         title:"Mega Mushrooms - contact us",
-        description:"Contact us if you wish to drop us a line"
+        description:"Message here if you wish to drop us a line"
     },
     delivery:{
         title:"Mega Mushrooms - delivery policy",
@@ -36,7 +32,7 @@ const Metadata:WholeMeta = {
     },
     cookies:{
         title:"Mega Mushrooms - cookies policy",
-        description:"Here at Mega Mushrooms we use cookies to ensure the site functions optimally."
+        description:"View cookies here."
     },
     returns:{
         title:"Mega Mushrooms - return policy",
@@ -56,7 +52,7 @@ const Metadata:WholeMeta = {
     },
     wholesale:{
         title:"Mega Mushrooms- Buy wholesale lion's mane.",
-        description:"Purchase wholesale lion's mane to keep your stores well supplied."
+        description:"Buy UK grown lion's mane mushrooms to keep your stores well supplied."
     },
     forgottenpassword:{
         title:"Mega Mushrooms - forgotten password",

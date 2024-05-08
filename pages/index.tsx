@@ -26,6 +26,8 @@ const Home: NextPage = () => {
         <meta name="description" content={Metadata["home"]["description"]}/>
         <meta property="og:title" content={Metadata["home"]["title"]}/>
         <meta property="og:description" content={Metadata["home"]["description"]}/>
+        <link rel="canonical" href="https://megamushrooms.uk/" />
+
       </Head>
       <Hero />
       <Wholesale />
