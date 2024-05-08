@@ -7,11 +7,11 @@ interface WholeMeta {
 }
 const Metadata:WholeMeta = {
     home:{
-        title:"🍄 Mega Mushrooms 🍄 - Home of UK Grown Lion's Mane Mushrooms",
+        title:"Mega Mushrooms - Home of UK Grown Lion's Mane Mushrooms",
         description:"We are a small mushroom farm based in South East London and a producer of lion's mane mushrooms. Buy now!"
     },
     plp:{
-        title:"🍄 Mega Mushrooms 🍄 - Premium Mushrooms",
+        title:"Mega Mushrooms - Premium Mushrooms",
         description:"Explore the magic of lion's mane mushrooms at Mega Mushrooms. Considered a nootropic by some, lion's mane is known for enhancing brain health and reducing oxidative stress in the body. Stay tuned for the diverse range of exotic mushrooms that will soon be hitting our shelves."
     },
     about:{
