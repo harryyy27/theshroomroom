@@ -153,16 +153,18 @@ export default function ProductDetails(props:any){
     return(
         <div className="product-container">
         <Head>
-            <meta name="description" content={Metadata["pdp"]["description"]}/>
+            
             {
                 name&&description&&price?
                 <>
                 <meta property="og:title" content={`Buy ${name} mushrooms UK`}/>
                 <title>Buy {name} mushrooms UK</title>
+                <meta name="description" content={description}/>
                 <meta property="og:description" content={description}/>
                 <meta property="og:type" content="product"></meta>
                 <meta property="product:price:amount" content={price}></meta>
                 <meta property="product:price:currency" content="GBP"></meta>
+                <meta property="product:availability" content={stockAvailable!==0?"instock":"oos"}></meta>
                 <meta property="og:availability" content={stockAvailable!==0?"instock":"oos"}></meta>
                 </>:
                 null
