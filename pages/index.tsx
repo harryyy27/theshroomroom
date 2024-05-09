@@ -27,6 +27,7 @@ const Home: NextPage = (props:any) => {
         <meta property="og:title" content={Metadata["home"]["title"]}/>
         <meta property="og:description" content={Metadata["home"]["description"]}/>
         <link rel="canonical" href={`${props.website_name}/`} />
+        <meta name="p:domain_verify" content="51c93de7c80c745653c50923d39b8b79"/>
         <script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
 
       </Head>
