@@ -8,10 +8,12 @@ function generateRobotTxt(){
         User-agent: *
 
         Disallow: /auth/*
-        Disallow:/cart
+        Disallow:/cart*
         Disallow:/myaccount/*
         Disallow:/checkout*
         Disallow:/thank-you*
+        Disallow:/forgotten-password*
+        Disallow:/set-password*
         Disallow:*.jpg
         Disallow:*.png
         Disallow:*.webp
