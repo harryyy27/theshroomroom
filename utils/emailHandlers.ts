@@ -26,7 +26,7 @@ function template(content:string,websiteName:string|undefined){
             <td style="display:inline-block;width:200px; height:1rem"></td>
             <td colspan="1" valign="center" style="text-align:center; padding:12px  0;display:inline-block;width:50px;margin-left:auto;position:relative;right:-10px">
               <a href="${websiteName}" style="display:block;margin-left:auto;position:relative;right:-80px;">
-                <img src="cid:logo" alt="Mega Mushrooms Logo" border="0" width="40px" height="auto"/>
+                <img src="${websiteName+"/_next/image?url=%2Flogo_small.jpg&w=48&q=75"}" alt="Mega Mushrooms Logo" border="0" width="40px" height="auto"/>
               </a>
             </td>
             <td colspan="1" valign="center" style="text-align:center; display:inline-block;padding:12px  0;">
@@ -131,19 +131,18 @@ export async function receiveUpdatesHandler(email:string,user:boolean,websiteNam
 export async function orderHandler(order:any,websiteName:string|undefined,companyEmail:string|undefined,trustPilotEmail:string|undefined){
     try{
         const content = orderString(order)
-        const imageAttach = [
-          {
-            filename:'logo_small.jpg',
-            path:process.cwd()+'/public/logo_small.jpg',
-            cid:'logo',
-          }]
+        // const imageAttach = [
+        //   {
+        //     filename:'logo_small.jpg',
+        //     path:process.cwd()+'/public/logo_small.jpg',
+        //     cid:'logo',
+        //   }]
         sendEmail({
             subject: `Mega Mushrooms - order`,
             html:template(content,websiteName),
             to:`${order.email}`,
             from: `${companyEmail}`,
-            bcc: `${trustPilotEmail}`,
-            attachments:imageAttach
+            bcc: `${trustPilotEmail}`
         })
 
     }
