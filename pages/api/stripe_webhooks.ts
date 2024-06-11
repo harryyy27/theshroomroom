@@ -68,6 +68,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     if(order){
                         success=true
                         var trustPilotEmail=process.env.TRUST_PILOT_EMAIL
+                        console.log(order)
                         await orderHandler(order,websiteName,companyEmail,trustPilotEmail)
                     }
                     else {

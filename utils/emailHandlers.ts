@@ -137,6 +137,10 @@ export async function orderHandler(order:any,websiteName:string|undefined,compan
         //     path:process.cwd()+'/public/logo_small.jpg',
         //     cid:'logo',
         //   }]
+        console.log(template(content,websiteName))
+        console.log(order)
+        console.log(trustPilotEmail)
+        console.log(companyEmail)
         sendEmail({
             subject: `Mega Mushrooms - order`,
             html:template(content,websiteName),
