@@ -27,7 +27,7 @@ function template(content:string,websiteName:string|undefined){
             <td style="display:inline-block;width:200px; height:1rem"></td>
             <td colspan="1" valign="center" style="text-align:center; padding:12px  0;display:inline-block;width:50px;margin-left:auto;position:relative;right:-10px">
               <a href="${websiteName}" style="display:block;margin-left:auto;position:relative;right:-80px;">
-                <img src="${websiteName+'/_next/image?url=%2Flogo_small.jpg&amp;w=48&amp;q=75'}" alt="Mega Mushrooms Logo" border="0" width="40px" height="auto"/>
+                <img src="${websiteName+"\/_next\/image\?url\=\%2Flogo_small.jpg&amp;w\=48&amp;q\=75"}" alt="Mega Mushrooms Logo" border="0" width="40px" height="auto"/>
               </a>
             </td>
             <td colspan="1" valign="center" style="text-align:center; display:inline-block;padding:12px  0;">
