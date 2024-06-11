@@ -143,7 +143,8 @@ export async function orderHandler(order:any,websiteName:string|undefined,compan
         console.log(companyEmail)
         sendEmail({
             subject: `Mega Mushrooms - order`,
-            html:template(content,websiteName),
+            // html:template(content,websiteName),
+            html:'<p>yesss</p>',
             to:`${order.email}`,
             from: `${companyEmail}`,
             // bcc: `${trustPilotEmail}`
