@@ -146,7 +146,7 @@ export async function orderHandler(order:any,websiteName:string|undefined,compan
             html:template(content,websiteName),
             to:`${order.email}`,
             from: `${companyEmail}`,
-            bcc: `${trustPilotEmail}`
+            // bcc: `${trustPilotEmail}`
         })
 
     }
