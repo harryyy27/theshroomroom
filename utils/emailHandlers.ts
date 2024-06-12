@@ -6,7 +6,6 @@ import connect from './connection';
 import {orderString,receiveUpdateString,subscriptionString,deleteAccountString,registerString,disputeString,invoiceFinalizationFailString,invoiceFailString} from './emailContent'
 
 function template(content:string,websiteName:string|undefined){
-  console.log(websiteName+'/_next/image?url=%2Flogo_small.jpg&amp;w=48&amp;q=75')
     return `
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
@@ -27,6 +26,7 @@ function template(content:string,websiteName:string|undefined){
             <td style="display:inline-block;width:200px; height:1rem"></td>
             <td colspan="1" valign="center" style="text-align:center; padding:12px  0;display:inline-block;width:50px;margin-left:auto;position:relative;right:-10px">
               <a href="${websiteName}" style="display:block;margin-left:auto;position:relative;right:-80px;">
+                <img src="${websiteName+'/_next/image?url=%2Flogo_small.jpg&amp;w=48&amp;q=75'}" />
               </a>
             </td>
             <td colspan="1" valign="center" style="text-align:center; display:inline-block;padding:12px  0;">
@@ -137,14 +137,11 @@ export async function orderHandler(order:any,websiteName:string|undefined,compan
         //     path:process.cwd()+'/public/logo_small.jpg',
         //     cid:'logo',
         //   }]
-        console.log(template(content,websiteName))
-        console.log(order)
-        console.log(trustPilotEmail)
-        console.log(companyEmail)
+        
         sendEmail({
             subject: `Mega Mushrooms - order`,
             // html:template(content,websiteName),
-            html:'<p>yesss</p>',
+            html:template(content,websiteName),
             to:`${order.email}`,
             from: `${companyEmail}`,
             // bcc: `${trustPilotEmail}`
@@ -159,12 +156,7 @@ export async function orderHandler(order:any,websiteName:string|undefined,compan
 export async function subscriptionHandler(subscription:any,websiteName:string|undefined,companyEmail:string|undefined,renewal:boolean){
     try{
         const content = subscriptionString(subscription,renewal);
-        const imageAttach = [
-          {
-            filename:'logo_small.jpg',
-            path:process.cwd()+'/public/logo_small.jpg',
-            cid:'logo',
-          }]
+        
         sendEmail({
             subject: `Subscription confirmation`,
             html:template(content,websiteName),
