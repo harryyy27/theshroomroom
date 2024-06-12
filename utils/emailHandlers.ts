@@ -108,7 +108,7 @@ export async function receiveUpdatesHandler(email:string,user:boolean,websiteNam
     try{
         const content =receiveUpdateString(user,email)
 
-        sendEmail({
+        await sendEmail({
             subject: "Thank you for subscribing to Mega Mushrooms!",
             html:template(content,websiteName),
             to:`${email}`,
@@ -138,9 +138,8 @@ export async function orderHandler(order:any,websiteName:string|undefined,compan
         //     cid:'logo',
         //   }]
         
-        sendEmail({
+        await sendEmail({
             subject: `Mega Mushrooms - order`,
-            // html:template(content,websiteName),
             html:template(content,websiteName),
             to:`${order.email}`,
             from: `${companyEmail}`,
@@ -157,7 +156,7 @@ export async function subscriptionHandler(subscription:any,websiteName:string|un
     try{
         const content = subscriptionString(subscription,renewal);
         
-        sendEmail({
+        await sendEmail({
             subject: `Subscription confirmation`,
             html:template(content,websiteName),
             to:`${subscription.email}`,
@@ -174,18 +173,11 @@ export async function subscriptionHandler(subscription:any,websiteName:string|un
 export async function registerHandler(email:string,user:any,websiteName:string|undefined,companyEmail:string|undefined){
     try{
         const content = registerString(user,email)
-        sendEmail({
+        await sendEmail({
             subject: `Welcome to Mega Mushrooms`,
             html:template(content,websiteName),
             to:email,
             from: `${companyEmail}`,
-            // attachments:[
-            //   {
-            //     filename:'logo_small.jpg',
-            //     path:process.cwd()+'/public/logo_small.jpg',
-            //     cid:'logo',
-            //   }
-            // ]
         })
 
     }
@@ -197,18 +189,11 @@ export async function registerHandler(email:string,user:any,websiteName:string|u
 export async function deleteAccountHandler(email:string,websiteName:string|undefined,companyEmail:string|undefined){
     try{
         const content = deleteAccountString();
-        sendEmail({
+        await sendEmail({
             subject: "We are sorry to see you go",
             html: template(content,websiteName),
             to: email,
             from: `${companyEmail}`,
-            // attachments:[
-            //   {
-            //     filename:'logo_small.jpg',
-            //     path:process.cwd()+'/public/logo_small.jpg',
-            //     cid:'logo',
-            //   }
-            // ]
         })
 
     }
@@ -220,18 +205,11 @@ export async function deleteAccountHandler(email:string,websiteName:string|undef
 export async function disputeHandler(object:any,status:string,websiteName:string|undefined,companyEmail:string|undefined){
   try{
       const content = disputeString(object,status);
-      sendEmail({
+      await sendEmail({
           subject: "New Dispute",
           html: template(content,websiteName),
           to: `${companyEmail}`,
           from: `${companyEmail}`,
-          // attachments:[
-          //   {
-          //     filename:'logo_small.jpg',
-          //     path:process.cwd()+'/public/logo_small.jpg',
-          //     cid:'logo',
-          //   }
-          // ]
       })
 
   }
@@ -243,18 +221,11 @@ export async function disputeHandler(object:any,status:string,websiteName:string
 export async function invoiceFailHandler(attemptCount:number,email:string,finalizationFailure:boolean,websiteName:string|undefined,companyEmail:string|undefined){
   try{
     const content = invoiceFailString();
-    sendEmail({
+    await sendEmail({
         subject: "Your subscription payment has failed",
         html: template(content,websiteName),
         to: email,
         from: `${companyEmail}`,
-        // attachments:[
-        //   {
-        //     filename:'logo_small.jpg',
-        //     path:process.cwd()+'/public/logo_small.jpg',
-        //     cid:'logo',
-        //   }
-        // ]
     })
 
 }
@@ -264,7 +235,7 @@ catch(e){
 
 }
 export async function refundHandler(object:any,companyEmail:string|undefined){
-  sendEmail({
+  await sendEmail({
       subject: `Refund status`,
       html: `<h1>refund status</h1>
         <p>refund status: ${object.status}</p>
@@ -276,7 +247,7 @@ export async function refundHandler(object:any,companyEmail:string|undefined){
 
 }
 export async function payoutHandler(paid:boolean,obj:any,companyEmail:string|undefined){
-  sendEmail({
+  await sendEmail({
       subject: `${paid?"Payout paid":"Payout failed"}`,
       html: `<h1>${paid?"PAYOUT PAID":"PAYOUT FAILED"} - ${obj.id}</h1>`,
       to: `${companyEmail}`,
