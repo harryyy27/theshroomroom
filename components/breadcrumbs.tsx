@@ -19,7 +19,7 @@ type TBreadCrumbProps = {
 const NextBreadcrumb = ({homeElement, separator, containerClasses, listClasses, activeClasses, capitalizeLinks}: TBreadCrumbProps) => {
     const router = useRouter()
     const paths = usePathname()
-    var included=router.pathname.includes("forgotten-password")||router.pathname.includes("thank-you")
+    var included=router.pathname.includes("forgotten-password")||router.pathname.includes("thank-you")||router.pathname.includes("set-password")
     const pathNames = included?[]:paths.split('/').filter( path => path )
 
     return (

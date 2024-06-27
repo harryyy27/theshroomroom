@@ -12,6 +12,7 @@ export default function Contact(){
     const [err,setErr]=useState('');
     const [msg,setMsg]=useState('')
     const [user,setUser]=useState({})
+    const [formSubmitted,setFormSubmitted]=useState(false);
     useEffect(()=>{
         async function initiate(){
             const session = await getSession()
@@ -37,6 +38,7 @@ export default function Contact(){
         try{
             if(validate()){
                 e.preventDefault()
+                setFormSubmitted(true)
                 const resJson= await fetch('/api/contact',{
                     method:"POST",
                     headers: {
@@ -53,6 +55,7 @@ export default function Contact(){
                     throw new Error('We are sorry but your email failed to send, we are working to resolve this')
                 }
                 else{
+                    setFormSubmitted(false)
                     setMsg('Thank you for your message. We will respond as soon as possible!')
                 }
             }
@@ -61,6 +64,7 @@ export default function Contact(){
             }
         }
         catch(e:any){
+            setFormSubmitted(false)
             setErr(e.toString())
         }
         
@@ -106,7 +110,7 @@ export default function Contact(){
 
                 }
                 </div>
-            <button className="cta" onClick={(e)=>{
+            <button className="cta" disabled={formSubmitted} onClick={(e)=>{
                 setErr('')
                 handleSubmit(e)
             }}>Submit</button>
