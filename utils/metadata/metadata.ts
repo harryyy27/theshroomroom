@@ -18,6 +18,10 @@ const Metadata:WholeMeta = {
         title:"Mega Mushrooms - cultivating nature's medical marvels",
         description: "Get to know Mega Mushrooms and what we stand for. Learn about our mission to redefine nutrition, embrace sustainability and explore the diverse applications of fungi."
     },
+    blog:{
+        title:"Mega Mushrooms - blog page",
+        description: "Find out more about mushrooms, recipes and all things mycology right here in our blog."
+    },
     contact:{
         title:"Mega Mushrooms - contact us",
         description:"Message here if you wish to drop us a line"

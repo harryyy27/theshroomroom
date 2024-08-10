@@ -36,6 +36,7 @@ async function generateSiteMap(ctx:any): Promise<string>{
     <url><loc>${process.env.WEBSITE_NAME}/returns</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/contact-us</loc></url>
     <url><loc>${process.env.WEBSITE_NAME}/products</loc></url>
+    <url><loc>${process.env.WEBSITE_NAME}/blog</loc></url>
     ${product_pages_arr.filter((el:any)=>!el.includes("Shipping")).map((el:any)=>{
         var productName=el.replace(/[\s]/gi,'-').replace(/['\'']/gi,'&apos;');
         return `<url>

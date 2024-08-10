@@ -7,7 +7,19 @@ import {Metadata} from '../../../utils/metadata/metadata';
 import Link from 'next/link'
 import {getSession,getCsrfToken}from 'next-auth/react'
 import {notFound} from 'next/navigation';
+import {
 
+  FacebookIcon,
+  InstapaperIcon,
+  PinterestIcon,
+  TwitterIcon,
+  WhatsappIcon,
+  FacebookShareButton,
+  InstapaperShareButton,
+  PinterestShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+} from 'next-share'
 import {Product} from '../../../utils/schema';
 import connect from '../../../utils/connection'
 interface Product {
@@ -25,6 +37,7 @@ interface Product {
 }
 export default function ProductDetails(props:any){
     const context = useContext(CartContext);
+    const [url,setUrl]=useState('');
     const [product,setProduct]=useState<Product[]>([])
     const [productSizeList,setProductSizeList]=useState<string[]>([])
     const [drySizeList,setDrySizeList]=useState<string[]>([])
@@ -48,6 +61,7 @@ export default function ProductDetails(props:any){
     useEffect(()=>{
         props.setComponentLoading(true)
         setImageUrl(props.urlArr[props.urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
+        setUrl(window.location.href)
         const initiate = async()=>{
             const session = await getSession()
             if(session?.user){
@@ -162,6 +176,9 @@ export default function ProductDetails(props:any){
                 <meta name="description" content={description}/>
                 <meta property="og:description" content={description}/>
                 <meta property="og:type" content="product"></meta>
+                <meta property="og:image" content={imageUrl}></meta>
+                <meta property="twitter:card" content={imageUrl}></meta>
+                <meta property="twitter:description" content={description}></meta>
                 <meta property="product:price:amount" content={price}></meta>
                 <meta property="product:price:currency" content="GBP"></meta>
                 <meta property="product:availability" content={stockAvailable!==0?"instock":"oos"}></meta>
@@ -178,7 +195,41 @@ export default function ProductDetails(props:any){
                     :
                     null
                 }
+                <div className="social-media-bar">
+                    {
+                        url!==''?
+                        <>
+                        <FacebookShareButton
+                        url={url}
+                    >
+                        <FacebookIcon size={32} round/>
+                    </FacebookShareButton>
+                    <TwitterShareButton
+                        url={url}
+                    >
+                        <TwitterIcon
+                        size={32} round/>
+                    </TwitterShareButton>
+                    <PinterestShareButton
+                        description={""}
+                        media={""}
+                        url={url}
+                    >
+                        <PinterestIcon
+                            size={32} round/>
 
+                    </PinterestShareButton>
+                     <WhatsappShareButton
+                        url={url}>
+                            <WhatsappIcon size={32} round/>
+                        </WhatsappShareButton>
+                        </>
+                        :
+                        null
+                    }
+                   
+                </div>
+            
             </section>
             <section className="text-section">
                 <h1 className="main-heading product-heading" id="productName">{name?name:null} </h1>
