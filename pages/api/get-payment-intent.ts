@@ -11,7 +11,6 @@ async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippin
     const secret_key = process.env.STRIPE_SECRET_KEY as string;
     var standardShippingPriceId = process.env.STRIPE_SHIPPING_ID;
     let items;
-    console.log('oi slag')
     if(sesh&&sesh.user&&sesh.user.cart){
         
         items = sesh.user.cart.items.map(async(el:any)=>{
@@ -109,7 +108,6 @@ async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippin
         },
         expand:["latest_invoice.payment_intent"]
     })
-    console.log(checkoutSession)
     var subscription_id=checkoutSession.id;
     var latestInvoice = checkoutSession.latest_invoice as any
     setCookie(ctx,'checkoutDetails',JSON.stringify({paymentIntentId:latestInvoice.payment_intent.id as string,subscriptionId:subscription_id}),{
@@ -130,7 +128,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             console.log(e)
             return res.status(500).json({success:false,error:e.toString()})
         }
-        console.log('oi')
         
                 var start = Date.now()
                 
@@ -140,12 +137,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 await connect()
                 const body = req.url
                 const sesh = await getSession({req})
-                console.log("sesh: ",sesh)
                 const {Cart}= parseCookies({req},{
                     path:"/"
                 })
-                console.log("Cart: ",Cart)
-                console.log("body: ",body)
                 let subscriptionCheckout = (body as string)?.split('subscription=')[1].split('&')[0]==="true"?true:false
                 let shippingCost = Number(body?.split('shippingCost=')[1])
                 let total;
@@ -174,7 +168,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     path:"/checkout"
                 })
                 if(checkoutDetails){
-                    console.log()
                     var paymentIntentId=JSON.parse(checkoutDetails).paymentIntentId
                     var subscriptionId=JSON.parse(checkoutDetails).subscriptionId
         
@@ -259,9 +252,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                         })
                     }
                     else{
-                        console.log('oi slag')
                         var props = await getPaymentIntentSubscription(sesh,stripe,Cart,shippingCost,{req,res},start)
-                        console.log(props)
                         return res.status(200).json(props)
                 }
                 

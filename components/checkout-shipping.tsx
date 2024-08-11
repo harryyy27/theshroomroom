@@ -96,7 +96,6 @@ export default function CheckoutForm(props: any) {
 
     const handleChangeShipping=(e:any)=>{
         try{
-            console.log(e.target.id)
             props.setShippingCost(e.target.value)
             props.setShippingCostVal(true)
             props.setShippingType(e.target.id)
@@ -118,7 +117,6 @@ export default function CheckoutForm(props: any) {
             if(!validateShipping()){
                 throw new Error('Something has gone wrong, please refresh and start again')
             }
-            console.log(props.shippingCost)
             if (!(props.shippingCost>=0)) {
                 throw new Error('Please select shipping option.')
             }

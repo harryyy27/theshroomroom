@@ -33,8 +33,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
             const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
     
             });
-                    console.log(body)
-                    console.log(body.paymentIntentId)
                     if(body.subscriptionId!=='') {
                         let items=body.cart.items.map((el:any)=>{
                             return {
@@ -64,7 +62,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                                 quantity:1,
                             })
                         }
-                    console.log(items)
                     const subscription = await stripe.subscriptions.update(
                         body.subscriptionId,
                         {

@@ -142,7 +142,6 @@ export default function Checkout(props:any){
         var subscription = window.location.href.split('checkout?').length>1;
             const res= await fetch(`/api/get-payment-intent?subscription=${subscription?true:false}&shippingCost=${shippingCost}`)
             const resJson = await res.json()
-            console.log(resJson)
         
         return resJson
     }
@@ -156,8 +155,6 @@ export default function Checkout(props:any){
                 setSubscription(true)
 
             }
-            console.log(subscription)
-            console.log(pathname)
                 
                 
             async function initiate(){
@@ -168,7 +165,6 @@ export default function Checkout(props:any){
                         window.location.href=`/`
                     }
                     if(res.props.paymentIntent){
-                        console.log(res)
                         setOptions({clientSecret:res.props.paymentIntent.client_secret})
                         setPaymentIntent(res.props.paymentIntent)
                         setSubscriptionId(res.props.subscriptionId)
@@ -192,8 +188,6 @@ export default function Checkout(props:any){
 
                 if(props.user?.user){
                     setUser(props.user.user)
-                    console.log(props.user)
-                    console.log(props.user.user)
                     const userDAddress = props.user.user.dAddress
                         const userBAddress = props.user.user.bAddress
                         if (userDAddress.firstName && userDAddress.firstName.length > 0) {
@@ -491,10 +485,7 @@ export async function getServerSideProps(ctx:any){
         const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
 
         });
-        console.log(req.url)
-        console.log('yoo')
         const body = ctx.resolvedUrl
-        console.log(body)
         const sesh = await getSession(ctx)
         const {Cart}= parseCookies({req},{
             path:"/"
@@ -514,7 +505,6 @@ export async function getServerSideProps(ctx:any){
             },0)
         }
         if(!sesh&&!Cart){
-            console.log('oiiii')
             return {
                 props:{
                     refresh:true
@@ -529,7 +519,6 @@ export async function getServerSideProps(ctx:any){
         if(checkoutDetails){
 
             var paymentIntentId=JSON.parse(checkoutDetails).paymentIntentId
-            console.log(paymentIntentId)
             var subscriptionId=JSON.parse(checkoutDetails).subscriptionId
 
             paymentIntent=await stripe.paymentIntents.retrieve(paymentIntentId)

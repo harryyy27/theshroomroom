@@ -62,7 +62,6 @@ export default function ProductDetails(props:any){
     const metaName=`Buy ${props.metaName} - UK grown mushrooms | Mega Mushrooms`
     useEffect(()=>{
         props.setComponentLoading(true)
-        console.log(props.websiteName+props.resolvedUrl)
         setImageUrl(props.urlArr[props.urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
         setUrl(props.websiteName)
         const initiate = async()=>{
