@@ -61,7 +61,7 @@ export default function ProductDetails(props:any){
     useEffect(()=>{
         props.setComponentLoading(true)
         setImageUrl(props.urlArr[props.urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
-        setUrl(window.location.href)
+        setUrl(props.websiteName)
         const initiate = async()=>{
             const session = await getSession()
             if(session?.user){
@@ -176,8 +176,8 @@ export default function ProductDetails(props:any){
                 <meta name="description" content={description}/>
                 <meta property="og:description" content={description}/>
                 <meta property="og:type" content="product"></meta>
-                <meta property="og:image" content={imageUrl}></meta>
-                <meta property="twitter:card" content={imageUrl}></meta>
+                <meta property="og:image" content={url}></meta>
+                <meta property="twitter:card" content={url}></meta>
                 <meta property="twitter:description" content={description}></meta>
                 <meta property="product:price:amount" content={price}></meta>
                 <meta property="product:price:currency" content="GBP"></meta>
@@ -359,6 +359,7 @@ export async function getServerSideProps({req,res,resolvedUrl}:any){
     const urlArr =resolvedUrl.split('/')
     const freshUrl = urlArr[urlArr.length-1].split('?')[0].includes("Fresh")?true:urlArr[urlArr.length-1].split('?')[0].includes("Dried")?false:undefined;
     let productDetailsDb:any;
+    const websiteName=process.env.WEBSITE_NAME
     if(!urlArr[urlArr.length-1].includes("Shipping")){
         const productName = urlArr[urlArr.length-1].split('?')[0].replace(/[\-]/gi,' ').replace('\&apos','\'').replace('Fresh ','').replace('Dried ','');
         await connect()
@@ -382,7 +383,8 @@ export async function getServerSideProps({req,res,resolvedUrl}:any){
             props:{
                 urlArr:urlArr,
                 freshUrl:freshUrl,
-                productDetails:productDetailsDb
+                productDetails:productDetailsDb,
+                websiteName: websiteName+resolvedUrl
             }
         }
     }

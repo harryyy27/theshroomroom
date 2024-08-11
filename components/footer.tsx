@@ -23,7 +23,7 @@ export default function Footer(){
               <ul className={styles["footer-nav"]+" " + styles["social-media"]}>
                 <li className={styles["social-media-element"]}>
 
-                  <Link href="https://facebook.com">
+                  <Link href="https://www.facebook.com/megamushroomsuk">
                     <Image className={styles["social-media-icon"]}alt="facebook icon" src="/facebook.png" width="50" height="50"/>
                   </Link>
                 </li>
