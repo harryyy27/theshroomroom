@@ -23,6 +23,7 @@ import {
 } from 'next-share'
 import {Product} from '../../../utils/schema';
 import connect from '../../../utils/connection'
+import path from 'path';
 interface Product {
     _id:string,
     name:string,
@@ -61,8 +62,8 @@ export default function ProductDetails(props:any){
 
     useEffect(()=>{
         props.setComponentLoading(true)
+        console.log(props.websiteName+props.resolvedUrl)
         setImageUrl(props.urlArr[props.urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
-        console.log(props.urlArr[props.urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase())
         setUrl(props.websiteName)
         const initiate = async()=>{
             const session = await getSession()
@@ -168,30 +169,25 @@ export default function ProductDetails(props:any){
     }
     return(
         <div className="product-container">
-        <Head>
+                {name?
+                
+                <Head>
             
-            {
-                name&&description&&price?
-                <>
                 <meta property="og:title" content={`Buy ${name} - UK grown mushrooms | Mega Mushrooms`}/>
                 <title>Buy {name} - UK grown mushrooms | Mega Mushrooms</title>
                 <meta name="description" content={description}/>
-                <meta property="image" content={`${url}/_next/image?url=%2Fproducts%2Fmushrooms%2F${imageUrl.replace('\'',"")}.png&w=3840&q=75`}></meta>
                 <meta property="og:description" content={description}/>
                 <meta property="og:title" content={`Buy ${name} - UK grown mushrooms | Mega Mushrooms`}/>
                 <meta property="og:type" content="product"></meta>
-                <meta property="og:image" content={`${url}/_next/image?url=%2Fproducts%2Fmushrooms%2F${imageUrl.replace('\'',"")}.png&w=3840&q=75`}></meta>
-                <meta name="twitter:card" content={`${url}/public/products/mushrooms/${imageUrl.replace('\'',"")}.png`}></meta>
+                <meta property="og:image" content={`${url}/_next/image?url=%2Fproducts%2Fmushrooms%2F${imageMap[name].path.split('/')[imageMap[name].path.split('/').length-1]}.png&w=3840&q=75`}></meta>
+                <meta name="twitter:card" content={`${url}/_next/image?url=%2Fproducts%2Fmushrooms%2F${imageMap[name].path.split('/')[imageMap[name].path.split('/').length-1]}.png&w=3840&q=75`}></meta>
                 <meta name="twitter:description" content={description}></meta>
                 <meta name="twitter:title" content={`Buy ${name} - UK grown mushrooms | Mega Mushrooms`}/>
                 <meta property="product:price:amount" content={price}></meta>
                 <meta property="product:price:currency" content="GBP"></meta>
                 <meta property="product:availability" content={stockAvailable!==0?"instock":"oos"}></meta>
                 <meta property="og:availability" content={stockAvailable!==0?"instock":"oos"}></meta>
-                </>:
-                null
-            }
-        </Head>
+                </Head>:null}
             <section className="image-section">
                 {
                     name?
@@ -205,12 +201,12 @@ export default function ProductDetails(props:any){
                         url!==''?
                         <>
                         <FacebookShareButton
-                        url={'https://megamushroom-test.vercel.app'}
+                        url={url+props.resolvedUrl}
                     >
                         <FacebookIcon size={32} round/>
                     </FacebookShareButton>
                     <TwitterShareButton
-                        url={url}
+                        url={url+props.resolvedUrl}
                     >
                         <TwitterIcon
                         size={32} round/>
@@ -218,14 +214,14 @@ export default function ProductDetails(props:any){
                     <PinterestShareButton
                         description={""}
                         media={""}
-                        url={url}
+                        url={url+props.resolvedUrl}
                     >
                         <PinterestIcon
                             size={32} round/>
 
                     </PinterestShareButton>
                      <WhatsappShareButton
-                        url={url}>
+                        url={url+props.resolvedUrl}>
                             <WhatsappIcon size={32} round/>
                         </WhatsappShareButton>
                         </>
@@ -389,7 +385,8 @@ export async function getServerSideProps({req,res,resolvedUrl}:any){
                 urlArr:urlArr,
                 freshUrl:freshUrl,
                 productDetails:productDetailsDb,
-                websiteName: websiteName+resolvedUrl
+                websiteName: websiteName,
+                resolvedUrl:resolvedUrl
             }
         }
     }
