@@ -388,7 +388,7 @@ export async function getServerSideProps({req,res,resolvedUrl}:any){
                 metaDescription:metaDescription,
                 metaStockAvailable:metaStock,
                 metaPrice:metaPrice,
-                metaImageUrl:websiteName+`/_next/image?url=%2Fproducts%2Fmushrooms%2F${imageMap[metaName].path.split('/')[imageMap[metaName].path.split('/').length-1]}.png&w=3840&q=75`,
+                metaImageUrl:websiteName+`/_next/image?url=%2Fproducts%2Fmushrooms%2Fog_${imageMap[metaName].path.split('/')[imageMap[metaName].path.split('/').length-1]}.png&w=3840&q=75`,
                 urlArr:urlArr,
                 freshUrl:freshUrl,
                 productDetails:productDetailsDb,
