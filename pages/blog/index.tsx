@@ -15,9 +15,9 @@ export default function Blog(){
             {
                 blogObject.length===0?
                 <p>No blog entries yet... but stay tuned!</p>:
-                blogObject.map((el:any)=>{
+                blogObject.map((el:any,idx:number)=>{
                     return(
-                        <section>
+                        <section key={idx}>
                             <div>blogObject</div>
                         </section>
                     )

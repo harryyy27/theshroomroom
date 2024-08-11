@@ -75,7 +75,7 @@ export default function CheckoutForm(props: any) {
     const [phase,setPhase]=useState(1)
     const stripe = useStripe();
     const setComponentLoading = props.setComponentLoading;
-    var elements:any= phase===1?useElements():null;
+    var elements:any= useElements();
     
     useEffect(() => {
         setSubscription(props.subscriptionId)

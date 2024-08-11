@@ -25,9 +25,9 @@ export default function Delivery(){
             </p>
             <ul>
                 {
-                    Object.keys(localPostcodes).map((el:any)=>{
+                    Object.keys(localPostcodes).map((el:any,idx:number)=>{
                         return(
-                            <li>
+                            <li key={idx}>
                                 <h2>{el.split('_').join(' ')}</h2>
                                 {
                                     localPostcodes[el as keyof typeof localPostcodes].map((elPost:any,idx:any)=>{

@@ -285,7 +285,7 @@ export default function CheckoutForm(props: any) {
 
                 <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
                     <label htmlFor="billingDelivery">Billing same as delivery:</label>
-                    <input  autoComplete="complete" id="billingDelivery" type="checkbox" value={String(props.updates)} onChange={(e) => props.setBillingDelivery(!props.billingDelivery)} />
+                    <input  autoComplete="complete" id="billingDelivery" type="checkbox" checked={props.billingDelivery} onChange={(e) => props.setBillingDelivery(!props.billingDelivery)} />
                 </div>
                 {
                     !props.billingDelivery?
