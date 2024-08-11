@@ -59,7 +59,7 @@ export default function ProductDetails(props:any){
     const [stripeId,setStripeId]=useState('');
     const [itemsAvailable,setItemsAvailable]=useState(false);
     const [err,setErr]=useState('');
-
+    const metaName=`Buy ${props.metaName} - UK grown mushrooms | Mega Mushrooms`
     useEffect(()=>{
         props.setComponentLoading(true)
         console.log(props.websiteName+props.resolvedUrl)
@@ -169,25 +169,23 @@ export default function ProductDetails(props:any){
     }
     return(
         <div className="product-container">
-                {name?
                 
                 <Head>
             
-                <meta property="og:title" content={`Buy ${name} - UK grown mushrooms | Mega Mushrooms`}/>
-                <title>Buy {name} - UK grown mushrooms | Mega Mushrooms</title>
-                <meta name="description" content={description}/>
-                <meta property="og:description" content={description}/>
-                <meta property="og:title" content={`Buy ${name} - UK grown mushrooms | Mega Mushrooms`}/>
+                <title>{metaName}</title>
+                <meta name="description" content={props.metaDescription}/>
+                <meta property="og:description" content={props.metaDescription}/>
+                <meta property="og:title" content={metaName}/>
                 <meta property="og:type" content="product"></meta>
-                <meta property="og:image" content={`${url}/_next/image?url=%2Fproducts%2Fmushrooms%2F${imageMap[name].path.split('/')[imageMap[name].path.split('/').length-1]}.png&w=3840&q=75`}></meta>
-                <meta name="twitter:card" content={`${url}/_next/image?url=%2Fproducts%2Fmushrooms%2F${imageMap[name].path.split('/')[imageMap[name].path.split('/').length-1]}.png&w=3840&q=75`}></meta>
-                <meta name="twitter:description" content={description}></meta>
-                <meta name="twitter:title" content={`Buy ${name} - UK grown mushrooms | Mega Mushrooms`}/>
-                <meta property="product:price:amount" content={price}></meta>
+                <meta property="og:image" content={props.metaImageUrl}></meta>
+                <meta name="twitter:card" content={props.metaImageUrl}></meta>
+                <meta name="twitter:description" content={props.metaDescription}></meta>
+                <meta name="twitter:title" content={metaName}/>
+                <meta property="product:price:amount" content={props.metaPrice}></meta>
                 <meta property="product:price:currency" content="GBP"></meta>
-                <meta property="product:availability" content={stockAvailable!==0?"instock":"oos"}></meta>
-                <meta property="og:availability" content={stockAvailable!==0?"instock":"oos"}></meta>
-                </Head>:null}
+                <meta property="product:availability" content={props.metaStockAvailable}></meta>
+                <meta property="og:availability" content={props.metaStockAvailable}></meta>
+                </Head>
             <section className="image-section">
                 {
                     name?
@@ -380,8 +378,17 @@ export async function getServerSideProps({req,res,resolvedUrl}:any){
         
     }
     else{
+        const metaName=(freshUrl?"Fresh ":"Dried ")+productDetailsDb[0].name
+        const metaDescription=productDetailsDb[0].description
+        const metaStock=productDetailsDb[0].stock_available!==0?"instock":"oos"
+        const metaPrice = productDetailsDb[0].price
         return {
             props:{
+                metaName:metaName,
+                metaDescription:metaDescription,
+                metaStockAvailable:metaStock,
+                metaPrice:metaPrice,
+                metaImageUrl:websiteName+`/_next/image?url=%2Fproducts%2Fmushrooms%2F${imageMap[metaName].path.split('/')[imageMap[metaName].path.split('/').length-1]}.png&w=3840&q=75`,
                 urlArr:urlArr,
                 freshUrl:freshUrl,
                 productDetails:productDetailsDb,
