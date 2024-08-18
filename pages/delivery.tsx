@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import {Metadata} from '../utils/metadata/metadata';
 import ZedPostcodes from '../utils/zedPostcodes/postcodes'
+
+import localPostcodes from '../utils/localPostcodes/postcodes'
 export default function Delivery(){
     return (
         <div className="static-container">
@@ -12,15 +14,33 @@ export default function Delivery(){
             </Head>
         <h1 className="main-heading">Delivery</h1>
         <section>
-            <h2>Mushies</h2>
             <p>
-                For the time being we will be limiting the delivery of fresh mushrooms to the postcodes listed at the bottom of this page. However, dried mushrooms and seasoning can be delivered to anywhere in the country. Deliveries will arrive in 1-4 working days.
+                For the time being we will be limiting the delivery of fresh mushrooms to the postcodes listed at the bottom of this page. For the time being we are only going to deliver fresh mushrooms locally. However, dried mushrooms and seasoning can be delivered to anywhere in the country. Dried deliveries will arrive in 1-4 working days but fresh deliveries will be delivered in 1-2 working days and will be shipped the morning they are harvested.
             </p>
             <p>
-                Please contact if you have any special enquiries.
+                If you're not covered by our local postcodes, don't mind your mushrooms arriving overheated and you're not too fussed about the postman playing football with your parcel, please let us know and we'll have them sent them off by Royal Mail.
+            </p>
+            <p>
+                Also, please contact if you have any other special enquiries.
             </p>
             <ul>
-                <li>
+                {
+                    Object.keys(localPostcodes).map((el:any,idx:number)=>{
+                        return(
+                            <li key={idx}>
+                                <h2>{el.split('_').join(' ')}</h2>
+                                {
+                                    localPostcodes[el as keyof typeof localPostcodes].map((elPost:any,idx:any)=>{
+                                        return(
+                                            <span key={idx}>{elPost}  </span>
+                                        )
+                                    })
+                                }
+                            </li>
+                        )
+                    })
+                }
+                {/* <li>
                     <h2>Bristol</h2>
                     <p>
                 {
@@ -107,7 +127,7 @@ export default function Delivery(){
                         })
                     }
                     </p>
-                </li>
+                </li> */}
             </ul>
         </section>
         </div>

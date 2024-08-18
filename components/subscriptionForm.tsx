@@ -50,7 +50,6 @@ export default function Subscribe(){
                         })
                     })
                     const resJson=await res.json()
-                    console.log(resJson)
                     if(resJson.success){
                         setSuccess(true)
                     }

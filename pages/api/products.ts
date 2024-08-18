@@ -15,7 +15,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     await connect()
     var response;
     if(RegExp('product=').test(req.url as string)===true){
-      console.log(req.url)
       const product =req.url?.split('product=')[1].split('&')[0].replaceAll('%27','\'').replaceAll('%20',' ')
       if(req.url?.includes("fresh=")){
         const fresh = (req.url?.split("fresh=")[1]==="true"?true:false)

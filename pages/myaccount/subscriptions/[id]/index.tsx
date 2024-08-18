@@ -232,68 +232,68 @@ export default function Subscription({setComponentLoading}:any){
     }
 
     }
-    async function amendSubscription(e:FormEvent) {
-        try{
-            e.preventDefault()
-            const valid = await validate_form()
-            if(valid){
-                const csrftoken=await getCsrfToken()
-                if(!csrftoken){
-                    throw new Error("No csrfin here")
-                }
-                const res = await fetch(`/api/subscriptions`,{
-                    method:"PUT",
-                    headers:{
-                        csrftoken:csrftoken
-                    },
-                    body:JSON.stringify(
-                        {
-                            amend:true,
-                            subscriptionId:subscription[0].subscriptionId,
+    // async function amendSubscription(e:FormEvent) {
+    //     try{
+    //         e.preventDefault()
+    //         const valid = await validate_form()
+    //         if(valid){
+    //             const csrftoken=await getCsrfToken()
+    //             if(!csrftoken){
+    //                 throw new Error("No csrfin here")
+    //             }
+    //             const res = await fetch(`/api/subscriptions`,{
+    //                 method:"PUT",
+    //                 headers:{
+    //                     csrftoken:csrftoken
+    //                 },
+    //                 body:JSON.stringify(
+    //                     {
+    //                         amend:true,
+    //                         subscriptionId:subscription[0].subscriptionId,
                            
-                        dAddress: {
-                            firstName: dFirstName,
-                            surname: dSurname,
-                            firstLine: dFirstLine,
-                            secondLine: dSecondLine,
-                            city: dCity,
-                            postcode: dPostcode,
-                            phoneNumber:dPhoneNumber
-                        },
-                        bAddress: {
-                            firstName: bFirstName,
-                            surname: bSurname,
-                            firstLine: bFirstLine,
-                            secondLine: bSecondLine,
-                            city: bCity,
-                            postcode: bPostcode,
-                            phoneNumber:bPhoneNumber
-                        },
-                        deliveryHub:deliveryHub
-                        }
-                    )
-                })
-                const resJson=await res.json()
-                if(resJson.success){
-                    setAmendSuccess(true)
+    //                     dAddress: {
+    //                         firstName: dFirstName,
+    //                         surname: dSurname,
+    //                         firstLine: dFirstLine,
+    //                         secondLine: dSecondLine,
+    //                         city: dCity,
+    //                         postcode: dPostcode,
+    //                         phoneNumber:dPhoneNumber
+    //                     },
+    //                     bAddress: {
+    //                         firstName: bFirstName,
+    //                         surname: bSurname,
+    //                         firstLine: bFirstLine,
+    //                         secondLine: bSecondLine,
+    //                         city: bCity,
+    //                         postcode: bPostcode,
+    //                         phoneNumber:bPhoneNumber
+    //                     },
+    //                     deliveryHub:deliveryHub
+    //                     }
+    //                 )
+    //             })
+    //             const resJson=await res.json()
+    //             if(resJson.success){
+    //                 setAmendSuccess(true)
     
-                }
-                else{
-                    throw new Error('request unsucessful')
-                }
+    //             }
+    //             else{
+    //                 throw new Error('request unsucessful')
+    //             }
     
-            }
-            else{
-                throw new Error('Form not valid');
-            }
-        }
-        catch(e:any){
-            console.log(e)
-            setErr(e)
-        }
+    //         }
+    //         else{
+    //             throw new Error('Form not valid');
+    //         }
+    //     }
+    //     catch(e:any){
+    //         console.log(e)
+    //         setErr(e)
+    //     }
         
         
-    }
+    // }
     async function cancelSubscription(e:FormEvent,idx:number){
         try{
             setComponentLoading(true)
@@ -443,39 +443,6 @@ export default function Subscription({setComponentLoading}:any){
                         <p>Subtotal: {el.subtotal}</p>
                         <p>Shipping cost: {el.shippingCost}</p>
                         <p>Total: {el.total}</p>
-                        {
-                        
-                            el.status === "SUBSCRIPTION_ACTIVE"?
-                            <form>
-                        <h2>Delivery Address</h2>
-                            <FormComponent labelName={"First Name"} variable={dFirstName} variableName={Object.keys({ dFirstName })[0]} setVariable={setDFirstName} variableVal={dFirstNameVal} setVariableVal={setDFirstNameVal} inputType={"text"} required={true} />
-                            <FormComponent labelName={"Surname"} variable={dSurname} variableName={Object.keys({ dSurname })[0]} setVariable={setDSurname} variableVal={dSurnameVal} setVariableVal={setDSurnameVal} inputType={"text"} required={true} />
-                            <FormComponent labelName={"Street name and number"} variable={dFirstLine} variableName={Object.keys({ dFirstLine })[0]} setVariable={setDFirstLine} variableVal={dFirstLineVal} setVariableVal={setDFirstLineVal} inputType={"text"} required={true} />
-
-                            <FormComponent labelName={"2nd Line of address"} variable={dSecondLine} variableName={Object.keys({ dSecondLine })[0]} setVariable={setDSecondLine} inputType={"text"} required={false} />
-                            <FormComponent labelName={"City"} variable={dCity} setVariable={setDCity} variableName={Object.keys({ dCity })[0]} variableVal={dCityVal} setVariableVal={setDCityVal} inputType={"text"} required={true} />
-                            <FormComponent labelName={"Postcode"} variable={dPostcode} variableName={Object.keys({ dPostcode })[0]} setVariable={setDPostcode} variableVal={dPostcodeVal} setVariableVal={setDPostcodeVal} inputType={"text"} callback={postCodeValidate} params={validPostcodes} required={true} />
-                            <Link className="link" href="/delivery">See available delivery postcodes here</Link>
-
-                            <FormComponent labelName={"Phone Number"} variable={dPhoneNumber} variableName={Object.keys({ dPhoneNumber })[0]} setVariable={setDPhoneNumber} variableVal={dPhoneNumberVal} setVariableVal={setDPhoneNumberVal} inputType={"text"} required={true} />
-
-                            <h2>Billing Address</h2>
-                            <FormComponent labelName={"First Name"} variable={bFirstName} variableName={Object.keys({ bFirstName })[0]} setVariable={setBFirstName} variableVal={bFirstNameVal} setVariableVal={setBFirstNameVal} inputType={"text"} required={true} />
-                            <FormComponent labelName={"Surname"} variable={bSurname} variableName={Object.keys({ bSurname })[0]} setVariable={setBSurname} variableVal={bSurnameVal} setVariableVal={setBSurnameVal} inputType={"text"} required={true} />
-                            <FormComponent labelName={"Street name and number"} variable={bFirstLine} variableName={Object.keys({ bFirstLine })[0]} setVariable={setBFirstLine} variableVal={bFirstLineVal} setVariableVal={setBFirstLineVal} inputType={"text"} required={true} />
-
-                            <FormComponent labelName={"2nd Line of address"} variable={bSecondLine} variableName={Object.keys({ bSecondLine })[0]} setVariable={setBSecondLine} inputType={"text"} required={false} />
-                            <FormComponent labelName={"City"} variable={bCity} variableName={Object.keys({ bCity })[0]} setVariable={setBCity} variableVal={bCityVal} setVariableVal={setBCityVal} inputType={"text"} required={true} />
-                            <FormComponent labelName={"Postcode"} variable={bPostcode} variableName={Object.keys({ bPostcode })[0]} setVariable={setBPostcode} variableVal={bPostcodeVal} setVariableVal={setBPostcodeVal} inputType={"text"} required={true} />
-                            <FormComponent labelName={"Phone Number"} variable={bPhoneNumber} variableName={Object.keys({ bPhoneNumber })[0]} setVariable={setBPhoneNumber} variableVal={bPhoneNumberVal} setVariableVal={setBPhoneNumberVal} inputType={"text"} required={true} />
-
-                            <button type="submit" className="cta" onClick={(e)=>{amendSubscription(e)}}>Amend Subscription</button>
-                            {
-                                amendSuccess?
-                                <p>Successfully amended</p>:
-                                null
-                            }
-                        </form>:
                         <div>
                         <h2>Delivery Address</h2>
                             <p>{dFirstName}</p>
@@ -492,8 +459,6 @@ export default function Subscription({setComponentLoading}:any){
                             <p>{bCity}</p>
                             <p>{bPostcode}</p>
                         </div>
-                        
-            }
                         {
                             el.status === "SUBSCRIPTION_ACTIVE"?
                         <div className={el.status+idx}>

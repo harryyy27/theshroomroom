@@ -1,15 +1,29 @@
 import {useEffect,useState,useContext} from 'react';
 import Image from 'next/image';
 import {imageMap} from '../../../utils/imageMap/imageMap';
+import productImage from './products/ground_lions_mane_dry.png'
 import {CartContext} from '../../../context/cart';
 import Head from 'next/head';
 import {Metadata} from '../../../utils/metadata/metadata';
 import Link from 'next/link'
 import {getSession,getCsrfToken}from 'next-auth/react'
 import {notFound} from 'next/navigation';
+import {
 
+  FacebookIcon,
+  InstapaperIcon,
+  PinterestIcon,
+  TwitterIcon,
+  WhatsappIcon,
+  FacebookShareButton,
+  InstapaperShareButton,
+  PinterestShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+} from 'next-share'
 import {Product} from '../../../utils/schema';
 import connect from '../../../utils/connection'
+import path from 'path';
 interface Product {
     _id:string,
     name:string,
@@ -25,6 +39,7 @@ interface Product {
 }
 export default function ProductDetails(props:any){
     const context = useContext(CartContext);
+    const [url,setUrl]=useState('');
     const [product,setProduct]=useState<Product[]>([])
     const [productSizeList,setProductSizeList]=useState<string[]>([])
     const [drySizeList,setDrySizeList]=useState<string[]>([])
@@ -44,10 +59,11 @@ export default function ProductDetails(props:any){
     const [stripeId,setStripeId]=useState('');
     const [itemsAvailable,setItemsAvailable]=useState(false);
     const [err,setErr]=useState('');
-
+    const metaName=`Buy ${props.metaName} - UK grown mushrooms | Mega Mushrooms`
     useEffect(()=>{
         props.setComponentLoading(true)
         setImageUrl(props.urlArr[props.urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
+        setUrl(props.websiteName)
         const initiate = async()=>{
             const session = await getSession()
             if(session?.user){
@@ -152,24 +168,23 @@ export default function ProductDetails(props:any){
     }
     return(
         <div className="product-container">
-        <Head>
+                
+                <Head>
             
-            {
-                name&&description&&price?
-                <>
-                <meta property="og:title" content={`Buy ${name} mushrooms UK`}/>
-                <title>Buy {name} mushrooms UK</title>
-                <meta name="description" content={description}/>
-                <meta property="og:description" content={description}/>
+                <title>{metaName}</title>
+                <meta name="description" content={props.metaDescription}/>
+                <meta property="og:description" content={props.metaDescription}/>
+                <meta property="og:title" content={metaName}/>
                 <meta property="og:type" content="product"></meta>
-                <meta property="product:price:amount" content={price}></meta>
+                <meta property="og:image" content={props.metaImageUrl}></meta>
+                <meta name="twitter:card" content={props.metaImageUrl}></meta>
+                <meta name="twitter:description" content={props.metaDescription}></meta>
+                <meta name="twitter:title" content={metaName}/>
+                <meta property="product:price:amount" content={props.metaPrice}></meta>
                 <meta property="product:price:currency" content="GBP"></meta>
-                <meta property="product:availability" content={stockAvailable!==0?"instock":"oos"}></meta>
-                <meta property="og:availability" content={stockAvailable!==0?"instock":"oos"}></meta>
-                </>:
-                null
-            }
-        </Head>
+                <meta property="product:availability" content={props.metaStockAvailable}></meta>
+                <meta property="og:availability" content={props.metaStockAvailable}></meta>
+                </Head>
             <section className="image-section">
                 {
                     name?
@@ -178,7 +193,41 @@ export default function ProductDetails(props:any){
                     :
                     null
                 }
+                <div className="social-media-bar">
+                    {
+                        url!==''?
+                        <>
+                        <FacebookShareButton
+                        url={url+props.resolvedUrl}
+                    >
+                        <FacebookIcon size={32} round/>
+                    </FacebookShareButton>
+                    <TwitterShareButton
+                        url={url+props.resolvedUrl}
+                    >
+                        <TwitterIcon
+                        size={32} round/>
+                    </TwitterShareButton>
+                    <PinterestShareButton
+                        description={""}
+                        media={""}
+                        url={url+props.resolvedUrl}
+                    >
+                        <PinterestIcon
+                            size={32} round/>
 
+                    </PinterestShareButton>
+                     <WhatsappShareButton
+                        url={url+props.resolvedUrl}>
+                            <WhatsappIcon size={32} round/>
+                        </WhatsappShareButton>
+                        </>
+                        :
+                        null
+                    }
+                   
+                </div>
+            
             </section>
             <section className="text-section">
                 <h1 className="main-heading product-heading" id="productName">{name?name:null} </h1>
@@ -308,6 +357,7 @@ export async function getServerSideProps({req,res,resolvedUrl}:any){
     const urlArr =resolvedUrl.split('/')
     const freshUrl = urlArr[urlArr.length-1].split('?')[0].includes("Fresh")?true:urlArr[urlArr.length-1].split('?')[0].includes("Dried")?false:undefined;
     let productDetailsDb:any;
+    const websiteName=process.env.WEBSITE_NAME
     if(!urlArr[urlArr.length-1].includes("Shipping")){
         const productName = urlArr[urlArr.length-1].split('?')[0].replace(/[\-]/gi,' ').replace('\&apos','\'').replace('Fresh ','').replace('Dried ','');
         await connect()
@@ -327,11 +377,22 @@ export async function getServerSideProps({req,res,resolvedUrl}:any){
         
     }
     else{
+        const metaName=(freshUrl?"Fresh ":"Dried ")+productDetailsDb[0].name
+        const metaDescription=productDetailsDb[0].description
+        const metaStock=productDetailsDb[0].stock_available!==0?"instock":"oos"
+        const metaPrice = productDetailsDb[0].price
         return {
             props:{
+                metaName:metaName,
+                metaDescription:metaDescription,
+                metaStockAvailable:metaStock,
+                metaPrice:metaPrice,
+                metaImageUrl:websiteName+`/_next/image?url=%2Fproducts%2Fmushrooms%2Fog_${imageMap[metaName].path.split('/')[imageMap[metaName].path.split('/').length-1]}.png&w=3840&q=75`,
                 urlArr:urlArr,
                 freshUrl:freshUrl,
-                productDetails:productDetailsDb
+                productDetails:productDetailsDb,
+                websiteName: websiteName,
+                resolvedUrl:resolvedUrl
             }
         }
     }

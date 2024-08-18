@@ -1,5 +1,57 @@
 /* 
 colour scheme - turkey tail */
+#progressBar{
+  width:60vw;
+  margin:auto;
+  margin-top:2rem;
+  display:flex;
+}
+.progress-bar-wrap {
+  position:relative;
+  width:33%;
+  transform:translateX(50%);
+}
+.progress-bar-name {
+  position:absolute;
+  bottom:-2rem;
+  left:0;
+  transform:translateX(-50%)
+}
+.progress-bar-line {
+  display:block;
+  border:3px solid 	#D3D3D3;
+  height:3px;
+  line-height:3px;
+  width:80%;
+  margin:auto;
+}
+.progress-bar-phase {
+  left:0;
+  position:absolute;
+  transform:translateX(-50%);
+  top:-1rem;
+  border:0;
+  background-color:inherit;
+  padding:0;
+  font-family: var(--dosis-font);
+  font-size:1rem;
+  color:var(--pri);
+  cursor:pointer;
+}
+.progress-bar-phase-number {
+  width:48px;
+  height:48px;
+  line-height:48px;
+  border: 1px solid 	#D3D3D3;
+  border-radius:50%;
+  text-align:center;
+  display:inline-block;
+  background-color:	#D3D3D3;
+}
+
+.green{
+  border:3px solid #17B169;
+}
 .add-relative {
   position:relative;
 }
@@ -237,6 +289,7 @@ colour scheme - turkey tail */
   text-align:center;
 }
 #productImage {
+  z-index:-1;
   width:100%;
   aspect-ratio: 350/250;
 }
@@ -280,6 +333,13 @@ colour scheme - turkey tail */
   width:80%;
   flex-wrap:no-wrap;
   padding-top:3rem;
+}
+.social-media-bar {
+  z-index:1;
+  position:absolute;
+  bottom:-1rem;
+  left:50%;
+  transform:translateX(-50%)
 }
 .image-section {
   height:auto;
