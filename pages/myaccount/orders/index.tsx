@@ -96,6 +96,11 @@ export default function MyAccountOrders({setComponentLoading}:any){
                         <p>Subtotal: {el.subtotal}</p>
                         <p>Shipping cost: {el.shippingCost}</p>
                         <p>Total: {el.total}</p>
+                        {el.discountTotal?
+                        <p>Discount total: {el.discountTotal}</p>
+                        :
+                        null
+                    }
 
                     </div>
                     </Link>

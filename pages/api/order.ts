@@ -1,5 +1,5 @@
 import connect from '../../utils/connection';
-import {Order, User,Subscription,Product} from '../../utils/schema';
+import {Order, User,Subscription,Product,Discounts} from '../../utils/schema';
 import {NextApiRequest,NextApiResponse} from 'next'
 import {getCsrfToken} from 'next-auth/react';
 import {errorHandler} from '../../utils/emailHandlers'
@@ -45,11 +45,22 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                         throw(error)
                     }
                 }
+                if(body.discountId){
+                    let discount = await Discounts().findOneAndUpdate({_id:body.discountId,codesAvailable:{$gte:1}},{$inc:{codesAvailable:-1}}).session(dbSession)
+                if(!discount){
+                    await dbSession?.abortTransaction()
+                    const discountFailed = await Discounts().findOne({_id:body.discountId})
+                    var error = new Error(`Discount ${discountFailed.codeName} is no longer available`)
+                    throw(error)
+                }
                 return true
+                }
+                
                 })
             }
             catch(e:any){
                 e.cause="transaction"
+                console.log(e)
                 return res.status(500).json({success:false,error:e.toString()})
             }
             finally{

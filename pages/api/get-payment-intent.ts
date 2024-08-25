@@ -2,8 +2,10 @@ import connect from '../../utils/connection';
 import {NextApiRequest,NextApiResponse} from 'next'
 import {getSession} from 'next-auth/react';
 import postcodes from '../../utils/localPostcodes/postcodes'
+import discountLogic from '../../utils/discountLogic'
 import {parseCookies, setCookie,destroyCookie} from 'nookies'
 import { Product } from '../../utils/types'
+import { Discounts } from '../../utils/schema';
 
 import { v4 as uuidv4 } from 'uuid';
 async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippingCost:number,ctx:any,start:any){
@@ -141,9 +143,21 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     path:"/"
                 })
                 let subscriptionCheckout = (body as string)?.split('subscription=')[1].split('&')[0]==="true"?true:false
-                let shippingCost = Number(body?.split('shippingCost=')[1])
+                
+                var codeName=''
+                var shippingCost;
+                var discount;
+                if(subscriptionCheckout===false&&body?.split('&code').length==2&&sesh&&sesh.user){
+                    codeName = body?.split('&code=')[1]
+                    shippingCost=Number(body?.split('shippingCost=')[1].split('&')[0])
+                    discount = await Discounts().findOne({codeName:codeName})
+                }
+                else{
+
+                    shippingCost = Number(body?.split('shippingCost=')[1])
+                }
+                
                 let total;
-        
                 if(sesh&&sesh.user&&sesh.user.cart){
                     total = sesh.user.cart.items.reduce((a:number,b:Product)=>{
                         return a+b.price*b.quantity
@@ -155,6 +169,13 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                         return a+b.price*b.quantity
                     },0)
                 }
+                var discountFailed=false;
+                if(discount?.codesAvailable>=1){
+                    total=discountLogic[codeName as string].newTotal(total)
+                }
+                else{
+                    discountFailed=true
+                }
                 if(!sesh&&!Cart){
                     return res.status(200).json({
                         props:{
@@ -162,7 +183,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                         },
                         });
                 }
-                
                 let paymentIntent;
                 const {checkoutDetails} = parseCookies({req},{
                     path:"/checkout"
@@ -197,7 +217,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                                 return res.status(200).json({
                                     props: {
                                         paymentIntent:paymentIntent,
-                                        subscriptionId:''
+                                        subscriptionId:'',
+                                        discountFailed:discountFailed
                                     }
                                 })
                             
@@ -247,7 +268,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                         return res.status(200).json({
                             props: {
                                 paymentIntent:paymentIntent,
-                                subscriptionId:''
+                                subscriptionId:'',
+                                discountFailed:discountFailed
                             }
                         })
                     }

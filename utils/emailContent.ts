@@ -1,5 +1,6 @@
 import {Product} from './types'
 import {imageMap} from './imageMap/imageMap'
+import discountLogic from'./discountLogic';
 export function orderString(order:any){
     return `
         <!-- Content -->
@@ -147,10 +148,24 @@ export function orderString(order:any){
                       <th style="width:320px;text-align:left; font-weight:normal; padding:15px 0;background-color:#fff;">Delivery:</th>
                       <td style="width:320px;padding:15px 0;text-align:right;background-color:#fff;">£${order.shippingCost}</td>
                     </tr>
+                    ${
+                      order.code?
+                      `<tr>
+                      <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;">Total</th>
+                      <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${discountLogic[order.code].description}</td>
+                    </tr>
+                    
                     <tr>
                       <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;">Total</th>
+                      <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${order.shippingCost+order.discountTotal}</td>
+                    </tr>`:
+                    `<tr>
+                      <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;">Total</th>
                       <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${order.shippingCost+order.products.items.reduce((acc:number,el:any)=>acc+el.price,0)}</td>
-                    </tr>
+                    </tr>`
+
+                    }
+                    
                   </tbody>
                   <!-- end totals -->
                 </table>

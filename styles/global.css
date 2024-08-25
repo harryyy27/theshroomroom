@@ -1,5 +1,38 @@
 /* 
 colour scheme - turkey tail */
+.timer-wrapper {
+ display:flex;
+ justify-content:center;
+ width:50%;
+ margin:auto;
+ text-align:center;
+}
+.timer-divider {
+  display: flex;
+  flex-direction:column;
+  width:3rem;
+}
+.timer-header {
+  font-size: 2rem;
+  color:var(--pri);
+  font-weight:700;
+}
+.timer-interval {
+  font-size:2rem;
+  font-weight:700;
+}
+.days {
+  color:var(--pri)
+}
+.hours {
+  color: var(--sec)
+}
+.minutes {
+  color: var(--ter0)
+}
+.seconds {
+  color: var(--ter1)
+}
 #progressBar{
   width:60vw;
   margin:auto;

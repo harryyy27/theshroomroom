@@ -5,6 +5,7 @@ import Faq from '../components/home_page/faq';
 import Benefits from '../components/home_page/benefits';
 import Wholesale from '../components/home_page/wholesale';
 import Contact from '../components/home_page/contact';
+import Sale from '../components/home_page/sale'
 // import Carousel from '../components/carousel';
 // import {CarouselHomeNewArrivals} from '../utils/carouselConfig/home.module'
 import {useState} from 'react'
@@ -37,6 +38,7 @@ const Home: NextPage = (props:any) => {
         <script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
 
       </Head>
+      <Sale />
       <Hero />
       <Wholesale />
       <Benefits />

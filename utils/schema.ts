@@ -212,6 +212,23 @@ const UserSchema=new Schema({
         type:Boolean,
         default:false,
         required:false
+    },
+    discountCodesUsed:{
+        discounts:[
+            {
+                discountCode:String,
+                date:Date
+            }
+        ]
+    },
+    promoCodesUsed:{
+        promos:[{
+            promoCode:String,
+            date:Date
+        }
+
+    ]
+        
     }
 })
 const User = function(){
@@ -348,6 +365,10 @@ const OrderSchema=new Schema({
         type:Number,
         required:true
     },
+    discountTotal: {
+        type:Number,
+        required:false
+    },
     total: {
         type:Number,
         required:true
@@ -378,6 +399,10 @@ const OrderSchema=new Schema({
     },
     zedBookingId:{
         type:String,
+        required:false
+    },
+    code:{
+        Type:String,
         required:false
     }
 })
@@ -611,6 +636,35 @@ const ErrorSchema= new Schema({
 const Errors = function(){
     return models.Errors || model("Errors",ErrorSchema)
 }
+const DiscountSchema = new Schema({
+    codeName:{
+        type:String,
+        required:true
+    },
+    codesAvailable:{
+        type:Number,
+        required:true
+    },
+    expiryDate:{
+        type:Date,
+        required:true,
+    },
+    products:{
+        productIds:[
+            {
+                productId:String,
+            }
+        ]
+    },
+    users:[{
+        email:String,
+        postcode: String,
+        firstLine: String,
+    }]
+})
+const Discounts = function(){
+    return models.Discounts || model("Discounts",DiscountSchema)
+}
 const DisputeSchema= new Schema({
     disputeId:{
         type:String,
@@ -640,4 +694,4 @@ const DisputeSchema= new Schema({
 const Dispute = function(){
     return models.Disputes || model("Disputes",DisputeSchema)
 }
-export {User,Order,Product,Subscription,Errors,PasswordResetToken,ReceiveUpdates,Dispute}
+export {User,Order,Product,Subscription,Errors,PasswordResetToken,ReceiveUpdates,Dispute,Discounts}
