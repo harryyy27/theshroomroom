@@ -48,15 +48,17 @@ colour scheme - turkey tail */
   position:absolute;
   bottom:-2rem;
   left:0;
-  transform:translateX(-50%)
+  transform:translateX(-50%);
+  font-size:0.8rem
 }
 .progress-bar-line {
   display:block;
   border:3px solid 	#D3D3D3;
   height:3px;
   line-height:3px;
-  width:80%;
+  width:60%;
   margin:auto;
+  transform:translateY(-1.5px)
 }
 .progress-bar-phase {
   left:0;
@@ -72,9 +74,9 @@ colour scheme - turkey tail */
   cursor:pointer;
 }
 .progress-bar-phase-number {
-  width:48px;
-  height:48px;
-  line-height:48px;
+  width:2rem;
+  height:2rem;
+  line-height:2rem;
   border: 1px solid 	#D3D3D3;
   border-radius:50%;
   text-align:center;
