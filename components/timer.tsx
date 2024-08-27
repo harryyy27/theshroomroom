@@ -46,7 +46,7 @@ return(
         </div>
         <div className="timer-divider">
         <span className="timer-header seconds">S</span>
-        <span className="timer-interval seconds">{seconds}</span>
+        <span className="timer-interval seconds color-animate">{seconds}</span>
         </div>
         
     </div>

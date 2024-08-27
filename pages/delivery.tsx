@@ -15,10 +15,10 @@ export default function Delivery(){
         <h1 className="main-heading">Delivery</h1>
         <section>
             <p>
-                For the time being we will be limiting the delivery of fresh mushrooms to the postcodes listed at the bottom of this page. For the time being we are only going to deliver fresh mushrooms locally. However, dried mushrooms and seasoning can be delivered to anywhere in the country. Dried deliveries will arrive in 1-4 working days but fresh deliveries will be delivered in 1-2 working days and will be shipped the morning they are harvested.
+                We will exclusively deliver fresh mushrooms to Bromley and South East London (see postcodes below). However, dried mushrooms and seasoning can be delivered to anywhere in the country. Dried deliveries will arrive in 1-4 working days but fresh deliveries will be arrive within 1-2 working days and will be shipped the morning they are harvested.
             </p>
             <p>
-                If you're not covered by our local postcodes, don't mind your mushrooms arriving overheated and you're not too fussed about the postman playing football with your parcel, please let us know and we'll have them sent them off by Royal Mail.
+                If you don't mind receiving fresh mushrooms via Royal Mail, please contact us to be added to an exemption list.
             </p>
             <p>
                 Also, please contact if you have any other special enquiries.

@@ -30,8 +30,16 @@ colour scheme - turkey tail */
 .minutes {
   color: var(--ter0)
 }
-.seconds {
-  color: var(--ter1)
+@keyframes colorChange {
+  from {
+    color: var(--pri)
+  }
+  to {
+    color: var(--ter1)
+  }
+}
+.color-animate {
+  animation:colorChange 1s linear infinite
 }
 #progressBar{
   width:60vw;

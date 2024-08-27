@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import {Metadata} from '../utils/metadata/metadata';
-
+import Link from 'next/link'
 export default function Returns(){
     return(
         <div className="static-container">
@@ -13,11 +13,15 @@ export default function Returns(){
         <h1 className="main-heading">Returns</h1>
         <section>
         <h2>Perishable goods</h2>
-        <p>Refunds are not offered on perishable goods.</p>
+        <p>Refunds are not offered on perishable goods and as such, we will not be offering refunds on fresh lion's mane.</p>
+        <p>However, if dried mushroom packaging remains unopened, sealed and undamaged, we will offer you a refund upon its arrival at the return address below:</p>
         <ul>
-            <li>Mushies</li>
-            {/* <li>Spore syringes</li> */}
+            <li>2 Overbrae,</li>
+            <li>Beckenham,</li>
+            <li>Kent,</li>
+            <li>BR3 1SX</li>
         </ul>
+        <p>If you have any further queries <Link className="link" href="/contact-us">contact us here.</Link></p>
         </section>
         {/* <section>
             <h2>Non-perishable</h2>

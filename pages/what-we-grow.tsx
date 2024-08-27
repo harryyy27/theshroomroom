@@ -18,9 +18,8 @@ export default function WhatWeGrow(props:any) {
                 <meta property="og:description" content={Metadata["whatwegrow"]["description"]}/>
             </Head>
             <h1>What we grow</h1>
-            <p>For now, we are only growing lion's mane mushrooms. We are currently not working with a lot of space and in order to optimise growing conditions, we decided to commit to the temperature and humidity requirements of 1 type of mushroom rather than work with averages, which inevitably leads to an inferior product and slower growth process. However, we will soon be renting out a warehouse which should give us the space we need to grow a broad range of mushrooms for your consumption. Stay tuned!</p>
 
-            <h2>Lion's Mane Mushroom: Nature's Neuroprotective Treasure</h2>
+            <h2>Lion's Mane (Hericium Erinaceus): Nature's Neuroprotective Treasure</h2>
 
             <p>The lion's mane mushroom, scientifically known as hericium erinaceus, is a marvel of the fungal kingdom, revered for its stunning appearance, delectable taste and remarkable health benefits. Often referred to as the "Pom Pom" mushroom due to its distinctive appearance or the monkey head mushroom in east Asia, lion's mane is saprophytic meaning it feeds on dead organic matter (dead trees in the case of lion's mane).</p>
             <ul>
@@ -40,10 +39,6 @@ export default function WhatWeGrow(props:any) {
                     <p>In vitro studies have demonstrated lion's mane can also exhibit <cite><a className="link" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3835629/">gastroprotective effects</a></cite> as well as <cite><a className="link" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6044372/">anticancer properties</a></cite>. It has been demonstrated that the extracts "stimulated the activities of natural killer cells and macrophages on one hand and blocked angiogenesis on the other."</p>
                 </li>
                 
-                <li>
-                    <h3>Cultural Significance:</h3>
-                    <p>The lion's mane mushroom has a rich cultural and historical significance. In traditional Chinese and Japanese medicine, it has been cherished for its healing properties, often regarded as a symbol of longevity, mental clarity, and spiritual potency. Ancient texts and scrolls extol its benefits, frequently associating it with wisdom and enlightenment.</p>
-                </li>
                 
                 <li>
                     <h3>A Fungus of Fascination:</h3>

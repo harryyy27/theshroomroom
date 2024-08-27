@@ -12,8 +12,8 @@ export default function Privacy(){
                 <meta property="og:description" content={Metadata["privacy"]["description"]}/>
             </Head>
             <h1 className="main-heading">PRIVACY POLICY</h1>
-            <p className="static-para">This privacy policy applies between you (the user of this website) and the Shroom Room, the owner and provider of this website.</p>
-            <p className="static-para">The Shroom Room takes the privacy of your information very seriously. This privacy policy applies to our use of any and all data collected by us or provided by you in relation to your use of the Website.</p>
+            <p className="static-para">This privacy policy applies between you (the user of this website) and Mega Mushrooms, the owner and provider of this website.</p>
+            <p className="static-para">Mega Mushrooms takes the privacy of your information very seriously. This privacy policy applies to our use of any and all data collected by us or provided by you in relation to your use of the Website.</p>
             <p className="static-para"><b>Please read this privacy policy carefully.</b></p>
             <section>
                 <h2>Definitions and interpretation</h2>
@@ -21,11 +21,11 @@ export default function Privacy(){
                     <li>
                         <p  className="static-para">In this privacy policy, the following definitions are used.</p>
                         <ul>
-                            <li>Data - collectively all information that you submit to The Shroom Room via the website. This definition incorporates, where applicable, the definitions provided in the Data Protection Laws;</li>
+                            <li>Data - collectively all information that you submit to Mega Mushrooms via the website. This definition incorporates, where applicable, the definitions provided in the Data Protection Laws;</li>
                             <li>Data Protection Laws - any applicable law relating to the processing of personal Data, including but not limited to the GDPR, and any national implementing and supplementary laws, regulations and secondary legislation;</li>
                             <li>GDPR - any UK General Data Protection Regulation;</li>
-                            <li>The Shroom Room - the Shroom Room of Beckenham, UK;</li>
-                            <li>User or you - any third party that accesses the website and is not either (i) employed by The Shroom Room and acting in the course of their employment or (ii) engaged as a consultant or otherwise providing services to The Shroom Room and accessing the website in connection with the provision of such services;</li>
+                            <li>Mega Mushrooms - Mega Mushrooms of Beckenham, UK;</li>
+                            <li>User or you - any third party that accesses the website and is not either (i) employed by Mega Mushrooms and acting in the course of their employment or (ii) engaged as a consultant or otherwise providing services to Mega Mushrooms and accessing the website in connection with the provision of such services;</li>
                             <li>Website - the website that you are currently using, www.theshroomroom.co.uk;</li>
                             
                         </ul>
@@ -43,10 +43,10 @@ export default function Privacy(){
                     </li>
                         <h2>Scope of this privacy </h2>
                     <li>
-                        This privacy policy applies only to the actions of the Shroom Room and users with respect to this website. It does not extend to any other websites that can be accessed from this website including but not limited to, any links we may provide to social media websites.
+                        This privacy policy applies only to the actions of Mega Mushrooms and users with respect to this website. It does not extend to any other websites that can be accessed from this website including but not limited to, any links we may provide to social media websites.
                     </li>
                     <li>
-                        For the purposes of applicable Data Protection Laws, the Shroom Room is the &quot;data controller&quot;. This means that the Shroom Room determines the purposes for which, and the manner in which, your Data is processed.
+                        For the purposes of applicable Data Protection Laws, Mega Mushrooms is the &quot;data controller&quot;. This means that Mega Mushrooms determines the purposes for which, and the manner in which, your Data is processed.
                     </li>
                     <h2>How we collect data</h2>
                     <li>
@@ -58,7 +58,7 @@ export default function Privacy(){
                         </ol>
                     </li>
                     <h2>Data that is given to us by you</h2>
-                    <li>The Shroom Room will collect your data in a number of ways for example:
+                    <li>Mega Mushrooms will collect your data in a number of ways for example:
 
                     <ol>
                         <li>When you contact us through the website, by phone, post, email or through any other means;</li>
@@ -105,7 +105,7 @@ export default function Privacy(){
                     <h2>Links to other websites</h2>
                     <li>This website may, from time to time, provide links to other websites. We have no control over such websites and are not responsible for the content of these websites. This privacy policy does not extend to your use of such websites. You are advised to read the privacy policy or statement of other websites prior to using them.</li>
                     <h2>Changes of business ownership or control</h2>
-                    <li>The Shroom Room may from time to time, expand or reduce our business and this may involve the sale and/or transfer of control of all or part of The Shroom Room. Data provided by users will, where it is relevant to any part of our business so transferred, be transferred along with that part and the new owner or newly controlling party will, under the terms of this privacy policy, be permitted to use the data for the purposes for which it was originally supplied to us.</li>
+                    <li>Mega Mushrooms may from time to time, expand or reduce our business and this may involve the sale and/or transfer of control of all or part of Mega Mushrooms. Data provided by users will, where it is relevant to any part of our business so transferred, be transferred along with that part and the new owner or newly controlling party will, under the terms of this privacy policy, be permitted to use the data for the purposes for which it was originally supplied to us.</li>
                     <li>We will also disclose data to a prospective purchaser of our business or any part of it.</li>
                     <li>In the above instances, we will take steps with the aim of ensuring your privacy is protected.</li>
                     <h2>General</h2>
@@ -114,8 +114,8 @@ export default function Privacy(){
                     <li>Unless otherwise agreed, no delay, act or omission by a party in exercising any right or remedy will be deemed a waiver of that, or any other, right or remedy</li>
                     <li>This agreement will be governed by and interpreted to the law of England and Wales. All disputes arising under the agreement will be subject to the exclusive jurisdiction of the English and Welsh courts.</li>
                     <h2>Changes to this privacy policy</h2>
-                    <li>The Shroom Room reserves the right to change this privacy policy as we may deem necessary from time to time or as may be required by law. Any changes will be immediately posted on the website and you are deemed to have accepted the terms of privacy policy on your first use of the website following the alterations.</li>
-                    <p>You may contact the Shroom Room at {process.env.COMPANY_EMAIL}</p>
+                    <li>Mega Mushrooms reserves the right to change this privacy policy as we may deem necessary from time to time or as may be required by law. Any changes will be immediately posted on the website and you are deemed to have accepted the terms of privacy policy on your first use of the website following the alterations.</li>
+                    <p>You may contact Mega Mushrooms at {process.env.COMPANY_EMAIL}</p>
                 </ol>
             </section>
         </div>

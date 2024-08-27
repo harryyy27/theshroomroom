@@ -23,8 +23,7 @@ export default function Sale (props:any){
                 <div >{
                         preSale!==null? preSale?
                         <>
-                    <h1 className={homeStyles['sales-title']}>OUR DOORS ARE OPENING!</h1>
-                    <h2 className={homeStyles['sales-heading']}>25% off all products and free local shipping during our opening sale</h2>
+                    <h1 className={homeStyles['sales-title']}>OPENING COUNTDOWN...</h1>
                     <Timer countdownDate={countdownDate}/>
                     <button id="heroCta" className="cta"><Link id="heroCtaLink" href="/products">BUY NOW</Link></button>
                     </>

@@ -41,18 +41,6 @@ export default function Header(){
     },[context])
     return (
         <header id="header" className={styles.header}>
-            {
-
-            }
-            <div className={styles["sale-header"]+ " "+ styles["top"]}>
-            <div className={styles['sale-header-slide-backward']}>
-                <span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span>
-            </div>
-            <div className={styles['sale-header-slide-backward']}>
-                <span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span>
-            </div>
-
-            </div>
             <nav className={styles["nav"]}>
                 <div className={styles["title-bar"]}>
                     
@@ -215,15 +203,7 @@ export default function Header(){
                 role="button">
                 <span className={mobileMenuOpen?styles["burger-menu-element"]+" "+styles["burger-open"]:styles["burger-menu-element"]} aria-hidden="true"></span>
             </div>
-            <div className={styles["sale-header"]}>
-            <div className={styles['sale-header-slide-forward']}>
-                <span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span>
-            </div>
-            <div className={styles['sale-header-slide-forward']}>
-                <span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span><span className={styles["sale-text"]}>SALE</span>
-            </div>
-
-            </div>
+            
         </header>
     )
 }
