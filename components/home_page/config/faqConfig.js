@@ -1,7 +1,7 @@
 const config = [
     {
         question: "Can I have a discount?",
-        answer: "YES! Simply sign up and enter the following code during the checkout process"
+        answer: "YES! Simply sign up, check the box to receive updates and enter the code you receive during the checkout process."
     },
     {
         question: "How do I prepare dried mushrooms?",
