@@ -30,7 +30,8 @@ export default function WhatWeGrow(props:any) {
                 </li>
                 <li>
                     <h3>Culinary Delight:</h3>
-                    <p>Beyond its aesthetic allure, Lion's Mane is celebrated in culinary traditions worldwide. When cooked, this mushroom takes on a tender, succulent texture with a delicate seafood-like flavor. Its ability to absorb surrounding flavors makes it a versatile ingredient in various cuisines. It can be sautéed, grilled, roasted, or used in soups,sauces and stews, adding a unique taste and texture to dishes. It's meaty texture also makes it a great substitute for meat making it a great option for vegans</p>
+                    <p>Beyond its aesthetic allure, Lion's Mane is celebrated in culinary traditions worldwide. When cooked, this mushroom takes on a tender, meaty, succulent texture with a delicate savoury flavor. Its ability to absorb surrounding flavors makes it a versatile ingredient in various cuisines. It can be sautéed, grilled, roasted, or used in soups, sauces and stews, adding a unique taste to dishes. Its texture also makes it a great substitute for meat, boosting its standing among vegans.
+                    </p>
                 </li>
                 <li>
                 <h3>Health Benefits:</h3>

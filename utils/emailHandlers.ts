@@ -4,7 +4,7 @@ import {sendEmail} from './nodemailer';
 import {imageMap} from '../utils/imageMap/imageMap';
 import connect from './connection';
 import {orderString,receiveUpdateString,subscriptionString,deleteAccountString,registerString,disputeString,invoiceFinalizationFailString,invoiceFailString} from './emailContent'
-
+import saleDates from './saleDates/saleDates';
 function template(content:string,websiteName:string|undefined){
     return `
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -80,6 +80,30 @@ function template(content:string,websiteName:string|undefined){
     </body>
     </html>`
 }
+function discountCodeHtmlTemplate(discountCode:string) {
+  return `
+
+    <table cellspacing="0" cellpadding="0" style="border-collapse:collapse; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; margin-bottom:100px; text-align:left;width:700px;color:#343434;">
+        <tbody>
+          <tr>
+
+            <td style="width:150px;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="color:#343434; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; padding:15px 30px 0;width:640px;">
+              <p>Thank you for joining our mailing list!</p>
+              <p>Your discount code is ${discountCode}</p>
+              <p>Happy spending!</p>
+            </td>
+          </tr>
+          <tr>
+
+            <td style="width:150px;">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+  `
+}
 export async function errorHandler(headers:string,body:string|undefined,method:string,message:string,client:boolean){
     await connect()
     const error =  new (Errors() as any)({
@@ -104,10 +128,17 @@ export async function errorHandler(headers:string,body:string|undefined,method:s
     // }
 
 }
+
 export async function receiveUpdatesHandler(email:string,user:boolean,websiteName:string|undefined,companyEmail:string|undefined){
     try{
+      // await connect()
+      // const discount = await Discounts().findOne({_id:})
+      // const todayDate = Date.now()
+      // let discountCodeHtml = ''
+      // if(+saleDates.countdownDate - +todayDate<0 && +saleDates.saleEndDate-todayDate>0){
+      //   discountCodeHtml+=discountCodeHtmlTemplate()
+      // }
         const content =receiveUpdateString(user,email)
-
         await sendEmail({
             subject: "Thank you for subscribing to Mega Mushrooms!",
             html:template(content,websiteName),
