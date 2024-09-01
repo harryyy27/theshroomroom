@@ -1,10 +1,11 @@
 import bcrypt from 'bcrypt';
-import {User} from '../../utils/schema'
+import {User,ReceiveUpdates,Order,Discounts} from '../../utils/schema'
 import connect from '../../utils/connection'
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {getCsrfToken} from 'next-auth/react';
 import {errorHandler,registerHandler} from '../../utils/emailHandlers';
 import { registerString } from '../../utils/emailContent';
+import saleDates from '../../utils/saleDates/saleDates';
 export default async function handler(req:NextApiRequest,res:NextApiResponse) {
     try{
         if(req.method==='POST'){
@@ -40,8 +41,23 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse) {
             user.subscriptions=[]
             const companyEmail=process.env.COMPANY_EMAIL
             await user.save()
-            await registerHandler(body.username,user,process.env.WEBSITE_NAME,companyEmail)
-            res.status(200).json({message: 'Registered successfully'})
+            await ReceiveUpdates().findOneAndDelete({email:body.username})
+            const nowDate = Date.now()
+            if((+saleDates.countdownDate-nowDate<0)&&+saleDates.saleEndDate-nowDate>0){
+                if(body.updates){
+                    await registerHandler(body.username,user,process.env.WEBSITE_NAME,companyEmail,true)
+                }
+                else {
+
+                    await registerHandler(body.username,user,process.env.WEBSITE_NAME,companyEmail,false)
+                }
+                
+            }
+            else {
+                await registerHandler(body.username,user,process.env.WEBSITE_NAME,companyEmail,null)
+            }
+            
+            return res.status(200).json({message: 'Registered successfully'})
 
         }
         else {

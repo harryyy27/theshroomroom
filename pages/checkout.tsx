@@ -376,6 +376,7 @@ export default function Checkout(props:any){
                     phase===2?
                     <Shipping
                         setComponentLoading={props.setComponentLoading}
+                        dPostcode={dPostcode}
                         shippingCost={shippingCost}
                         setShippingCost={setShippingCost}
                         shippingCostVal={shippingCostVal}
@@ -391,6 +392,7 @@ export default function Checkout(props:any){
                         discountId={discountId}
                         setCode={setCode}
                         setDiscountId={setDiscountId}
+                        user={user}
 
                     />:
                     phase===3&&

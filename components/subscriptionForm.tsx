@@ -15,7 +15,9 @@ export default function Subscribe(){
             const session = await getSession()
         
             if(session&&session?.user?.email!==""){
+                console.log(session.user.email)
                 setEmail(session.user.email);
+                setEmailVal(true)
                 setUser(true);
                 setUpdates(session.user.updates);
             }
@@ -34,7 +36,9 @@ export default function Subscribe(){
     async function handleSubscribe(subscribe:boolean,e:any){
         try{
             e.preventDefault()
+            console.log('yeh')
             if(validate()){
+                console.log(emailVal)
                     const res=await fetch('/api/editUser',{
                         method: "POST",
                         headers: {
@@ -45,13 +49,14 @@ export default function Subscribe(){
                             user:user,
                             email:email,
                             subscription:true,
-                            subscribe:subscribe,
+                            subscribe:!subscribe,
             
                         })
                     })
                     const resJson=await res.json()
                     if(resJson.success){
                         setSuccess(true)
+                        setUpdates(!updates)
                     }
                     else{
                         setSuccess(false)
@@ -73,15 +78,15 @@ export default function Subscribe(){
     return(
         <form id="subscriptionForm"className={styles["form"]}>
             <div className={styles["form-element-wrapper"]}>
-                <h2>JOIN US</h2>
+                <h2>JOIN OUR MAILING LIST</h2>
                 <p>For information on all of our latest products</p>
                 {
                     user&&updates?
-                    <p>You are already subscribed</p>
+                    <p>You are subscribed</p>
                     :
                     null
                 }
-                <FormComponent user={user} labelName={"Email"}variable={email} variableName={Object.keys({email})[0]} setVariable={setEmail} variableVal={emailVal} setVariableVal={setEmailVal} inputType={"email"} required={true}/>
+                <FormComponent disabled={user?true:false} user={user} labelName={"Email"}variable={email} variableName={Object.keys({email})[0]} setVariable={setEmail} variableVal={emailVal} setVariableVal={setEmailVal} inputType={"email"} required={true}/>
                 
                 {
                     err!==''?
@@ -99,7 +104,13 @@ export default function Subscribe(){
             }
             {
                     success!==null&&success===true?
-                    <p style={{"color":"green"}}>You have successfully added yourself to our email list</p>
+                    <p style={{"color":"green"}}>{
+                        updates?
+                        "You have successfully added yourself to our mailing list"
+                        :
+                        "You have successfully removed yourself from our mailing list."
+                    
+                    }</p>
                     :success!==null&&success===false?
                     <p style={{"color":"red"}}>{subscriptionError}</p>:
                     null

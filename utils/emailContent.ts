@@ -176,7 +176,7 @@ export function orderString(order:any){
         </table>
         <!-- End Content -->`
 }
-export function receiveUpdateString(user:any,email:string){
+export function receiveUpdateString(user:any,email:string,discountString:string){
     return `
     <!-- Content -->
     <table cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; text-align:left; border-width: 1px; border-color:#ddd; border-style:solid;color:#343434;" width="700">
@@ -190,7 +190,7 @@ export function receiveUpdateString(user:any,email:string){
             <p>We are pleased you have chosen to join our mailing list.</p>
             <p style="margin:0;">We will update you in the event that any new products, offers or site updates you should be made aware of.</p>
             <p style="margin:0;">In the mean time, you are welcome to browse our current range of <a style="color:#943201;"href=\"${process.env.WEBSITE_NAME}/products\">products</a></p>
-            
+            ${discountString}
             <p style="margin:0;">No longer wish to receive emails from Mega Mushrooms?</p><p><a style="color:#943201;" href="${process.env.WEBSITE_NAME}/${user?"edit":`unsubscribe?email=${email}`}">Unsubscribe</a></p>
           </td>
         </tr>
@@ -374,7 +374,7 @@ export function deleteAccountString(){
     </table>`
 }
 
-export function registerString(user:any,email:string){
+export function registerString(user:any,email:string,discountTemplate:string){
     return `
     <!-- Content -->
     <table cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; text-align:left; border-width: 1px; border-color:#ddd; border-style:solid;color:#343434;" width="700">
@@ -388,7 +388,7 @@ export function registerString(user:any,email:string){
             <p>We are pleased you have chosen to register an account with us at this important time in our development as we garner a community of fungi fanatics.</p>
             <p style="margin:0;">Keep an eye on our site for any new products, offers or site updates you should be made aware of.</p>
             <p style="margin:0;">In the mean time, you are welcome to browse our current range of <a style="color:#943201;" href=\"${process.env.WEBSITE_NAME}/products\">products</a></p>
-            
+            ${discountTemplate}
             <p style="margin:0;">${!user.updates?"Wish to receive updates of new products or services?":"No longer wish to receive updates of new products or servces?"} <a style="color:#943201;" href="${process.env.WEBSITE_NAME}/edit">${!user.updates?"Subscribe":"Unsubscribe"}</a></p>
           </td>
         </tr>

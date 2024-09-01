@@ -26,8 +26,11 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
         }
         if(req.method==="GET"){
             if(req.url?.includes('?id=')){
-                const id =req.url.split('id=')[1]
+                const id =req.url.split('id=')[1].split('&postcode=')[0]
+                const postcode=req.url.split('postcode=')[1].split('&email=')[0]
+                const email=req.url.split('email=')[1]
                 const discount = await Discounts().findOne({_id:id})
+                console.log(discount)
                 const {codesAvailable,expiryDate,startDate}=discount
                 if(codesAvailable<=0){
                     return res.status(202).json({success:false,error:"No codes available"})
@@ -43,9 +46,18 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 }
             }
             else if(req.url?.includes('?codeName')){
-                const codeName=req.url.split('?codeName=')[1]
+                const codeName=req.url.split('?codeName=')[1].split('&postcode=')[0]
+                const postcode=req.url.split('postcode=')[1].split('&email=')[0]
+                const email=req.url.split('email=')[1]
+                console.log(codeName)
                 const discount = await Discounts().findOne({codeName:codeName})
-                console.log(discount)
+                const discounts = await Discounts().find({})
+                if(!discount){
+                    return res.status(400).json({succes:false, error:"Code not found"})
+                }
+                if(!discount.users.every((el:any)=>el.email!==email)){
+                    return res.status(202).json({success:false,error:"Code already claimed."})
+                }
                 const {codesAvailable,expiryDate,startDate,_id}=discount
                 if(codesAvailable<=0){
                     return res.status(202).json({success:false,error:"No codes available"})

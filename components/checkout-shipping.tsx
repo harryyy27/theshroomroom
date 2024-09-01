@@ -8,6 +8,7 @@ import { CartContext } from '../context/cart';
 import Link from 'next/link'
 import FormComponent from "./form-component"
 import discountLogic from '../utils/discountLogic'
+import { data } from "cypress/types/jquery"
 export default function CheckoutForm(props: any) {
 
     const context = useContext(CartContext);
@@ -145,7 +146,9 @@ export default function CheckoutForm(props: any) {
     }
     async function handleCheckCode(e:FormEvent){
         e.preventDefault()
-        const res = await fetch(`/api/discount-code?codeName=${code}`)
+        console.log(code)
+        console.log(props.user.email)
+        const res = await fetch(`/api/discount-code?codeName=${code}&postcode=${props.dPostcode}&email=${props.user.email}`)
         const resJson = await res.json()
         if(resJson.success){
             if(discountLogic.hasOwnProperty(code)){
@@ -199,7 +202,11 @@ export default function CheckoutForm(props: any) {
                 </fieldset>
                 {
                     props.user&&!props.subscription?
-                    <FormComponent user={props.user} labelName={"Discount Code"} variable={code} variableName={Object.keys( code)[0]} setVariable={setCode} inputType={"text"} required={false} />:
+                    <>
+                    <FormComponent user={props.user} labelName={"Discount Code"} variable={code} variableName={Object.keys( code)[0]} setVariable={setCode} inputType={"text"} required={false} />
+                    
+                    <button className="cta inline" onClick={(e)=>handleCheckCode(e)}>Apply Code</button>
+                    </>:
                     null
                 }
                 
@@ -213,7 +220,6 @@ export default function CheckoutForm(props: any) {
                     <p style={{"color":"green"}}>Discount code applied!</p>:
                     null
                 }
-                <button className="cta inline" onClick={(e)=>handleCheckCode(e)}>Apply Code</button>
                     
                 </form>
                 {

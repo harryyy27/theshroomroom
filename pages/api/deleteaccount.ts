@@ -24,8 +24,8 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
         const emailStr=email.email
         await connect()
         const user = await User().findOne({username:emailStr})
-        const subscriptions = user.subscriptions 
-        if(user&&user.subscriptions.length>1){
+        const subscriptions = await Subscription().find({email:emailStr,status:"ACTIVE"})
+        if(user&&subscriptions.length>1){
             for(var i=0;i<subscriptions.length;i++){
                 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY,{
     

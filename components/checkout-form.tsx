@@ -100,6 +100,10 @@ export default function CheckoutForm(props: any) {
                await handleCheckCode()
     
             }
+            if(props.user?.updates){
+                setUpdates(props.user.updates)
+
+            }
         }
         initiate()
         
@@ -416,11 +420,16 @@ export default function CheckoutForm(props: any) {
                 
 
                     
+                {
+                    !props.user?.updates?
 
                 <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
-                    <label htmlFor="updates">Receive updates</label>
-                    <input  autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e) => setUpdates(e.target.checked)} />
-                </div>
+                <label htmlFor="updates">Receive updates</label>
+                <input  autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e) => setUpdates(e.target.checked)} />
+            </div>
+                :
+                null
+                }
                 <button id="placeOrder"  className="cta add-relative" type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e) => placeOrder(e)}>Submit
                 
                 </button>

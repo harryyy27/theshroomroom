@@ -11,6 +11,14 @@ const logic:{[key:string]:{
         newTotal:function(total:number){
         return total
     },
-    description:"NILSCH"}
+    
+    description:"NILSCH"},
+
+    "D_TEST": {
+        newTotal:function(total:number){
+        return Number(total)*(1-0.25)
+        },
+        description:"25% off"
+    },
 }
 export default logic
