@@ -190,12 +190,13 @@ export function receiveUpdateString(user:any,email:string,discountString:string)
             <p>We are pleased you have chosen to join our mailing list.</p>
             <p style="margin:0;">We will update you in the event that any new products, offers or site updates you should be made aware of.</p>
             <p style="margin:0;">In the mean time, you are welcome to browse our current range of <a style="color:#943201;"href=\"${process.env.WEBSITE_NAME}/products\">products</a></p>
-            ${discountString}
             <p style="margin:0;">No longer wish to receive emails from Mega Mushrooms?</p><p><a style="color:#943201;" href="${process.env.WEBSITE_NAME}/${user?"edit":`unsubscribe?email=${email}`}">Unsubscribe</a></p>
           </td>
         </tr>
     </tbody>
-    </table>`
+    </table>
+    ${discountString}
+    `
 }
 export function subscriptionString(subscription:any,renewal:boolean){
     return `
@@ -386,14 +387,14 @@ export function registerString(user:any,email:string,discountTemplate:string){
         <tr>
           <td style="padding:15px 30px;width:640px;background-color:#FFF;">
             <p>We are pleased you have chosen to register an account with us at this important time in our development as we garner a community of fungi fanatics.</p>
-            <p style="margin:0;">Keep an eye on our site for any new products, offers or site updates you should be made aware of.</p>
             <p style="margin:0;">In the mean time, you are welcome to browse our current range of <a style="color:#943201;" href=\"${process.env.WEBSITE_NAME}/products\">products</a></p>
-            ${discountTemplate}
             <p style="margin:0;">${!user.updates?"Wish to receive updates of new products or services?":"No longer wish to receive updates of new products or servces?"} <a style="color:#943201;" href="${process.env.WEBSITE_NAME}/edit">${!user.updates?"Subscribe":"Unsubscribe"}</a></p>
           </td>
         </tr>
     </tbody>
-    </table>`
+    </table>
+    ${discountTemplate}
+            `
 }
 
 export function disputeString(object:any,status:string){

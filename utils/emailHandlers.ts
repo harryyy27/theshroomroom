@@ -179,7 +179,7 @@ export async function receiveUpdatesHandler(email:string,user:any,websiteName:st
     try{
       const todayDate = Date.now()
       let content = ''
-      if(+saleDates.countdownDate - +todayDate<0 && +saleDates.saleEndDate-todayDate>0){
+      if(+saleDates.saleEndDate-todayDate>0){
             if(user){
               content =receiveUpdateString(user,email,discountCodeHtmlTemplate('D_TESTTESTTEST'))
 
