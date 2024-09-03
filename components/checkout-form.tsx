@@ -6,6 +6,7 @@ import {
     useElements,
 } from '@stripe/react-stripe-js'
 import Link from 'next/link'
+import discountLogic from '../utils/discountLogic'
 import Dropdown from '../components/dropdown'
 import styles from '../styles/Components/Form.module.css'
 import { useRouter } from 'next/router'
@@ -72,13 +73,40 @@ export default function CheckoutForm(props: any) {
     const [local,setLocal]=useState(false);
     const [updateErr,setUpdateErr]=useState(false);
     const [localVal,setLocalVal]=useState(false);
-    const [phase,setPhase]=useState(1)
+    
+    const [discountErr,setDiscountErr]=useState('')
+    const [discountTotal,setDiscountTotal]=useState<number | null>(null)
+    const [discountDescription,setDiscountDescription]=useState('')
     const stripe = useStripe();
     const setComponentLoading = props.setComponentLoading;
     var elements:any= useElements();
-    
+    async function handleCheckCode(){
+        console.log(props.discountFailed)
+        if(props.discountFailed){
+            setDiscountErr("This discount code is no longer available. Continue to pay at full price")
+            props.setCode('')
+
+        }
+        else {
+            setDiscountTotal(discountLogic[props.code as string].newTotal(context.state.subTotal)+props.shippingCost)
+            setDiscountDescription(discountLogic[props.code as string].description)
+        }
+        
+    }
     useEffect(() => {
-        setSubscription(props.subscriptionId)
+        async function initiate(){
+            setSubscription(props.subscriptionId)
+            if(props.code){
+               await handleCheckCode()
+    
+            }
+            if(props.user?.updates){
+                setUpdates(props.user.updates)
+
+            }
+        }
+        initiate()
+        
     },[])
     const paymentElementHandler = (e: any) => {
         if (e.complete) {
@@ -215,45 +243,50 @@ export default function CheckoutForm(props: any) {
                 emailAddress = props.user?.email
                 userId = props.user?.id
             }
+            let body = {
+                userId: userId,
+                email: emailAddress?.trim(),
+                guestCheckout: guestCheckout,
+                dAddress: {
+                    firstName: props.dFirstName.trim(),
+                    surname: props.dSurname.trim(),
+                    firstLine: props.dFirstLine.trim(),
+                    secondLine: props.dSecondLine.trim(),
+                    city: props.dCity.trim(),
+                    postcode: props.dPostcode.trim(),
+                    phoneNumber:props.dPhoneNumber.trim()
+                },
+                bAddress: {
+                    firstName: props.billingDelivery?props.dFirstName.trim():props.bFirstName.trim(),
+                    surname: props.billingDelivery?props.dSurname.trim():props.bSurname.trim(),
+                    firstLine: props.billingDelivery?props.dFirstLine.trim():props.bFirstLine.trim(),
+                    secondLine: props.billingDelivery?props.dSecondLine.trim():props.bSecondLine.trim(),
+                    city: props.billingDelivery?props.dCity.trim():props.bCity.trim(),
+                    postcode: props.billingDelivery?props.dPostcode.trim():props.bPostcode.trim(),
+                    phoneNumber: props.billingDelivery?props.dPhoneNumber.trim():props.bPhoneNumber.trim(),
+                },
+                products: context.state.cart,
+                shippingCost: props.shippingCost,
+                shippingMethod: props.shippingType,
+                deliveryHub:props.deliveryHub,
+                code:props.code,
+                subtotal: context.state.subTotal,
+                total: Number(context.state.subTotal)+Number(props.shippingCost),
+                status: "INITIATED",
+                error: 'None',
+                paymentIntentId: props.paymentIntent.id,
+                updates: updates,
+                subscription: subscription
+            } as any
+            if(discountTotal!== null){
+                body={...body,discountTotal:discountTotal,discountId:props.discountId}
+            }
             const eventInitiated = await fetch('/api/order', {
                 method: "POST",
                 headers: {
                     "csrftoken": await getCsrfToken() as string
                 },
-                body: JSON.stringify({
-                    userId: userId,
-                    email: emailAddress?.trim(),
-                    guestCheckout: guestCheckout,
-                    dAddress: {
-                        firstName: props.dFirstName.trim(),
-                        surname: props.dSurname.trim(),
-                        firstLine: props.dFirstLine.trim(),
-                        secondLine: props.dSecondLine.trim(),
-                        city: props.dCity.trim(),
-                        postcode: props.dPostcode.trim(),
-                        phoneNumber:props.dPhoneNumber.trim()
-                    },
-                    bAddress: {
-                        firstName: props.billingDelivery?props.dFirstName.trim():props.bFirstName.trim(),
-                        surname: props.billingDelivery?props.dSurname.trim():props.bSurname.trim(),
-                        firstLine: props.billingDelivery?props.dFirstLine.trim():props.bFirstLine.trim(),
-                        secondLine: props.billingDelivery?props.dSecondLine.trim():props.bSecondLine.trim(),
-                        city: props.billingDelivery?props.dCity.trim():props.bCity.trim(),
-                        postcode: props.billingDelivery?props.dPostcode.trim():props.bPostcode.trim(),
-                        phoneNumber: props.billingDelivery?props.dPhoneNumber.trim():props.bPhoneNumber.trim(),
-                    },
-                    products: context.state.cart,
-                    shippingCost: props.shippingCost,
-                    shippingMethod: props.shippingType,
-                    deliveryHub:props.deliveryHub,
-                    subtotal: context.state.subTotal,
-                    total: Number(context.state.subTotal)+Number(props.shippingCost),
-                    status: "INITIATED",
-                    error: 'None',
-                    paymentIntentId: props.paymentIntent.id,
-                    updates: updates,
-                    subscription: subscription
-                })
+                body: JSON.stringify(body)
             })
             const order = await eventInitiated.json()
             if (order.success === false) {
@@ -331,7 +364,11 @@ export default function CheckoutForm(props: any) {
             checkoutSuccess?<div id="success" style={{color:"green",position:"fixed",display:"block",width:"100vw",height:"400px",lineHeight:"400px",top:"100px",opacity:0.001}}><p>Success</p></div>:
             null
         }
-        
+        {
+            discountErr?
+            <p style={{"color":"red"}}>{discountErr}</p>
+            :null
+        }
             <h1 className="main-heading center">{props.subscriptionId!==''?"Subscription ":""}Checkout</h1>
             {
                 errorMessage !== '' ?
@@ -370,22 +407,38 @@ export default function CheckoutForm(props: any) {
                         </ul>
                         <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toString()}</span></p>
                         <p>Shipping: £<span id="shipping">{props.shippingCost}</span></p>
-                        <p>Total: £<span id="total">{(context.state.subTotal+props.shippingCost).toString()}</span></p>
+                        {
+                            discountTotal?
+                            <p>Discount applied: {discountDescription}</p>:
+                            null
+
+                        }
+                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:context.state.subTotal)+Number(props.shippingCost)).toString()}</span></p>
 
                     </div>
                 }
                 
 
                     
+                {
+                    !props.user?.updates?
 
                 <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
-                    <label htmlFor="updates">Receive updates</label>
-                    <input  autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e) => setUpdates(e.target.checked)} />
-                </div>
+                <label htmlFor="updates">Receive updates</label>
+                <input  autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e) => setUpdates(e.target.checked)} />
+            </div>
+                :
+                null
+                }
                 <button id="placeOrder"  className="cta add-relative" type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e) => placeOrder(e)}>Submit
                 
                 </button>
 
+                {
+            discountErr?
+            <p style={{"color":"red"}}>{discountErr}</p>
+            :null
+        }
                 
             {
                 !context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?

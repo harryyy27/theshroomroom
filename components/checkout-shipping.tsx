@@ -3,8 +3,12 @@ import { useState, FormEvent, useContext,useEffect } from "react"
 import { useRouter } from 'next/router'
 import { getCsrfToken } from 'next-auth/react'
 import { destroyCookie } from 'nookies'
+import styles from '../styles/Components/Form.module.css'
 import { CartContext } from '../context/cart';
 import Link from 'next/link'
+import FormComponent from "./form-component"
+import discountLogic from '../utils/discountLogic'
+import { data } from "cypress/types/jquery"
 export default function CheckoutForm(props: any) {
 
     const context = useContext(CartContext);
@@ -15,6 +19,11 @@ export default function CheckoutForm(props: any) {
     const [errorMessage, setErrorMessage] = useState('');
     const [deliveryHub,setDeliveryHub]=useState('');
     const [local,setLocal]=useState(false);
+    const [success,setSuccess]=useState(false);
+    const [discountErr,setDiscountErr]=useState('')
+    const [discountTotal,setDiscountTotal]=useState<number | null>(null)
+    const [discountDescription,setDiscountDescription]=useState('')
+    const [code,setCode]=useState('')
     const setComponentLoading = props.setComponentLoading;
     // const postCodeValidate=(formPostcode:string,validPostcodesArr:any)=>{
         
@@ -49,6 +58,8 @@ export default function CheckoutForm(props: any) {
         
     // }
     useEffect(()=>{
+        console.log(props.subscription)
+        console.log(props.user)
         if(props.local){
             props.setShippingCost(0)
             props.setShippingCostVal(true)
@@ -133,6 +144,31 @@ export default function CheckoutForm(props: any) {
         }
 
     }
+    async function handleCheckCode(e:FormEvent){
+        e.preventDefault()
+        console.log(code)
+        console.log(props.user.email)
+        const res = await fetch(`/api/discount-code?codeName=${code}&postcode=${props.dPostcode}&email=${props.user.email}`)
+        const resJson = await res.json()
+        if(resJson.success){
+            if(discountLogic.hasOwnProperty(code)){
+                console.log('yeh')
+                const indexCode = code
+                const discountFunction = discountLogic[indexCode].newTotal
+                const newDiscountTotal = discountFunction(context.state.subTotal)
+                props.setCode(code)
+                props.setDiscountId(resJson.discountId)
+                setDiscountTotal(newDiscountTotal)
+                setDiscountDescription(discountLogic[indexCode].description)
+                setSuccess(true)
+                setDiscountErr(resJson.error)
+            }
+        }
+        else {
+            setDiscountErr(resJson.error)
+            setSuccess(false)
+        }
+    }
     return (
         <div className="static-container">
         {
@@ -141,7 +177,9 @@ export default function CheckoutForm(props: any) {
         }
         
             <h1 className="main-heading center">{props.subscription?"Subscription ":""}Checkout</h1>
-            <fieldset>
+            
+                <form className={styles["form"]}>
+                <fieldset style={{backgroundColor:"white"}}>
                 <legend>Select a shipping method:</legend>
                 <div>
                     <input type="radio" id="free" name="shipping" value={0} disabled={!props.local} checked={props.shippingType==="free"} onChange={(e)=>handleChangeShipping(e)}/>
@@ -162,7 +200,48 @@ export default function CheckoutForm(props: any) {
                         :null
                 }
                 </fieldset>
+                {
+                    props.user&&!props.subscription?
+                    <>
+                    <FormComponent user={props.user} labelName={"Discount Code"} variable={code} variableName={Object.keys( code)[0]} setVariable={setCode} inputType={"text"} required={false} />
+                    
+                    <button className="cta inline" onClick={(e)=>handleCheckCode(e)}>Apply Code</button>
+                    </>:
+                    null
+                }
+                
+                {
+                    discountErr!==''?
+                    <p style={{"color":"red"}}>{discountErr}</p>:
+                    null
+                }
+                {
+                    success?
+                    <p style={{"color":"green"}}>Discount code applied!</p>:
+                    null
+                }
+                    
+                </form>
+                {
+                    context.cartLoaded &&
+                    <div style={{"marginTop":"1rem"}}>
+                        <ul>
+                                    {
+                                        context.state.cart.items.map((el:any,idx:number)=><li key={idx}className={"product-list-element"}>{el.name} {el.size} x {el.quantity}</li>)
+                                    }
+                        </ul>
+                        <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toString()}</span></p>
+                        <p>Shipping: £<span id="shipping">{props.shippingCost}</span></p>
+                        {
+                            discountTotal?
+                            <p>Discount applied: {discountDescription}</p>:
+                            null
 
+                        }
+                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:context.state.subTotal)+Number(props.shippingCost)).toString()}</span></p>
+
+                    </div>
+                }
             <button className="cta"type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e)=>goPay(e)}>PAY NOW</button>
             {
                 errorMessage !== '' ?

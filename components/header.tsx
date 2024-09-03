@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import saleDates from '../utils/saleDates/saleDates'
 import {signIn, signOut,useSession,getSession} from "next-auth/react";
 import {useRouter} from 'next/router';
 import {useContext,useState,useEffect} from 'react';
@@ -12,7 +13,9 @@ export default function Header(){
     const [itemsNotAvailable, setItemsNotAvailable] = useState(false);
     const context = useContext(CartContext)
     const [width,setWidth]=useState(0);
-
+    const [preSale,setPreSale]=useState<boolean | null>(null)
+    const [countdownDate,setCountdownDate]=useState<Date|null>(null)
+    const [endSaleDate,setEndSaleDate]=useState<Date|null>(null)
     const router = useRouter();
     function menuOpen(){
             if(document.body.classList.contains("fixed-mobile")){
@@ -27,6 +30,14 @@ export default function Header(){
     }
     useEffect(()=>{
         setWidth(window.innerWidth)
+        setCountdownDate(saleDates.countdownDate)
+        setEndSaleDate(saleDates.saleEndDate)
+        if(Date.now()- +saleDates.countdownDate<0){
+            setPreSale(true)
+        }
+        else if(Date.now()- +saleDates.saleEndDate<0){
+            setPreSale(false)
+        }
     },[context])
     return (
         <header id="header" className={styles.header}>
@@ -192,7 +203,6 @@ export default function Header(){
                 role="button">
                 <span className={mobileMenuOpen?styles["burger-menu-element"]+" "+styles["burger-open"]:styles["burger-menu-element"]} aria-hidden="true"></span>
             </div>
-            
             
         </header>
     )

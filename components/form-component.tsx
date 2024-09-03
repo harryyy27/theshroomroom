@@ -4,7 +4,7 @@ export default function FormComponent(props:any){
     return(
         <div className={styles["form-element-wrapper"]}>
                     <label className={styles["form-label"]} htmlFor={props.variableName+(props.page?props.page:'')}>{props.labelName}</label>
-                    <input className={styles["form-element"]} autoComplete="autocomplete" type={props.inputType} required={props.required} id={props.variableName+(props.page?props.page:'')} value={props.variable||''} 
+                    <input className={styles["form-element"]} autoComplete="autocomplete" type={props.inputType} required={props.required} id={props.variableName+(props.page?props.page:'')} value={props.variable||'' } disabled={props.disabled}
                         onBlur={async(e)=>{
                             if(props.required){
                                 if(props.callback){

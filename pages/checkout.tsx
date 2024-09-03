@@ -100,9 +100,13 @@ export default function Checkout(props:any){
     const [options,setOptions] = useState({
         clientSecret:''
     })
+    const [code,setCode]=useState('');
+    const [codeVal,setCodeVal]=useState<boolean | null>(null)
     const [local,setLocal]=useState(false);
     const [loaded,setLoaded]=useState(false);
     const [mounted,setMounted]=useState(false);
+    const [discountFailed,setDiscountFailed]=useState(false)
+    const [discountId,setDiscountId]=useState('')
     const pathname = usePathname()
     // const context = useContext(CartContext);
 
@@ -140,7 +144,7 @@ export default function Checkout(props:any){
     }
     async function handleGetPaymentIntent(){
         var subscription = window.location.href.split('checkout?').length>1;
-            const res= await fetch(`/api/get-payment-intent?subscription=${subscription?true:false}&shippingCost=${shippingCost}`)
+            const res= await fetch(`/api/get-payment-intent?subscription=${subscription?true:false}&shippingCost=${shippingCost}${code!==''?`&code=${code}`:''}`)
             const resJson = await res.json()
         
         return resJson
@@ -169,6 +173,9 @@ export default function Checkout(props:any){
                         setPaymentIntent(res.props.paymentIntent)
                         setSubscriptionId(res.props.subscriptionId)
                         
+                        if(res.props.discountFailed){
+                            setDiscountFailed(res.props.discountFailed)
+                        }
                     }
                     setLoaded(true)
                     props.setComponentLoading(false)
@@ -369,6 +376,7 @@ export default function Checkout(props:any){
                     phase===2?
                     <Shipping
                         setComponentLoading={props.setComponentLoading}
+                        dPostcode={dPostcode}
                         shippingCost={shippingCost}
                         setShippingCost={setShippingCost}
                         shippingCostVal={shippingCostVal}
@@ -380,6 +388,12 @@ export default function Checkout(props:any){
                         local={local}
                         subscription={subscription}
                         handlePhaseChange={handlePhaseChange}
+                        code={code}
+                        discountId={discountId}
+                        setCode={setCode}
+                        setDiscountId={setDiscountId}
+                        user={user}
+
                     />:
                     phase===3&&
                     loaded&&paymentIntent?
@@ -469,7 +483,10 @@ export default function Checkout(props:any){
                         paymentIntent={paymentIntent}  
                         setComponentLoading={props.setComponentLoading} 
                         subscriptionId={subscriptionId}
-                        handlePhaseChange={handlePhaseChange}/>
+                        handlePhaseChange={handlePhaseChange}
+                        code={code}
+                        discountId={discountId}
+                        discountFailed={discountFailed}/>
                 </Elements>:null
                 }
                 

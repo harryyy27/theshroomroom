@@ -1,10 +1,10 @@
-import {Errors} from './schema';
+import {Errors,Discounts} from './schema';
 // import {Order,Subscription} from './types'
 import {sendEmail} from './nodemailer';
 import {imageMap} from '../utils/imageMap/imageMap';
 import connect from './connection';
 import {orderString,receiveUpdateString,subscriptionString,deleteAccountString,registerString,disputeString,invoiceFinalizationFailString,invoiceFailString} from './emailContent'
-
+import saleDates from './saleDates/saleDates';
 function template(content:string,websiteName:string|undefined){
     return `
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -80,6 +80,76 @@ function template(content:string,websiteName:string|undefined){
     </body>
     </html>`
 }
+function discountCodeHtmlTemplate(discountCode:string) {
+  return `
+
+    <table cellspacing="0" cellpadding="0" style="border-collapse:collapse; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; margin-bottom:100px; text-align:left;width:700px;color:#343434;">
+        <tbody>
+          <tr>
+
+            <td style="width:150px;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="color:#343434; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; padding:15px 30px 0;width:640px;">
+              <p>Thank you for joining our mailing list!</p>
+              <p>Your discount code is ${discountCode}</p>
+              <p>Happy spending!</p>
+            </td>
+          </tr>
+          <tr>
+
+            <td style="width:150px;">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+  `
+}
+function discountInvitationHtmlTemplate(discountString:string,websiteName:string) {
+  return `
+
+    <table cellspacing="0" cellpadding="0" style="border-collapse:collapse; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; margin-bottom:100px; text-align:left;width:700px;color:#343434;">
+        <tbody>
+          <tr>
+
+            <td style="width:150px;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="color:#343434; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; padding:15px 30px 0;width:640px;">
+              <p><a style="color:#943201"href="${websiteName+'#join-mailing-list'}">Join our mailing list</a> for ${discountString}</p>
+              <p>Happy spending!</p>
+            </td>
+          </tr>
+          <tr>
+
+            <td style="width:150px;">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+  `
+}
+function discountSignUpInvitationHtmlTemplate(discountString:string,websiteName:string) {
+  return `
+
+    <table cellspacing="0" cellpadding="0" style="border-collapse:collapse; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; margin-bottom:100px; text-align:left;width:700px;color:#343434;">
+        <tbody>
+          <tr>
+
+            <td style="width:150px;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="color:#343434; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; padding:15px 30px 0;width:640px;">
+              <p><a style="color:#943201"href="${websiteName+'/auth/signup'}">Sign up now</a> for ${discountString}</p>
+              <p>Happy spending!</p>
+            </td>
+          </tr>
+          <tr>
+
+            <td style="width:150px;">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+  `
+}
 export async function errorHandler(headers:string,body:string|undefined,method:string,message:string,client:boolean){
     await connect()
     const error =  new (Errors() as any)({
@@ -104,10 +174,30 @@ export async function errorHandler(headers:string,body:string|undefined,method:s
     // }
 
 }
-export async function receiveUpdatesHandler(email:string,user:boolean,websiteName:string|undefined,companyEmail:string|undefined){
-    try{
-        const content =receiveUpdateString(user,email)
 
+export async function receiveUpdatesHandler(email:string,user:any,websiteName:string|undefined,companyEmail:string|undefined){
+    try{
+      const todayDate = Date.now()
+      let content = ''
+      if(+saleDates.saleEndDate-todayDate>0){
+            if(user){
+              content =receiveUpdateString(user,email,discountCodeHtmlTemplate('D_TESTTESTTEST'))
+
+            }
+            else {
+              content =receiveUpdateString(user,email,discountSignUpInvitationHtmlTemplate('25% off first order',websiteName as string))
+    
+            }
+            
+            //25%
+            //
+            
+        }
+        else {
+          content =receiveUpdateString(user,email,'')
+
+        }
+      
         await sendEmail({
             subject: "Thank you for subscribing to Mega Mushrooms!",
             html:template(content,websiteName),
@@ -170,9 +260,24 @@ export async function subscriptionHandler(subscription:any,websiteName:string|un
     }
 
 }
-export async function registerHandler(email:string,user:any,websiteName:string|undefined,companyEmail:string|undefined){
+export async function registerHandler(email:string,user:any,websiteName:string|undefined,companyEmail:string|undefined,discount:boolean | null){
     try{
-        const content = registerString(user,email)
+        let content;
+        if(discount!==null){
+          if(discount===true){
+            content= registerString(user,email,discountCodeHtmlTemplate('D_TESTTESTTEST'))
+          }
+          else{
+            const invitationString = 'for 25% off your first order!'
+            content= registerString(user,email,discountInvitationHtmlTemplate(invitationString,websiteName as string))
+
+          }
+          
+        }
+        else{
+          content = registerString(user,email,'')
+
+        }
         await sendEmail({
             subject: `Welcome to Mega Mushrooms`,
             html:template(content,websiteName),

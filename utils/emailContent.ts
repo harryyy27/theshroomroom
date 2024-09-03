@@ -1,5 +1,6 @@
 import {Product} from './types'
 import {imageMap} from './imageMap/imageMap'
+import discountLogic from'./discountLogic';
 export function orderString(order:any){
     return `
         <!-- Content -->
@@ -147,10 +148,24 @@ export function orderString(order:any){
                       <th style="width:320px;text-align:left; font-weight:normal; padding:15px 0;background-color:#fff;">Delivery:</th>
                       <td style="width:320px;padding:15px 0;text-align:right;background-color:#fff;">£${order.shippingCost}</td>
                     </tr>
+                    ${
+                      order.code?
+                      `<tr>
+                      <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;">Total</th>
+                      <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${discountLogic[order.code].description}</td>
+                    </tr>
+                    
                     <tr>
                       <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;">Total</th>
+                      <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${order.shippingCost+order.discountTotal}</td>
+                    </tr>`:
+                    `<tr>
+                      <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;">Total</th>
                       <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${order.shippingCost+order.products.items.reduce((acc:number,el:any)=>acc+el.price,0)}</td>
-                    </tr>
+                    </tr>`
+
+                    }
+                    
                   </tbody>
                   <!-- end totals -->
                 </table>
@@ -161,7 +176,7 @@ export function orderString(order:any){
         </table>
         <!-- End Content -->`
 }
-export function receiveUpdateString(user:any,email:string){
+export function receiveUpdateString(user:any,email:string,discountString:string){
     return `
     <!-- Content -->
     <table cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; text-align:left; border-width: 1px; border-color:#ddd; border-style:solid;color:#343434;" width="700">
@@ -175,12 +190,13 @@ export function receiveUpdateString(user:any,email:string){
             <p>We are pleased you have chosen to join our mailing list.</p>
             <p style="margin:0;">We will update you in the event that any new products, offers or site updates you should be made aware of.</p>
             <p style="margin:0;">In the mean time, you are welcome to browse our current range of <a style="color:#943201;"href=\"${process.env.WEBSITE_NAME}/products\">products</a></p>
-            
             <p style="margin:0;">No longer wish to receive emails from Mega Mushrooms?</p><p><a style="color:#943201;" href="${process.env.WEBSITE_NAME}/${user?"edit":`unsubscribe?email=${email}`}">Unsubscribe</a></p>
           </td>
         </tr>
     </tbody>
-    </table>`
+    </table>
+    ${discountString}
+    `
 }
 export function subscriptionString(subscription:any,renewal:boolean){
     return `
@@ -359,7 +375,7 @@ export function deleteAccountString(){
     </table>`
 }
 
-export function registerString(user:any,email:string){
+export function registerString(user:any,email:string,discountTemplate:string){
     return `
     <!-- Content -->
     <table cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; text-align:left; border-width: 1px; border-color:#ddd; border-style:solid;color:#343434;" width="700">
@@ -371,14 +387,14 @@ export function registerString(user:any,email:string){
         <tr>
           <td style="padding:15px 30px;width:640px;background-color:#FFF;">
             <p>We are pleased you have chosen to register an account with us at this important time in our development as we garner a community of fungi fanatics.</p>
-            <p style="margin:0;">Keep an eye on our site for any new products, offers or site updates you should be made aware of.</p>
             <p style="margin:0;">In the mean time, you are welcome to browse our current range of <a style="color:#943201;" href=\"${process.env.WEBSITE_NAME}/products\">products</a></p>
-            
             <p style="margin:0;">${!user.updates?"Wish to receive updates of new products or services?":"No longer wish to receive updates of new products or servces?"} <a style="color:#943201;" href="${process.env.WEBSITE_NAME}/edit">${!user.updates?"Subscribe":"Unsubscribe"}</a></p>
           </td>
         </tr>
     </tbody>
-    </table>`
+    </table>
+    ${discountTemplate}
+            `
 }
 
 export function disputeString(object:any,status:string){

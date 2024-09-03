@@ -172,6 +172,17 @@
   padding:0;
   width:100%;
 }
+.sales-title{
+  text-align:center;
+  color:var(--pri);
+}
+.sales-heading {
+  text-align:center;
+  color:var(--sec);
+}
+.sales-title {
+  color: var(--sec)
+}
 @media(max-width:1024px){
   .hero-sub-heading {
     display:none

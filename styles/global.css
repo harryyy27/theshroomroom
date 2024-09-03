@@ -1,5 +1,46 @@
 /* 
 colour scheme - turkey tail */
+.timer-wrapper {
+ display:flex;
+ justify-content:center;
+ width:50%;
+ margin:auto;
+ text-align:center;
+}
+.timer-divider {
+  display: flex;
+  flex-direction:column;
+  width:3rem;
+}
+.timer-header {
+  font-size: 2rem;
+  color:var(--pri);
+  font-weight:700;
+}
+.timer-interval {
+  font-size:2rem;
+  font-weight:700;
+}
+.days {
+  color:var(--pri)
+}
+.hours {
+  color: var(--sec)
+}
+.minutes {
+  color: var(--ter0)
+}
+@keyframes colorChange {
+  from {
+    color: var(--pri)
+  }
+  to {
+    color: var(--ter1)
+  }
+}
+.color-animate {
+  animation:colorChange 1s linear infinite
+}
 #progressBar{
   width:60vw;
   margin:auto;
@@ -15,15 +56,17 @@ colour scheme - turkey tail */
   position:absolute;
   bottom:-2rem;
   left:0;
-  transform:translateX(-50%)
+  transform:translateX(-50%);
+  font-size:0.8rem
 }
 .progress-bar-line {
   display:block;
   border:3px solid 	#D3D3D3;
   height:3px;
   line-height:3px;
-  width:80%;
+  width:60%;
   margin:auto;
+  transform:translateY(-1.5px)
 }
 .progress-bar-phase {
   left:0;
@@ -39,9 +82,9 @@ colour scheme - turkey tail */
   cursor:pointer;
 }
 .progress-bar-phase-number {
-  width:48px;
-  height:48px;
-  line-height:48px;
+  width:2rem;
+  height:2rem;
+  line-height:2rem;
   border: 1px solid 	#D3D3D3;
   border-radius:50%;
   text-align:center;
@@ -227,6 +270,7 @@ colour scheme - turkey tail */
 }
 .product-list {
   display:flex;
+  justify-content: space-around;
 }
 
 .cart-btn{

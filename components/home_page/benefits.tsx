@@ -16,7 +16,7 @@ export default function Benefits(){
                     
                     <div className={homeStyles["card-text-wrap"]}>
                         <h2 className={`bullet-heading ${homeStyles["benefit-heading"]}`}>Antioxidants</h2>
-                        <p className="bullet-margin">Antioxidants render free radicals in your body harmless by neutralising their charge. This means your cells will incur a lot less damage from free radicals as your body actively eliminates them.</p>
+                        <p className="bullet-margin">The antioxidants in lions mane neutralize free radicals in your body. This means your cells will incur a lot less damage from free radicals as your body actively seeks to eliminate them.</p>
                     </div>
                     
                 </li>
@@ -27,7 +27,7 @@ export default function Benefits(){
                     </figure>
                     <div className={homeStyles["card-text-wrap"]}>
                         <h2 className={`bullet-heading ${homeStyles["benefit-heading"]}`}>Brain health</h2>
-                        <p className="bullet-margin">Studies have found that active biological compounds found in lion's mane mushrooms have neurotrophic effects by inducing the production of nerve growth factor in cells.</p>
+                        <p className="bullet-margin">Studies have found that active biological compounds found in lion's mane mushrooms may have neurotrophic effects by inducing the production of nerve growth factor in cells.</p>
                     </div>
                     
                 </li>

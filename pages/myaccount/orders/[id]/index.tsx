@@ -430,6 +430,11 @@ export default function MyAccountOrders({setComponentLoading}:any){
                         <p>Shipping cost: {el.shippingCost}</p>
                         <p>Total: {el.total}</p>
                         
+                        {el.discountTotal?
+                        <p>Discount total: {el.discountTotal}</p>
+                        :
+                        null
+                    }
                         <div>
                         <h2>Delivery Address</h2>
                             <p>{dFirstName}</p>

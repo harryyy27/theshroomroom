@@ -67,6 +67,36 @@
   -moz-animation: glow 1s ease-in-out infinite alternate, textchange 1s ease-in-out infinite alternate;
   animation: glow 1s ease-in-out infinite alternate, textchange 1s ease-in-out infinite alternate;
 }
+.sale-header {
+    width:100%;
+    overflow:hidden;
+    position:absolute;
+    white-space:nowrap;
+
+}
+.top {
+    top:0px;
+}
+.bottom {
+    bottom:0px;
+}
+@keyframes slide-backward {
+    from {
+        transform: translateX(0)
+    }
+    to {
+        transform: translateX(-100%)
+    }
+}
+@keyframes slide-forward {
+    from {
+        transform:translateX(-100%)
+    }
+    to {
+        transform: translateX(0)
+    }
+}
+
 @keyframes glow {
     from {
       text-shadow: 1px 1px 2px var(--ter2), 1px 1px 4px var(--ter2), 1px 1px 6px var(--sec), 1px 1px 8px var(--sec);
@@ -75,6 +105,23 @@
       text-shadow: 0 0 2px var(--ter2), 0 0 3px var(--ter2), 0 0 4px var(--sec), 0 0 5px var(--sec), 0 0 6px var(--pri), 0 0 7px var(--pri);
     }
   }
+.sale-header-slide-forward {
+    display:inline-flex;
+    width:100%;
+    justify-content:space-around;
+    animation: 20s slide-forward infinite linear;
+}
+.sale-header-slide-backward {
+    display:inline-flex;
+    width:100%;
+    justify-content:space-around;
+    animation:20s slide-backward infinite linear;
+}
+.sale-text {
+    font-weight:700;
+    color:var(--sec);
+    animation: 10s glow infinite linear;
+}
 
 .nav-link {
     

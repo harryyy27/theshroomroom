@@ -79,8 +79,8 @@ export default function SignUp({setComponentLoading}:any){
             <FormComponent user={user} labelName={"Email"}variable={username} variableName={Object.keys({username})[0]} setVariable={setUsername} variableVal={usernameVal} setVariableVal={setUsernameVal} inputType={"email"} required={true}/>
             <FormComponent user={user} labelName={"Password"}variable={password} variableName={Object.keys({password})[0]} setVariable={setPassword} variableVal={passwordVal} setVariableVal={setPasswordVal} inputType={"password"} required={true}/>
             <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
-                    <label className={styles["form-label"]} style={{"display":"inline-block"}} htmlFor="updates">Receive updates</label>
-                    <input  autoComplete="complete" id="updates" type="checkbox" value={String(updates)} onChange={(e) => setUpdates(e.target.checked)} />
+                    <label className={styles["form-label"]} style={{"display":"inline-block"}} htmlFor="updates">Join our mailing list</label>
+                    <input  autoComplete="complete" id="updates" type="checkbox" value={String(updates)} checked={updates}onChange={(e) => setUpdates(e.target.checked)} />
                 </div>
             <button id="signUp" className="cta" type="submit" value="submit" >Submit</button>
             {/* <button id="googleSignUp">Sign up with Google</button> */}
