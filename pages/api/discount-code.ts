@@ -48,19 +48,13 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             else if(req.url?.includes('?codeName')){
                 const codeName=req.url.split('?codeName=')[1].split('&postcode=')[0]
                 const postcode=req.url.split('postcode=')[1].split('&email=')[0]
-                const email=req.url.split('email=')[1]
-                console.log(codeName)
+                const email=req.url.split('email=')[1].replace('%40','@')
                 const discount = await Discounts().findOne({codeName:codeName})
                 const discounts = await Discounts().find({})
                 if(!discount){
                     return res.status(400).json({success:false, error:"Code not found"})
                 }
-                console.log(discount)
-                console.log(discount.users)
-                console.log(email)
                 if(!discount.users.every((el:any)=>{
-                    console.log(el.email)
-                    console.log(email)
                     return el.email.trim()!==email.trim()
                 })){
                     return res.status(202).json({success:false,error:"Code already claimed."})
