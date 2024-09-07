@@ -55,7 +55,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 if(!discount){
                     return res.status(400).json({success:false, error:"Code not found"})
                 }
-                if(!discount.users.every((el:any)=>el.email!==email)){
+                if(!discount.users.every((el:any)=>el.email.trim()!==email.trim())){
                     return res.status(202).json({success:false,error:"Code already claimed."})
                 }
                 const {codesAvailable,expiryDate,startDate,_id}=discount
