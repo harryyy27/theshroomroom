@@ -262,10 +262,11 @@ export async function subscriptionHandler(subscription:any,websiteName:string|un
 }
 export async function registerHandler(email:string,user:any,websiteName:string|undefined,companyEmail:string|undefined,discount:boolean | null){
     try{
+        let active_code=process.env.ACTIVE_DISCOUNT_CODE
         let content;
-        if(discount!==null){
+        if(discount!==null&&active_code!==undefined){
           if(discount===true){
-            content= registerString(user,email,discountCodeHtmlTemplate('D_TESTTESTTEST'))
+            content= registerString(user,email,discountCodeHtmlTemplate(active_code))
           }
           else{
             const invitationString = 'for 25% off your first order!'

@@ -307,7 +307,7 @@ export default function CheckoutForm(props: any) {
 
                     
 
-                <button id="goShipping"  className="cta add-relative" type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e) => goShipping(e)}>Submit
+                <button id="phaseChange1"  className="cta add-relative phase-change" type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e) => goShipping(e)}>Submit
                 
                 </button>
 

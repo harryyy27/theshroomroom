@@ -405,11 +405,16 @@ export default function CheckoutForm(props: any) {
                                         context.state.cart.items.map((el:any,idx:number)=><li key={idx}className={"product-list-element"}>{el.name} {el.size} x {el.quantity}</li>)
                                     }
                         </ul>
+                        {
+                            !props.user?
+                            <div id="guestEmailAddress"></div>:
+                            null
+                        }
                         <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toString()}</span></p>
                         <p>Shipping: £<span id="shipping">{props.shippingCost}</span></p>
                         {
                             discountTotal?
-                            <p>Discount applied: {discountDescription}</p>:
+                            <p>Discount applied: <span id="discount">{discountDescription}</span></p>:
                             null
 
                         }

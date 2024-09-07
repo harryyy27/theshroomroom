@@ -242,7 +242,7 @@ export default function CheckoutForm(props: any) {
 
                     </div>
                 }
-            <button className="cta"type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e)=>goPay(e)}>PAY NOW</button>
+            <button id="phaseChange2" className="cta phase-change"type="submit" disabled={processing||!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} onClick={(e)=>goPay(e)}>PAY NOW</button>
             {
                 errorMessage !== '' ?
                     <p>{errorMessage}</p> :
