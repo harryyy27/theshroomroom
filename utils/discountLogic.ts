@@ -18,7 +18,14 @@ const logic:{[key:string]:{
         newTotal:function(total:number){
         return Number(total)*(1-0.25)
         },
-        description:"25% off"
+        description:"25% off your first order!"
+    },
+
+    "TrustMega25": {
+        newTotal:function(total:number){
+        return Number(total)*(1-0.25)
+        },
+        description:"25% off your first order!"
     },
 }
 export default logic
