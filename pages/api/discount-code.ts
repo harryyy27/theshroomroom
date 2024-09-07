@@ -53,7 +53,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 const discount = await Discounts().findOne({codeName:codeName})
                 const discounts = await Discounts().find({})
                 if(!discount){
-                    return res.status(400).json({succes:false, error:"Code not found"})
+                    return res.status(400).json({success:false, error:"Code not found"})
                 }
                 if(!discount.users.every((el:any)=>el.email!==email)){
                     return res.status(202).json({success:false,error:"Code already claimed."})
