@@ -126,7 +126,14 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
 
                     if(session?.user){
                         const user = await User().findOneAndUpdate({username:session?.user.email},{updates:body.updates})
-
+                        const dKeys=Object.keys(body.dAddress)
+                        const bKeys =Object.keys(body.bAddress)
+                        if(user&&user.dAddress&&dKeys.every((el:any)=>user.dAddress[el]==='')){
+                            await User().findOneAndUpdate({username:session?.user.email},{dAddress:{...body.dAddress}})
+                        }
+                        if(user&&user.bAddress&&bKeys.every((el:any)=>user.bAddress[el]==='')){
+                            await User().findOneAndUpdate({username:session?.user.email},{bAddress:{...body.bAddress}})
+                        }
                     }
                     else if(body.updates){
                         let userExists = await User().findOne({username:body.email})
