@@ -3,6 +3,7 @@ import {Errors,Discounts} from './schema';
 import {sendEmail} from './nodemailer';
 import {imageMap} from '../utils/imageMap/imageMap';
 import connect from './connection';
+import discountLogic from './discountLogic'
 import {orderString,receiveUpdateString,subscriptionString,deleteAccountString,registerString,disputeString,invoiceFinalizationFailString,invoiceFailString} from './emailContent'
 import saleDates from './saleDates/saleDates';
 function template(content:string,websiteName:string|undefined){
@@ -179,13 +180,19 @@ export async function receiveUpdatesHandler(email:string,user:any,websiteName:st
     try{
       const todayDate = Date.now()
       let content = ''
-      if(+saleDates.saleEndDate-todayDate>0){
+      const active_code = process.env.ACTIVE_DISCOUNT_CODE
+      let description;
+      if(active_code!==undefined){
+        description = discountLogic[active_code].description
+
+      }
+      if(+saleDates.saleEndDate-todayDate>0 && active_code!==undefined&&description!==undefined){
             if(user){
-              content =receiveUpdateString(user,email,discountCodeHtmlTemplate('D_TESTTESTTEST'))
+              content =receiveUpdateString(user,email,discountCodeHtmlTemplate(active_code))
 
             }
             else {
-              content =receiveUpdateString(user,email,discountSignUpInvitationHtmlTemplate('25% off first order',websiteName as string))
+              content =receiveUpdateString(user,email,discountSignUpInvitationHtmlTemplate(description,websiteName as string))
     
             }
             
@@ -263,13 +270,18 @@ export async function subscriptionHandler(subscription:any,websiteName:string|un
 export async function registerHandler(email:string,user:any,websiteName:string|undefined,companyEmail:string|undefined,discount:boolean | null){
     try{
         let active_code=process.env.ACTIVE_DISCOUNT_CODE
+        let description;
+        if(active_code!==undefined){
+          description = discountLogic[active_code].description
+  
+        }
         let content;
         if(discount!==null&&active_code!==undefined){
           if(discount===true){
             content= registerString(user,email,discountCodeHtmlTemplate(active_code))
           }
           else{
-            const invitationString = 'for 25% off your first order!'
+            const invitationString = 'for ' + description;
             content= registerString(user,email,discountInvitationHtmlTemplate(invitationString,websiteName as string))
 
           }
