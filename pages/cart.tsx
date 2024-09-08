@@ -4,14 +4,20 @@ import Link from 'next/link';
 import {Metadata} from '../utils/metadata/metadata';
 import {getSession} from 'next-auth/react'
 
+import saleDates from '../utils/saleDates/saleDates';
 import Head from 'next/head';
 import CartElement from '../components/cartElement'
 
 export default function Cart({setComponentLoading}:any){
     let context=useContext(CartContext)
     const [user,setUser]=useState(false);
+    const [isSale,setIsSale]=useState(false);
     useEffect(()=>{
         setComponentLoading(true)
+        const todayDate=Date.now()
+        if(+new Date(saleDates.countdownDate)-todayDate<0 && +new Date(saleDates.saleEndDate)-todayDate>0){
+            setIsSale(true)
+        }
         async function initiate(){
             const session = await getSession()
             if(session?.user){
@@ -36,7 +42,7 @@ export default function Cart({setComponentLoading}:any){
                     <>
                     <h1 className="main-heading center">Cart</h1>
                         <div className="cart-summary">
-                            <p><b>Sub-total: </b>{"£"+String(context.state.subTotal)}</p>
+                            <p><b>Sub-total: </b>{(!isSale?<span>£{String(Number(context.state.subTotal).toFixed(2))}</span>:<><span style={{textDecoration:"line-through"}}>£{String(Number(context.state.subTotal).toFixed(2))}</span><span style={{marginLeft:"0.25rem"}}>£{String((Number(context.state.subTotal)*0.9).toFixed(2))}</span></>)}</p>
                             <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkoutSide">One Time Purchase</span></Link></button>
                             {
                                 user?

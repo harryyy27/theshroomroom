@@ -30,7 +30,6 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 const postcode=req.url.split('postcode=')[1].split('&email=')[0]
                 const email=req.url.split('email=')[1]
                 const discount = await Discounts().findOne({_id:id})
-                console.log(discount)
                 const {codesAvailable,expiryDate,startDate}=discount
                 if(codesAvailable<=0){
                     return res.status(202).json({success:false,error:"No codes available"})

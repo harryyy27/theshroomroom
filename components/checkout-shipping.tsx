@@ -9,10 +9,11 @@ import Link from 'next/link'
 import FormComponent from "./form-component"
 import discountLogic from '../utils/discountLogic'
 import { data } from "cypress/types/jquery"
+import saleDates from "../utils/saleDates/saleDates"
 export default function CheckoutForm(props: any) {
 
     const context = useContext(CartContext);
-    
+    const [isSale,setIsSale]=useState(false)
     const [checkoutError, setCheckoutError] = useState('');
     const [checkoutSuccess, setCheckoutSuccess] = useState(false);
     const [processing, setProcessing] = useState(false);
@@ -58,8 +59,10 @@ export default function CheckoutForm(props: any) {
         
     // }
     useEffect(()=>{
-        console.log(props.subscription)
-        console.log(props.user)
+        const todayDate=Date.now()
+        if(+new Date(saleDates.countdownDate)-todayDate<0 && +new Date(saleDates.saleEndDate)-todayDate>0){
+            setIsSale(true)
+        }
         if(props.local){
             props.setShippingCost(0)
             props.setShippingCostVal(true)
@@ -146,13 +149,10 @@ export default function CheckoutForm(props: any) {
     }
     async function handleCheckCode(e:FormEvent){
         e.preventDefault()
-        console.log(code)
-        console.log(props.user.email)
         const res = await fetch(`/api/discount-code?codeName=${code}&postcode=${props.dPostcode}&email=${props.user.email}`)
         const resJson = await res.json()
         if(resJson.success){
             if(discountLogic.hasOwnProperty(code)){
-                console.log('yeh')
                 const indexCode = code
                 const discountFunction = discountLogic[indexCode].newTotal
                 const newDiscountTotal = discountFunction(context.state.subTotal)
@@ -230,15 +230,25 @@ export default function CheckoutForm(props: any) {
                                         context.state.cart.items.map((el:any,idx:number)=><li key={idx}className={"product-list-element"}>{el.name} {el.size} x {el.quantity}</li>)
                                     }
                         </ul>
-                        <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toFixed(2).toString()}</span></p>
-                        <p>Shipping: £<span id="shipping">{props.shippingCost.toFixed(2)}</span></p>
+                        <p>Subtotal: £<span id="subTotal">{!isSale?context.state.subTotal.toFixed(2).toString():(Number(context.state.subTotal)*0.9).toFixed(2).toString()}</span></p>
+                        {
+                            props.shippingCost!==null?
+                            <p>Shipping: £<span id="shipping">{props.shippingCost.toFixed(2)}</span></p>
+                            :null
+
+                        }
                         {
                             discountTotal?
                             <p>Discount applied: {discountDescription}</p>:
                             null
 
                         }
-                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal?.toFixed(2)!==null?discountTotal:context.state.subTotal.toFixed(2))+Number(props.shippingCost)).toFixed(2).toString()}</span></p>
+                        {
+                            props.shippingCost!==null&&Number(context.state.subTotal)>0?
+<p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:!isSale?context.state.subTotal.toFixed(2):(Number(context.state.subTotal)*0.9))+Number(props.shippingCost)).toFixed(2).toString()}</span></p>:
+null
+                        }
+                        
 
                     </div>
                 }

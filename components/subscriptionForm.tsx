@@ -15,7 +15,6 @@ export default function Subscribe(){
             const session = await getSession()
         
             if(session&&session?.user?.email!==""){
-                console.log(session.user.email)
                 setEmail(session.user.email);
                 setEmailVal(true)
                 setUser(true);
@@ -36,9 +35,7 @@ export default function Subscribe(){
     async function handleSubscribe(subscribe:boolean,e:any){
         try{
             e.preventDefault()
-            console.log('yeh')
             if(validate()){
-                console.log(emailVal)
                     const res=await fetch('/api/editUser',{
                         method: "POST",
                         headers: {

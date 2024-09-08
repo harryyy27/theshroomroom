@@ -8,6 +8,7 @@ import {Metadata} from '../../../utils/metadata/metadata';
 import Link from 'next/link'
 import {getSession,getCsrfToken}from 'next-auth/react'
 import {notFound} from 'next/navigation';
+import saleDates from '../../../utils/saleDates/saleDates';
 import {
 
   FacebookIcon,
@@ -38,6 +39,7 @@ interface Product {
     coming_soon:boolean,
 }
 export default function ProductDetails(props:any){
+    const [isSale,setIsSale]=useState(false);
     const context = useContext(CartContext);
     const [url,setUrl]=useState('');
     const [product,setProduct]=useState<Product[]>([])
@@ -64,6 +66,10 @@ export default function ProductDetails(props:any){
         props.setComponentLoading(true)
         setImageUrl(props.urlArr[props.urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
         setUrl(props.websiteName)
+        const todayDate=Date.now()
+        if(+new Date(saleDates.countdownDate)-todayDate<0 && +new Date(saleDates.saleEndDate)-todayDate>0){
+            setIsSale(true)
+        }
         const initiate = async()=>{
             const session = await getSession()
             if(session?.user){
@@ -274,7 +280,7 @@ export default function ProductDetails(props:any){
                     }
                     
                 </div>
-                <p id="productPrice"> Price: £{price?(qty*Number(price)).toFixed(2):null}</p>
+                <p id="productPrice"> Price: {!isSale?<span>£{Number(price).toFixed(2)}</span>:<><span style={{textDecoration:"line-through"}}>£{Number(price).toFixed(2)}</span><span style={{marginLeft:"0.25rem"}}>£{(Number(price)*0.9).toFixed(2)}</span></>}</p>
                 <div>
                     <label htmlFor={"productQuantity"}>Qty: </label>
                     <input id={`productQuantity`} className="form-input"name={"quantity"} type="number" value={qty} onChange={(e)=>{

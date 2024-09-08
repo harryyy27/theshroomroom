@@ -30,7 +30,7 @@ export default function Sale (props:any){
                         :
                         <>
                         <h1 className={homeStyles['sales-title']}>WE ARE OPEN FOR BUSINESS!</h1>
-                    <h2 className={homeStyles['sales-h2']}>25% off all products and free local shipping during our opening sale</h2>
+                    <h2 className={homeStyles['sales-h2']}><Link className="link" href="/auth/signup">Sign up</Link> and join our mailing list for 25% off your first order!</h2>
                     <button id="heroCta" className="cta"><Link id="heroCtaLink" href="/products">BUY NOW</Link></button>
                         <Timer countdownDate={endSaleDate}/>
                         </>:

@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 import { getCsrfToken } from 'next-auth/react'
 import { destroyCookie } from 'nookies'
 import { CartContext } from '../context/cart';
+import saleDates from "../utils/saleDates/saleDates"
 export interface Product {
     _id: String,
     price: number,
@@ -73,7 +74,7 @@ export default function CheckoutForm(props: any) {
     const [local,setLocal]=useState(false);
     const [updateErr,setUpdateErr]=useState(false);
     const [localVal,setLocalVal]=useState(false);
-    
+    const [isSale,setIsSale]=useState(false)
     const [discountErr,setDiscountErr]=useState('')
     const [discountTotal,setDiscountTotal]=useState<number | null>(null)
     const [discountDescription,setDiscountDescription]=useState('')
@@ -81,7 +82,6 @@ export default function CheckoutForm(props: any) {
     const setComponentLoading = props.setComponentLoading;
     var elements:any= useElements();
     async function handleCheckCode(){
-        console.log(props.discountFailed)
         if(props.discountFailed){
             setDiscountErr("This discount code is no longer available. Continue to pay at full price")
             props.setCode('')
@@ -94,6 +94,10 @@ export default function CheckoutForm(props: any) {
         
     }
     useEffect(() => {
+        const todayDate=Date.now()
+        if(+new Date(saleDates.countdownDate)-todayDate<0 && +new Date(saleDates.saleEndDate)-todayDate>0){
+            setIsSale(true)
+        }
         async function initiate(){
             setSubscription(props.subscriptionId)
             if(props.code){
@@ -270,8 +274,8 @@ export default function CheckoutForm(props: any) {
                 shippingMethod: props.shippingType,
                 deliveryHub:props.deliveryHub,
                 code:props.code,
-                subtotal: context.state.subTotal,
-                total: Number(context.state.subTotal)+Number(props.shippingCost),
+                subtotal: props.code!==''||!isSale?context.state.subTotal:(Number(context.state.subTotal)*0.9).toFixed(2),
+                total: props.code!==''||!isSale?Number(context.state.subTotal)+Number(props.shippingCost):(Number(context.state.subTotal)*0.9).toFixed(2)+Number(props.shippingCost),
                 status: "INITIATED",
                 error: 'None',
                 paymentIntentId: props.paymentIntent.id,
@@ -410,7 +414,7 @@ export default function CheckoutForm(props: any) {
                             <div id="guestEmailAddress"></div>:
                             null
                         }
-                        <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toFixed(2).toString()}</span></p>
+                        <p>Subtotal: £<span id="subTotal">{!isSale?context.state.subTotal.toFixed(2).toString():(Number(context.state.subTotal)*0.9).toFixed(2).toString()}</span></p>
                         <p>Shipping: £<span id="shipping">{props.shippingCost.toFixed(2)}</span></p>
                         {
                             discountTotal?
@@ -418,7 +422,7 @@ export default function CheckoutForm(props: any) {
                             null
 
                         }
-                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:context.state.subTotal)+Number(props.shippingCost)).toFixed(2).toString()}</span></p>
+                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:!isSale?context.state.subTotal:(Number(context.state.subTotal)*0.9).toFixed(2))+Number(props.shippingCost)).toFixed(2).toString()}</span></p>
 
                     </div>
                 }

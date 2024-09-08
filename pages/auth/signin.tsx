@@ -1,4 +1,4 @@
-import {useState,FormEvent} from 'react';
+import {useState,FormEvent,useContext} from 'react';
 import {signIn,getCsrfToken} from 'next-auth/react';
 import {useRouter}from 'next/router'
 import Link from 'next/link'
@@ -6,7 +6,11 @@ import Head from 'next/head';
 import {Metadata} from '../../utils/metadata/metadata'
 import styles from '../../styles/Components/Form.module.css'
 import FormComponent from '../../components/form-component';
+import { destroyCookie } from 'nookies';
+import { CartContext } from '../../context/cart';
 export default function SignIn({setComponentLoading}:any){
+
+    const context = useContext(CartContext);
     const router = useRouter()
     const [username,setUsername] =useState('');
     const [usernameVal,setUsernameVal] =useState<boolean|null>(null);
@@ -28,8 +32,11 @@ export default function SignIn({setComponentLoading}:any){
                 setMessage(res.error)
             }
             else{
-                setSuccess("Sucess!")
-                return router.push('/')
+                destroyCookie({}, "checkoutDetails", {
+                    path: '/checkout'
+                })
+                setSuccess("Success!")
+                window.location.href='/'
     
             }
 
