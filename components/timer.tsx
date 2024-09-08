@@ -11,7 +11,7 @@ export default function Timer(props:any){
         if(newTimeDifference>0){
             let timeLeft={
                 days:Math.floor(newTimeDifference/(24*60*60*1000)),
-                hours:Math.floor((newTimeDifference/(1000*60*60))%24),
+                hours:Math.floor((newTimeDifference/(1000*60*60))%24)-1,
                 minutes:Math.floor((newTimeDifference/(1000*60))%60),
                 seconds:Math.floor((newTimeDifference/(1000))%60),
             }
