@@ -7,6 +7,7 @@ import {useContext,useState,useEffect} from 'react';
 import {CartContext} from '../context/cart'
 import styles from '../styles/Components/Header.module.css'
 import BreadCrumbs from './breadcrumbs'
+import { destroyCookie } from 'nookies';
 export default function Header(){
     const {data:session,status} = useSession()
     const [mobileMenuOpen,setMobileMenuOpen]=useState(false);
@@ -69,6 +70,9 @@ export default function Header(){
                                 <>
                                     <Link href="/api/auth/signout" passHref replace><span  id="signOut"className={styles["acc-link"]} onClick={e=>{
                                         e.preventDefault()
+                                        destroyCookie({}, "checkoutDetails", {
+                                            path: '/checkout'
+                                        })
                                         signOut()
                                     }}>Sign Out</span></Link>
                                     <Link id="myAccount"href="/myaccount" passHref replace><span className={router.pathname.includes("myaccount")?styles["acc-link"]+ " "+styles["active-link"]:styles["acc-link"]}>My Account</span></Link>

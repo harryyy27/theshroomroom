@@ -32,7 +32,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                         const error= new Error('This user was not found')
                         return res.status(500).json({success:false,error:error.toString()})
                     }
-                    console.log(body)
                     await User().findOneAndUpdate({username:body.email},{updates:body.subscribe})
                     await receiveUpdatesHandler(body.email,user,process.env.WEBSITE_NAME,companyEmail)
             }

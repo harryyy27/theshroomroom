@@ -6,7 +6,7 @@ import discountLogic from '../../utils/discountLogic'
 import {parseCookies, setCookie,destroyCookie} from 'nookies'
 import { Product } from '../../utils/types'
 import { Discounts } from '../../utils/schema';
-
+import saleDates from '../../utils/saleDates/saleDates';
 import { v4 as uuidv4 } from 'uuid';
 async function getPaymentIntentSubscription(sesh:any,stripe:any,Cart:any,shippingCost:number,ctx:any,start:any){
     var stripeCustomerId= sesh?.user.stripeCustomerId||undefined;
@@ -170,8 +170,13 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     },0)
                 }
                 var discountFailed=false;
+                const todayDate=Date.now()
                 if(discount?.codesAvailable>=1){
                     total=discountLogic[codeName as string].newTotal(total)
+                }
+                else if(+new Date(saleDates.countdownDate)-todayDate<0 && +new Date(saleDates.saleEndDate)-todayDate>0){
+                    (total*=0.9).toFixed(2)
+                    discountFailed=true
                 }
                 else{
                     discountFailed=true

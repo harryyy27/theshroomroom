@@ -183,6 +183,9 @@
 .sales-title {
   color: var(--sec)
 }
+.sales-h2 {
+  text-align:center
+}
 @media(max-width:1024px){
   .hero-sub-heading {
     display:none

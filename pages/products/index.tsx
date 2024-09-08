@@ -5,6 +5,7 @@ import {CartContext} from '../../context/cart';
 import {imageMap} from '../../utils/imageMap/imageMap'
 import Head from 'next/head';
 import {Metadata} from '../../utils/metadata/metadata'
+import saleDates from '../../utils/saleDates/saleDates';
 interface ProductInterface{
     _id:String;
     name:String;
@@ -16,10 +17,15 @@ interface ProductInterface{
 }
 export default function Product(props:{mushrooms:ProductInterface[]}){
     const [products,setProducts]=useState<ProductInterface[]>([])
+    const [isSale,setIsSale]=useState(false);
     const [filteredProducts,setFilteredProducts]=useState<ProductInterface[]>([])
     useEffect(()=>{
         setProducts(props.mushrooms)
         setFilteredProducts(products)
+        const todayDate=Date.now()
+        if(+new Date(saleDates.countdownDate)-todayDate<0 && +new Date(saleDates.saleEndDate)-todayDate>0){
+            setIsSale(true)
+        }
     },[products,props.mushrooms])
     const context=useContext(CartContext)
     return(
@@ -69,7 +75,7 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
                             <h2 className="new">NEW!</h2>:
                             null
                         }
-                            <p className="product-price">£{Number(price).toFixed(2)}</p>
+                            <p className="product-price">{!isSale?<span>£{Number(price).toFixed(2)}</span>:<><span style={{textDecoration:"line-through"}}>£{Number(price).toFixed(2)}</span><span style={{marginLeft:"0.25rem"}}>£{Number(price*0.9).toFixed(2)}</span></>}</p>
                         {/* <select className="product-quantity" id={`quantity${idx}`}name={"quantity"} >
                             {
                                 [1,2,3,4,5,6,7,8,9,10].map((el:Number,idxSelect)=>{
