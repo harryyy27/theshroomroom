@@ -274,7 +274,7 @@ export default function ProductDetails(props:any){
                     }
                     
                 </div>
-                <p id="productPrice"> Price: £{price?qty*Number(price):null}</p>
+                <p id="productPrice"> Price: £{price?(qty*Number(price)).toFixed(2):null}</p>
                 <div>
                     <label htmlFor={"productQuantity"}>Qty: </label>
                     <input id={`productQuantity`} className="form-input"name={"quantity"} type="number" value={qty} onChange={(e)=>{

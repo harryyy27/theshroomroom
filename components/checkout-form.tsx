@@ -410,15 +410,15 @@ export default function CheckoutForm(props: any) {
                             <div id="guestEmailAddress"></div>:
                             null
                         }
-                        <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toString()}</span></p>
-                        <p>Shipping: £<span id="shipping">{props.shippingCost}</span></p>
+                        <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toFixed(2).toString()}</span></p>
+                        <p>Shipping: £<span id="shipping">{props.shippingCost.toFixed(2)}</span></p>
                         {
                             discountTotal?
                             <p>Discount applied: <span id="discount">{discountDescription}</span></p>:
                             null
 
                         }
-                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:context.state.subTotal)+Number(props.shippingCost)).toString()}</span></p>
+                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:context.state.subTotal)+Number(props.shippingCost)).toFixed(2).toString()}</span></p>
 
                     </div>
                 }

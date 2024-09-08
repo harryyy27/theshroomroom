@@ -69,7 +69,7 @@ export default function Product(props:{mushrooms:ProductInterface[]}){
                             <h2 className="new">NEW!</h2>:
                             null
                         }
-                            <p className="product-price">£{price}</p>
+                            <p className="product-price">£{Number(price).toFixed(2)}</p>
                         {/* <select className="product-quantity" id={`quantity${idx}`}name={"quantity"} >
                             {
                                 [1,2,3,4,5,6,7,8,9,10].map((el:Number,idxSelect)=>{
