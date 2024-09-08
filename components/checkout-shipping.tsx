@@ -230,15 +230,15 @@ export default function CheckoutForm(props: any) {
                                         context.state.cart.items.map((el:any,idx:number)=><li key={idx}className={"product-list-element"}>{el.name} {el.size} x {el.quantity}</li>)
                                     }
                         </ul>
-                        <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toString()}</span></p>
-                        <p>Shipping: £<span id="shipping">{props.shippingCost}</span></p>
+                        <p>Subtotal: £<span id="subTotal">{context.state.subTotal.toFixed(2).toString()}</span></p>
+                        <p>Shipping: £<span id="shipping">{props.shippingCost.toFixed(2)}</span></p>
                         {
                             discountTotal?
                             <p>Discount applied: {discountDescription}</p>:
                             null
 
                         }
-                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:context.state.subTotal)+Number(props.shippingCost)).toString()}</span></p>
+                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal?.toFixed(2)!==null?discountTotal:context.state.subTotal.toFixed(2))+Number(props.shippingCost)).toFixed(2).toString()}</span></p>
 
                     </div>
                 }
