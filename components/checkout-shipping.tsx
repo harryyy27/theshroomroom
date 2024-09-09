@@ -232,7 +232,7 @@ export default function CheckoutForm(props: any) {
                         </ul>
                         <p>Subtotal: £<span id="subTotal">{!isSale?context.state.subTotal.toFixed(2).toString():(Number(context.state.subTotal)*0.9).toFixed(2).toString()}</span></p>
                         {
-                            props.shippingCost!==null?
+                            props.shippingCost?
                             <p>Shipping: £<span id="shipping">{Number(props.shippingCost).toFixed(2)}</span></p>
                             :null
 
@@ -244,7 +244,7 @@ export default function CheckoutForm(props: any) {
 
                         }
                         {
-                            props.shippingCost!==null&&Number(context.state.subTotal)>0?
+                            props.shippingCost&&Number(context.state.subTotal)>0?
 <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:!isSale?context.state.subTotal.toFixed(2):(Number(context.state.subTotal)*0.9))+Number(props.shippingCost)).toFixed(2).toString()}</span></p>:
 null
                         }
