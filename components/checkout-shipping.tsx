@@ -233,7 +233,7 @@ export default function CheckoutForm(props: any) {
                         <p>Subtotal: £<span id="subTotal">{!isSale?context.state.subTotal.toFixed(2).toString():(Number(context.state.subTotal)*0.9).toFixed(2).toString()}</span></p>
                         {
                             props.shippingCost!==null?
-                            <p>Shipping: £<span id="shipping">{props.shippingCost.toFixed(2)}</span></p>
+                            <p>Shipping: £<span id="shipping">{Number(props.shippingCost).toFixed(2)}</span></p>
                             :null
 
                         }
