@@ -51,15 +51,20 @@ export default function Contact(){
                     })
                 })
                 const res = await resJson.json()
+                setFormSubmitted(false)
                 if(res["success"]===false){
                     throw new Error('We are sorry but your email failed to send, we are working to resolve this')
                 }
                 else{
-                    setFormSubmitted(false)
+                    setContent('')
                     setMsg('Thank you for your message. We will respond as soon as possible!')
+                    setTimeout(()=>{
+                        setMsg('')
+                    },3000)
                 }
             }
             else {
+                setFormSubmitted(false)
                 throw new Error('Please fill the form in correctly')
             }
         }
@@ -121,7 +126,7 @@ export default function Contact(){
             }
             {
                 msg?
-                <p>{msg}</p>:
+                <p style={{color:"green"}}>{msg}</p>:
                 null
             }
         </form>

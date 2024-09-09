@@ -20,36 +20,56 @@ export default function Timer(props:any){
     }
     useEffect(()=>{
         const timer = setTimeout(() => {
+            const secondElement = document.querySelector('.color-animate')
+            if(secondElement){
+                secondElement.classList.remove('color-animate')
+            }
             const date = props.countdownDate
             const timeLeft=calculateTimeLeft(date);
             setDays(timeLeft?timeLeft.days<10?'0'+timeLeft?.days as string:String(timeLeft?.days):'00')
             setHours(timeLeft?timeLeft.hours<10?'0'+timeLeft?.hours as string:String(timeLeft?.hours):'00')
             setMinutes(timeLeft?timeLeft.minutes<10?'0'+timeLeft?.minutes as string:String(timeLeft?.minutes):'00')
             setSeconds(timeLeft?timeLeft.seconds<10?'0'+timeLeft?.seconds as string:String(timeLeft?.seconds):'00')
+
+            if(secondElement){
+                secondElement.classList.add('color-animate')
+            }
             }, 1000);
         return () => clearTimeout(timer);
     },[seconds])
     
 return(
+    <>
+
+    <div>
+        <h2 className="timer-heading">Time Remaining</h2>
+    </div>
     <div className="timer-wrapper">
         <div className="timer-divider">
-        <span className="timer-header days">D</span>
-        <span className="timer-interval days">{days}:</span>
+        <span className="timer-interval-wrapper"><span className="timer-interval days">{days}</span><span className="timer-colon">:</span></span>
+        <span className="timer-header days">Days</span>
         </div>
         <div className="timer-divider">
-        <span className="timer-header hours">H</span>
-        <span className="timer-interval hours">{hours}:</span>
+        <span className="timer-interval-wrapper"><span className="timer-interval hours">{hours}</span><span className="timer-colon">:</span></span>
+        <span className="timer-header hours">Hours</span>
         </div>
         <div className="timer-divider">
-        <span className="timer-header minutes">M</span>
-        <span className="timer-interval minutes">{minutes}:</span>
+        <span className="timer-interval-wrapper">
+            <span className="timer-interval minutes">{minutes}</span>
+            <span className="timer-colon">:</span>
+        </span>
+            <span className="timer-header minutes">Minutes</span>
         </div>
         <div className="timer-divider">
-        <span className="timer-header seconds">S</span>
-        <span className="timer-interval seconds color-animate">{seconds}</span>
+            <span className="timer-interval-wrapper">
+                <span className="timer-interval seconds color-animate">{seconds}</span>
+
+            </span>
+        <span className="timer-header seconds">Seconds</span>
         </div>
         
     </div>
+    </>
 )
 
 }
