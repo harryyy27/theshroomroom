@@ -270,7 +270,7 @@ export default function CheckoutForm(props: any) {
                     phoneNumber: props.billingDelivery?props.dPhoneNumber.trim():props.bPhoneNumber.trim(),
                 },
                 products: context.state.cart,
-                shippingCost: props.shippingCost,
+                shippingCost: Number(props.shippingCost),
                 shippingMethod: props.shippingType,
                 deliveryHub:props.deliveryHub,
                 code:props.code,
@@ -415,14 +415,18 @@ export default function CheckoutForm(props: any) {
                             null
                         }
                         <p>Subtotal: £<span id="subTotal">{!isSale?context.state.subTotal.toFixed(2).toString():(Number(context.state.subTotal)*0.9).toFixed(2).toString()}</span></p>
-                        <p>Shipping: £<span id="shipping">{props.shippingCost.toFixed(2)}</span></p>
+                        <p>Shipping: £<span id="shipping">{Number(props.shippingCost).toFixed(2)}</span></p>
                         {
                             discountTotal?
                             <p>Discount applied: <span id="discount">{discountDescription}</span></p>:
                             null
 
                         }
+                        {
+                            props.shippingCost?
                         <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:!isSale?context.state.subTotal:(Number(context.state.subTotal)*0.9).toFixed(2))+Number(props.shippingCost)).toFixed(2).toString()}</span></p>
+                            :null
+                        }
 
                     </div>
                 }
