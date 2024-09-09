@@ -172,7 +172,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 var discountFailed=false;
                 const todayDate=Date.now()
                 if(discount?.codesAvailable>=1){
-                    total=discountLogic[codeName as string].newTotal(total)
+                    total=discountLogic[codeName as string].newTotal(total).toFixed(2)
                 }
                 else if(+new Date(saleDates.countdownDate)-todayDate<0 && +new Date(saleDates.saleEndDate)-todayDate>0){
                     (total*=0.9).toFixed(2)
