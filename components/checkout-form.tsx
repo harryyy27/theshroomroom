@@ -423,7 +423,7 @@ export default function CheckoutForm(props: any) {
 
                         }
                         {
-                            props.shippingCost?
+                            props.shippingCost!==null?
                         <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:!isSale?context.state.subTotal:(Number(context.state.subTotal)*0.9).toFixed(2))+Number(props.shippingCost)).toFixed(2).toString()}</span></p>
                             :null
                         }

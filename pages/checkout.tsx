@@ -218,10 +218,12 @@ export default function Checkout(props:any){
                         }
                         if (userDAddress.postcode && userDAddress.postcode.length > 0) {
                             if(localPostcodeValidate(userDAddress.postcode,localPostcodes)){
+                                console.log('local')
                                 setDPostcodeVal(true)
                                 setLocal(true)
                             }
                             else {
+                                console.log('not local')
                                 setDPostcodeVal(false)
                             }
                             
