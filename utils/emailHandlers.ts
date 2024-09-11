@@ -187,14 +187,8 @@ export async function receiveUpdatesHandler(email:string,user:any,websiteName:st
 
       }
       if(+saleDates.saleEndDate-todayDate>0 && active_code!==undefined&&description!==undefined){
-            if(user){
               content =receiveUpdateString(user,email,discountCodeHtmlTemplate(active_code))
 
-            }
-            else {
-              content =receiveUpdateString(user,email,discountSignUpInvitationHtmlTemplate(description,websiteName as string))
-    
-            }
             
             //25%
             //
