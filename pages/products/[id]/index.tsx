@@ -280,7 +280,7 @@ export default function ProductDetails(props:any){
                     }
                     
                 </div>
-                <p id="productPrice"> Price: {!isSale?<span>£{Number(price).toFixed(2)}</span>:<><span style={{textDecoration:"line-through"}}>£{Number(price).toFixed(2)}</span><span style={{marginLeft:"0.25rem"}}>£{(Number(price)*0.9).toFixed(2)}</span></>}</p>
+                <p id="productPrice"> Price: {!isSale?<span>£{Number(price).toFixed(2)}</span>:<><span style={{textDecoration:"line-through"}}>£{Number(price).toFixed(2)}</span><span style={{marginLeft:"0.25rem",color:"red",fontWeight:"700"}}>£{(Number(price)*0.9).toFixed(2)}</span></>}</p>
                 <div>
                     <label htmlFor={"productQuantity"}>Qty: </label>
                     <input id={`productQuantity`} className="form-input"name={"quantity"} type="number" value={qty} onChange={(e)=>{

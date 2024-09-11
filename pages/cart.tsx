@@ -42,7 +42,7 @@ export default function Cart({setComponentLoading}:any){
                     <>
                     <h1 className="main-heading center">Cart</h1>
                         <div className="cart-summary">
-                            <p><b>Sub-total: </b>{(!isSale?<span>£{String(Number(context.state.subTotal).toFixed(2))}</span>:<><span style={{textDecoration:"line-through"}}>£{String(Number(context.state.subTotal).toFixed(2))}</span><span style={{marginLeft:"0.25rem"}}>£{String((Number(context.state.subTotal)*0.9).toFixed(2))}</span></>)}</p>
+                            <p><b>Sub-total: </b>{(!isSale?<span>£{String(Number(context.state.subTotal).toFixed(2))}</span>:<><span style={{textDecoration:"line-through"}}>£{String(Number(context.state.subTotal).toFixed(2))}</span><span style={{marginLeft:"0.25rem",color:"red",fontWeight:"700"}}>£{String((Number(context.state.subTotal)*0.9).toFixed(2))}</span></>)}</p>
                             <button disabled={!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)} className={`cta ${!context.state.cart.items.every((el:any)=>el.stockAvailable >= el.quantity)?"button-disabled":""}`}><Link  href="/checkout"><span id="checkoutSide">One Time Purchase</span></Link></button>
                             {
                                 user?

@@ -64,6 +64,7 @@ export default function CheckoutForm(props: any) {
             setIsSale(true)
         }
         if(props.local){
+            console.log('set')
             props.setShippingCost(0)
             props.setShippingCostVal(true)
             props.setShippingType("free")
@@ -71,6 +72,7 @@ export default function CheckoutForm(props: any) {
 
         }
         else if(context.state.cart.items.every((el:any)=>!el.fresh)){
+            console.log('not set')
             props.setShippingCost(5)
             props.setShippingCostVal(true)
             props.setShippingType("standard")
@@ -79,7 +81,7 @@ export default function CheckoutForm(props: any) {
         else{
 
         }
-    },[])
+    },[props.shippingCost])
     const handleUnavailableItems = () => {
         context.state.cart.items.forEach((el)=>{
             if(el.stockAvailable<el.quantity &&context.saveCart){
@@ -232,7 +234,7 @@ export default function CheckoutForm(props: any) {
                         </ul>
                         <p>Subtotal: £<span id="subTotal">{!isSale?context.state.subTotal.toFixed(2).toString():(Number(context.state.subTotal)*0.9).toFixed(2).toString()}</span></p>
                         {
-                            props.shippingCost?
+                            props.shippingCost!==null?
                             <p>Shipping: £<span id="shipping">{Number(props.shippingCost).toFixed(2)}</span></p>
                             :null
 
@@ -244,7 +246,7 @@ export default function CheckoutForm(props: any) {
 
                         }
                         {
-                            props.shippingCost&&Number(context.state.subTotal)>0?
+                            props.shippingCost!==null&&Number(context.state.subTotal)>0?
 <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:!isSale?context.state.subTotal.toFixed(2):(Number(context.state.subTotal)*0.9))+Number(props.shippingCost)).toFixed(2).toString()}</span></p>:
 null
                         }
