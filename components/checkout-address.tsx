@@ -66,14 +66,14 @@ export default function CheckoutForm(props: any) {
     //     }
         
     // }
-    const localPostcodeValidate=async(formPostcode:string,validPostcodesArr:any)=>{
+    const localPostcodeValidate=async(formPostcode:string,validPostcodesArr:any,setCustomVal:any)=>{
         const keys = Object.keys(validPostcodesArr)
         let validPostcode=false
         let postcodeArea=''
         const containsFresh = !context.state.cart.items.every((el:any)=>el.fresh===false)
         keys.forEach((key:string)=>{
             if(!validPostcodesArr[key as string].every((el:string)=>{
-                return !formPostcode.toLowerCase().trim().startsWith(el.toLowerCase())}
+                return !formPostcode.toLowerCase().trim().split(' ').join('').startsWith(el.toLowerCase())}
             )){
                 validPostcode=true
                 postcodeArea=key
@@ -81,6 +81,9 @@ export default function CheckoutForm(props: any) {
         })
         if(containsFresh===false&&formPostcode.length>0){
             validPostcode=true
+        }
+        else if(containsFresh===true&&postcodeArea===''){
+            setCustomVal('We do not currently deliver fresh mushrooms to this postcode, use the link below to see postcodes we currently deliver to')
         }
         if(validPostcode&&postcodeArea!==''){
                     props.setLocal(true)

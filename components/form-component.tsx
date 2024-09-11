@@ -1,6 +1,7 @@
 import styles from '../styles/Components/Form.module.css'
-
+import {useState} from 'react';
 export default function FormComponent(props:any){
+    const [customVal,setCustomVal]=useState<string | null>(null)
     return(
         <div className={styles["form-element-wrapper"]}>
                     <label className={styles["form-label"]} htmlFor={props.variableName+(props.page?props.page:'')}>{props.labelName}</label>
@@ -8,7 +9,7 @@ export default function FormComponent(props:any){
                         onBlur={async(e)=>{
                             if(props.required){
                                 if(props.callback){
-                                    if(await props.callback(e.target.value,props.params)){
+                                    if(await props.callback(e.target.value,props.params,setCustomVal)){
                                         if(e.target.checkValidity()){
                                             props.setVariableVal(true)
                                         }
@@ -39,7 +40,7 @@ export default function FormComponent(props:any){
                             if(props.required&&typeof props.variableVal==="boolean"){
 
                                 if(props.callback){
-                                    if(await props.callback(e.target.value,props.params)){
+                                    if(await props.callback(e.target.value,props.params,setCustomVal)){
                                         if(e.target.checkValidity()){
                                             props.setVariableVal(true)
                                         }
@@ -66,7 +67,7 @@ export default function FormComponent(props:any){
                     
                 {
                     props.variableVal===false?
-                    <p className={"error-text"}>{`Please enter valid ${props.labelName.toLowerCase()}`+`${props.alternative?' or '+props.alternative:''}`}</p>
+                    <p className={"error-text"}>{customVal!==null? customVal :`Please enter valid ${props.labelName.toLowerCase()}`+`${props.alternative?' or '+props.alternative:''}`}</p>
                     :
                     null
 

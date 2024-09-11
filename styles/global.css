@@ -297,8 +297,13 @@ colour scheme - turkey tail */
 }
 
 .cart-btn{
-  background-color:var(--sec);
-  color:var(--ter2);
+  border:none;
+  width:32px;
+  height:32px;
+  padding:0;
+  background:none;
+  position:relative;
+  cursor: pointer;
 }
 .plp-image-wrapper {
   position:relative;
@@ -404,9 +409,14 @@ colour scheme - turkey tail */
 .social-media-bar {
   z-index:1;
   position:absolute;
-  bottom:-1rem;
+  bottom:-2rem;
   left:50%;
   transform:translateX(-50%)
+}
+
+.social-media-icon {
+  width:1.5rem;
+  margin:0.25rem;
 }
 .image-section {
   height:auto;
@@ -726,6 +736,10 @@ html {
 @media(min-width:481px){
   html {
     font-size: 16px;
+  }
+  .cart-btn {
+  
+  left:1rem;
   }
   .cart-wrapper {
     display:grid;
