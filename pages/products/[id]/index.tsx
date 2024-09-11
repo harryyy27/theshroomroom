@@ -206,13 +206,19 @@ export default function ProductDetails(props:any){
                         <FacebookShareButton
                         url={url+props.resolvedUrl}
                     >
-                        <FacebookIcon size={32} round/>
+                        <FacebookIcon 
+
+                        className="social-media-icon"
+                        size={32} round/>
                     </FacebookShareButton>
                     <TwitterShareButton
                         url={url+props.resolvedUrl}
                     >
                         <TwitterIcon
-                        size={32} round/>
+
+                        className="social-media-icon"
+                        size={32} 
+                        round/>
                     </TwitterShareButton>
                     <PinterestShareButton
                         description={""}
@@ -220,12 +226,18 @@ export default function ProductDetails(props:any){
                         url={url+props.resolvedUrl}
                     >
                         <PinterestIcon
+
+                        className="social-media-icon"
                             size={32} round/>
 
                     </PinterestShareButton>
                      <WhatsappShareButton
                         url={url+props.resolvedUrl}>
-                            <WhatsappIcon size={32} round/>
+                            <WhatsappIcon 
+                                className="social-media-icon"
+                                size={32} 
+                                round
+                            />
                         </WhatsappShareButton>
                         </>
                         :

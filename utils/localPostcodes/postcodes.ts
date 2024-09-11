@@ -12,8 +12,11 @@ const southEast:string[]= [
     "SE26",
     "SE6",
 ]
-
+const exemption:string[]=[
+    "DA162ET"
+]
 export default {
     Bromley:bromley,
-    South_East:southEast
+    South_East:southEast,
+    exemption:exemption
 }

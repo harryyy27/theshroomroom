@@ -198,7 +198,7 @@ export default function CheckoutForm(props: any) {
                 </div>
                 {
                     !context.state.cart.items.every((el:any)=>!el.fresh)?
-                        <p>We do not currently deliver fresh mushrooms via post</p>
+                        <p>We currently only deliver fresh mushrooms locally</p>
                         :null
                 }
                 </fieldset>
