@@ -297,8 +297,13 @@ colour scheme - turkey tail */
 }
 
 .cart-btn{
-  background-color:var(--sec);
-  color:var(--ter2);
+  border:none;
+  width:32px;
+  height:32px;
+  padding:0;
+  background:none;
+  position:relative;
+  cursor: pointer;
 }
 .plp-image-wrapper {
   position:relative;
@@ -731,6 +736,10 @@ html {
 @media(min-width:481px){
   html {
     font-size: 16px;
+  }
+  .cart-btn {
+  
+  left:1rem;
   }
   .cart-wrapper {
     display:grid;

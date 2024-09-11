@@ -86,7 +86,7 @@ export default function CartElement({_id,idx,name,quantity,price,fresh,size,stri
                 }
                 
             }
-            }>Delete</button>
+            }><Image width="32" height="32"alt="remove from cart" src="/bin.png"/></button>
             </div>
             {
                 stockAvailable===0?
