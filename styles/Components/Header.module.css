@@ -4,7 +4,7 @@
     z-index:1000000;
     width:100vw;
     border-bottom: 1px solid var(--ter2);
-    height:4.5rem;
+    height:4.75rem;
     
 }
 .header-stock-message {
@@ -298,7 +298,7 @@
         position:absolute;
         right: 1rem;
         z-index:10000;
-        top:0rem;
+        top:0.625rem;
     }
     .burger-menu-element{
         margin:1.425rem 0rem;;

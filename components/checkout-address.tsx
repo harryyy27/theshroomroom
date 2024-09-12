@@ -14,6 +14,7 @@ import { destroyCookie } from 'nookies'
 import { CartContext } from '../context/cart';
 import FormComponent from './form-component';
 import postcodes from '../utils/zedPostcodes/postcodes'
+import { standardShippingPostcodes } from "../utils/standardPostcodes/postcodes"
 import localPostcodes from '../utils/localPostcodes/postcodes'
 export interface Product {
     _id: String,
@@ -89,7 +90,7 @@ export default function CheckoutForm(props: any) {
                     props.setLocal(true)
                     return true
         }
-        else if(validPostcode){
+        else if(validPostcode||!standardShippingPostcodes.every((el:any)=>!formPostcode.toLowerCase().trim().split(' ').join('').startsWith(el.toLowerCase()))){
             
                     props.setLocal(false)
                     return true
