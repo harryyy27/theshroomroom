@@ -28,13 +28,19 @@ export default function Delivery(){
                     Object.keys(localPostcodes).map((el:any,idx:number)=>{
                         return(
                             <li key={idx}>
+                                {
+                                el!=="exemption"?
+                                <>
                                 <h2>{el.split('_').join(' ')}</h2>
                                 {
-                                    localPostcodes[el as keyof typeof localPostcodes].map((elPost:any,idx:any)=>{
+                                localPostcodes[el as keyof typeof localPostcodes].map((elPost:any,idx:any)=>{
                                         return(
                                             <span key={idx}>{elPost}  </span>
                                         )
                                     })
+                                }
+                                    </>:
+                                    null
                                 }
                             </li>
                         )
