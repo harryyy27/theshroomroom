@@ -9,6 +9,7 @@ import { getSession } from 'next-auth/react';
 import { getServerSession } from 'next-auth';
 import {parseCookies, setCookie,destroyCookie} from 'nookies'
 import {useEffect,useState,useContext} from 'react'
+import { standardShippingPostcodes } from '../utils/standardPostcodes/postcodes';
 const stripePromise = loadStripe(
     process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
   );
@@ -132,7 +133,7 @@ export default function Checkout(props:any){
                     setLocal(true)
                     return true
         }
-        else if(validPostcode){
+        else if(validPostcode||!standardShippingPostcodes.every((el:any)=>!formPostcode.toLowerCase().trim().split(' ').join('').startsWith(el.toLowerCase()))){
             
                     setLocal(false)
                     return true
