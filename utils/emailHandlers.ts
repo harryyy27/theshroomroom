@@ -56,7 +56,6 @@ function template(content:string,websiteName:string|undefined){
                 </tbody>
               </table>
             </td>
-            <td style="width:150px;">&nbsp;</td>
           </tr>
         </tbody>
       </table>
@@ -96,10 +95,6 @@ function discountCodeHtmlTemplate(discountCode:string) {
               <p>Your discount code is ${discountCode}</p>
               <p>Happy spending!</p>
             </td>
-          </tr>
-          <tr>
-
-            <td style="width:150px;">&nbsp;</td>
           </tr>
         </tbody>
       </table>
