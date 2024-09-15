@@ -9,6 +9,7 @@ import Link from 'next/link'
 import FormComponent from "./form-component"
 import discountLogic from '../utils/discountLogic'
 import { data } from "cypress/types/jquery"
+import { standardShippingPostcodes } from "../utils/standardPostcodes/postcodes"
 import saleDates from "../utils/saleDates/saleDates"
 export default function CheckoutForm(props: any) {
 
@@ -71,7 +72,7 @@ export default function CheckoutForm(props: any) {
             props.setShippingTypeVal(true)
 
         }
-        else if(context.state.cart.items.every((el:any)=>!el.fresh)){
+        else if(context.state.cart.items.every((el:any)=>!el.fresh)||!standardShippingPostcodes.every((el:any)=>!props.dPostcode.toLowerCase().trim().split(' ').join('').startsWith(el.toLowerCase()))){
             console.log('not set')
             props.setShippingCost(5)
             props.setShippingCostVal(true)
