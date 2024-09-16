@@ -78,6 +78,11 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
 
             }
         }
+        else if(req.method==="PUT"){
+            const body = JSON.parse(req.body)
+            await Discounts().findOneAndUpdate({_id:body.discountId},{$inc:{codes_available:1},$pull:{users:{email:body.email}}})
+            return res.status(200).json({success:true})
+        }
         
         else {
             return res.status(404).json({success:false,error:"Unknown method"})
