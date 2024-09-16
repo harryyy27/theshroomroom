@@ -295,6 +295,7 @@ export default function CheckoutForm(props: any) {
             const order = await eventInitiated.json()
             if (order.success === false) {
                 if(order.transactionFailure===false){
+                    console.log('oioi')
                     await fetch('/api/products',{
                         method:"PUT",
                         headers:{
@@ -302,6 +303,15 @@ export default function CheckoutForm(props: any) {
                         },
                         body: JSON.stringify({products: context.state.cart})
                     })
+                    if(discountTotal!==null){
+                        await fetch('/api/discount-code',{
+                            method:"PUT",
+                            headers:{
+                                csrftoken: await getCsrfToken() as string
+                            },
+                            body: JSON.stringify({discountId: props.discountId,email:emailAddress})
+                        })
+                    }
                 }
                 throw new Error("Order failed, no order received")
             }
