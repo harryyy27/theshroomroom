@@ -402,7 +402,11 @@ const OrderSchema=new Schema({
         required:false
     },
     code:{
-        Type:String,
+        type:String,
+        required:false
+    },
+    sale:{
+        type:Boolean,
         required:false
     }
 })

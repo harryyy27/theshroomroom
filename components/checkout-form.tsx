@@ -81,7 +81,7 @@ export default function CheckoutForm(props: any) {
     const stripe = useStripe();
     const setComponentLoading = props.setComponentLoading;
     var elements:any= useElements();
-    async function handleCheckCode(){
+    function handleCheckCode(){
         if(props.discountFailed){
             setDiscountErr("This discount code is no longer available. Continue to pay at full price")
             props.setCode('')
@@ -101,7 +101,7 @@ export default function CheckoutForm(props: any) {
         async function initiate(){
             setSubscription(props.subscriptionId)
             if(props.code){
-               await handleCheckCode()
+               handleCheckCode()
     
             }
             if(props.user?.updates){
