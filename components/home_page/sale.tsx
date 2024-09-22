@@ -18,7 +18,7 @@ export default function Sale (props:any){
         }
     },[])
     return(
-        <section>
+        <section className="sale-container">
 
                 <div >{
                         preSale!==null? preSale?

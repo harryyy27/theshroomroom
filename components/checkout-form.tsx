@@ -275,7 +275,7 @@ export default function CheckoutForm(props: any) {
                 deliveryHub:props.deliveryHub,
                 code:props.code,
                 subtotal: props.code!==''||!isSale?context.state.subTotal:(Number(context.state.subTotal)*0.9).toFixed(2),
-                total: props.code!==''||!isSale?Number(context.state.subTotal)+Number(props.shippingCost):(Number(context.state.subTotal)*0.9).toFixed(2)+Number(props.shippingCost),
+                total: props.code!==''||!isSale?Number(context.state.subTotal)+Number(props.shippingCost):Number(((Number(context.state.subTotal)*0.9)+Number(props.shippingCost)).toFixed(2)),
                 status: "INITIATED",
                 error: 'None',
                 paymentIntentId: props.paymentIntent.id,
@@ -434,7 +434,7 @@ export default function CheckoutForm(props: any) {
                         }
                         {
                             props.shippingCost!==null?
-                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:!isSale?context.state.subTotal:(Number(context.state.subTotal)*0.9).toFixed(2))+Number(props.shippingCost)).toFixed(2).toString()}</span></p>
+                        <p>Total: £<span id="total" style={{"textDecoration":discountTotal?"lineThrough":"none"}}>{(Number(discountTotal!==null?discountTotal:!isSale?context.state.subTotal:(Number(context.state.subTotal)*0.9).toFixed(2))+Number(props.shippingCost)).toFixed(2)}</span></p>
                             :null
                         }
 
