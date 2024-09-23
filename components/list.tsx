@@ -38,7 +38,19 @@ export default function List(props:any){
                                         <h2 className="bullet-heading">{el.question}</h2>
                                         <div className="cross-container"></div>
                                     </div>
+                                    {
+                                        typeof el.answer==="string"?
+
                                     <p id={`para${index}`}className="bullet-para" aria-hidden={"true"}>{el.answer}</p>
+                                        :
+                                        <ul id={`para${index}`} className="bullet-para" aria-hidden={"true"}>
+                                            {
+
+                                            el.answer.map((elAns:string)=><li style={{"listStyle":"outside"}}>{elAns}</li>
+                                            )
+                                            }
+                                        </ul>
+                                    }
                                 </li>
                         )
                     })
