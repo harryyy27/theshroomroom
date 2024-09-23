@@ -46,7 +46,7 @@ export default function List(props:any){
                                         <ul id={`para${index}`} className="bullet-para" aria-hidden={"true"}>
                                             {
 
-                                            el.answer.map((elAns:string)=><li style={{"listStyle":"outside"}}>{elAns}</li>
+                                            el.answer.map((elAns:string,idx:number)=><li key={idx}style={{"listStyle":"outside"}}>{elAns}</li>
                                             )
                                             }
                                         </ul>
