@@ -9,6 +9,8 @@ import Link from 'next/link'
 import {getSession,getCsrfToken}from 'next-auth/react'
 import {notFound} from 'next/navigation';
 import saleDates from '../../../utils/saleDates/saleDates';
+import config from '../../../utils/product_info/config'
+import List from '../../../components/list'
 import {
 
   FacebookIcon,
@@ -46,6 +48,7 @@ export default function ProductDetails(props:any){
     const [productSizeList,setProductSizeList]=useState<string[]>([])
     const [drySizeList,setDrySizeList]=useState<string[]>([])
     const [name,setName]=useState('');
+    const [indexName,setIndexName]=useState('')
     const [description,setDescription]=useState('');
     const [imageUrl,setImageUrl]=useState('');
     const [type,setType]=useState('');
@@ -63,6 +66,9 @@ export default function ProductDetails(props:any){
     const [err,setErr]=useState('');
     const metaName=`Buy ${props.metaName} - UK grown mushrooms | Mega Mushrooms`
     useEffect(()=>{
+        console.log(config)
+        console.log(props.productDetails)
+        console.log(props.productDetails[0].name.toLowerCase().replace(/[\s]/gi,'_').replace(/[\']/gi,''))
         props.setComponentLoading(true)
         setImageUrl(props.urlArr[props.urlArr.length-1].replace(/[\-]/gi,'_').replace('\&apos','').toLowerCase());
         setUrl(props.websiteName)
@@ -130,6 +136,7 @@ export default function ProductDetails(props:any){
             }
             setProduct(productDetails)
             setName((props.freshUrl?"Fresh ":"Dried ")+productDetails[0].name);
+            setIndexName(props.productDetails[0].name.toLowerCase().replace(/[\s]/gi,'_').replace(/[\']/gi,''))
             setDescription(productDetails[0].description);
             setType(productDetails[0].type)
             props.setComponentLoading(false)
@@ -292,7 +299,7 @@ export default function ProductDetails(props:any){
                     }
                     
                 </div>
-                <p id="productPrice"> Price: {!isSale?<span>£{Number(price).toFixed(2)}</span>:<><span style={{textDecoration:"line-through"}}>£{Number(price).toFixed(2)}</span><span style={{marginLeft:"0.25rem",color:"red",fontWeight:"700"}}>£{(Number(price)*0.9).toFixed(2)}</span></>}</p>
+                <p id="productPrice"> Price: {!isSale?<span>£{Number(price).toFixed(2)}</span>:<><span style={{textDecoration:"line-through"}}>£{Number(price).toFixed(2)}</span><span style={{marginLeft:"0.25rem",color:"green",fontWeight:"700"}}>£{(Number(price)*0.9).toFixed(2)}</span></>}</p>
                 <div>
                     <label htmlFor={"productQuantity"}>Qty: </label>
                     <input id={`productQuantity`} className="form-input"name={"quantity"} type="number" value={qty} onChange={(e)=>{
@@ -364,6 +371,9 @@ export default function ProductDetails(props:any){
                         }
                             
                         }>Add to basket</button>
+                        {
+                            indexName!==''&&config?
+                <List config={config[`${indexName.toLowerCase().replace(/[\s]/gi,'_').replace(/[\']/gi,'').replace(/ground_/gi,'')}`]}/>:null}
             </section>
             
 

@@ -5,7 +5,9 @@ import Faq from '../components/home_page/faq';
 import Benefits from '../components/home_page/benefits';
 import Wholesale from '../components/home_page/wholesale';
 import Contact from '../components/home_page/contact';
-import Sale from '../components/home_page/sale'
+import Sale from '../components/home_page/sale';
+
+import config from '../components/home_page/config/faqConfig.js';
 // import Carousel from '../components/carousel';
 // import {CarouselHomeNewArrivals} from '../utils/carouselConfig/home.module'
 import {useState,useEffect} from 'react'
@@ -41,7 +43,7 @@ const Home: NextPage = (props:any) => {
       <Hero />
       <Wholesale />
       <Benefits />
-      <Faq />
+      <Faq config={config} />
       <Contact/>
     </>
   )

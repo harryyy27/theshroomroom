@@ -1,4 +1,3 @@
-import homeStyles from '../../styles/Pages/Home.module.css'
 import Image from 'next/image'
 function keyHandler(el:HTMLElement,key:string){
     if(key==="Enter"){
@@ -24,22 +23,34 @@ function toggleQuestion(index:number){
         paragraphs[index].setAttribute("aria-hidden","true")
     }
 }
-export default function Faq(props:any){
+export default function List(props:any){
     return(
-        <section className={homeStyles["banner-container"]}>
-            <div className={homeStyles["faq-wrapper"]}>
-            <h1 className={homeStyles["home-section-heading"]}>FAQs</h1>
-            <ul>
+        <section>
+            <div className={"faq-wrapper"}>
+            <ul className="list-wrapper">
                 {
                     props.config.map((el:any,index:number)=>{
                         return(
-                                <li key={index} className={homeStyles["question"]} >
+                                <li key={index} className={"question"} >
                                     <div className="bullet-wrapper" onClick={(e)=>toggleQuestion(index)} onKeyDown={(e)=>keyHandler(e.target as HTMLElement,e.key)} aria-expanded={"false"} aria-controls={`para${index}`} role="button" tabIndex={0}>
-                                        <Image className="mush-bullet"src="/bullet-ter2.jpg" alt="bullet point" width="50" height="50" />
+
+                                        {/* <div className="cross-container mobile"></div> */}
                                         <h2 className="bullet-heading">{el.question}</h2>
                                         <div className="cross-container"></div>
                                     </div>
+                                    {
+                                        typeof el.answer==="string"?
+
                                     <p id={`para${index}`}className="bullet-para" aria-hidden={"true"}>{el.answer}</p>
+                                        :
+                                        <ul id={`para${index}`} className="bullet-para" aria-hidden={"true"}>
+                                            {
+
+                                            el.answer.map((elAns:string,idx:number)=><li key={idx}style={{"listStyle":"outside"}}>{elAns}</li>
+                                            )
+                                            }
+                                        </ul>
+                                    }
                                 </li>
                         )
                     })

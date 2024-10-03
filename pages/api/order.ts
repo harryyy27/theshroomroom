@@ -6,6 +6,7 @@ import {errorHandler,receiveUpdatesHandler} from '../../utils/emailHandlers'
 import {getServerSession} from 'next-auth'
 import {authOptions} from './auth/[...nextauth]'
 import mongoose from 'mongoose'
+import saleDates from '../../utils/saleDates/saleDates';
 
 
 async function handler(req:NextApiRequest,res:NextApiResponse){
@@ -77,12 +78,18 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 }
             }
                 var checkOrderExists = await Order().findOne({paymentIntentId:body.paymentIntentId})
-                
+                const todayDate=Date.now()
                 if(checkOrderExists){
                     var order = checkOrderExists
                 }
                 else{
                     var order = new (Order())(body);
+                }
+                if(+new Date(saleDates.countdownDate)-todayDate<0 && +new Date(saleDates.saleEndDate)-todayDate>0){
+                    order.sale=true
+                }
+                else{ 
+                    order.sale=false
                 }
                     
                 var date = Date.now();

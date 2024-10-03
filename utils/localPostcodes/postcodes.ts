@@ -13,7 +13,8 @@ const southEast:string[]= [
     "SE6",
 ]
 const exemption:string[]=[
-    "DA14FF"
+    "DA14FF",
+    "SW183HU"
 ]
 export default {
     Bromley:bromley,

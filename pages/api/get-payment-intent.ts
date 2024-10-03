@@ -159,24 +159,31 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 
                 let total;
                 if(sesh&&sesh.user&&sesh.user.cart){
-                    total = sesh.user.cart.items.reduce((a:number,b:Product)=>{
+                    total = Number(sesh.user.cart.items.reduce((a:number,b:Product)=>{
                         return a+b.price*b.quantity
-                    },0).toFixed(2)
+                    },0).toFixed(2))
         
                 }
                 else if(Cart) {
-                    total = JSON.parse(Cart).items.reduce((a:number,b:Product)=>{
+                    total = Number(JSON.parse(Cart).items.reduce((a:number,b:Product)=>{
                         return a+b.price*b.quantity
-                    },0).toFixed(2)
+                    },0).toFixed(2))
+                }
+                else {
+                    return res.status(200).json({
+                        props:{
+                            refresh:true
+                        },
+                        });
                 }
                 var discountFailed=false;
                 const todayDate=Date.now()
                 if(discount?.codesAvailable>=1){
-                    total=discountLogic[codeName as string].newTotal(total).toFixed(2)
+                    total=Number(discountLogic[codeName as string].newTotal(total).toFixed(2))
                 }
                 else if(+new Date(saleDates.countdownDate)-todayDate<0 && +new Date(saleDates.saleEndDate)-todayDate>0){
                     total*=0.9
-                    total=total.toFixed(2)
+                    total=Number(total.toFixed(2))
                     discountFailed=true
                 }
                 else{
