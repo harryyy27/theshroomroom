@@ -11,8 +11,6 @@ colour scheme - turkey tail */
 .question {
   background-color:white;
   padding:0.5rem;
-  margin:0.5rem;
-  margin:1rem auto ;
 
 }
 .sale-container {
@@ -565,9 +563,6 @@ colour scheme - turkey tail */
   position:relative;
   display:flex;
 }
-.bullet-wrapper:hover {
-  cursor: pointer;
-}
 .bullet-para {
   display:inline-block;
   width:calc(100% - 1rem);
@@ -575,6 +570,9 @@ colour scheme - turkey tail */
   font-style:italic;
   color:var(--pri);
   display:none;
+}
+.bullet-para-list {
+  display:block;
 }
 .bullet-heading {
   display:inline-block;
