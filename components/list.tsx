@@ -31,19 +31,18 @@ export default function List(props:any){
                 {
                     props.config.map((el:any,index:number)=>{
                         return(
-                                <li key={index} className={"question"} >
+                                <li key={index} className={"question question-list"} >
                                     <div className="bullet-wrapper" onClick={(e)=>toggleQuestion(index)} onKeyDown={(e)=>keyHandler(e.target as HTMLElement,e.key)} aria-expanded={"false"} aria-controls={`para${index}`} role="button" tabIndex={0}>
 
                                         {/* <div className="cross-container mobile"></div> */}
                                         <h2 className="bullet-heading">{el.question}</h2>
-                                        <div className="cross-container"></div>
                                     </div>
                                     {
                                         typeof el.answer==="string"?
 
-                                    <p id={`para${index}`}className="bullet-para" aria-hidden={"true"}>{el.answer}</p>
+                                    <p id={`para${index}`}className="bullet-para bullet-para-list" aria-hidden={"true"}>{el.answer}</p>
                                         :
-                                        <ul id={`para${index}`} className="bullet-para" aria-hidden={"true"}>
+                                        <ul id={`para${index}`} className="bullet-para bullet-para-list" aria-hidden={"true"}>
                                             {
 
                                             el.answer.map((elAns:string,idx:number)=><li key={idx}style={{"listStyle":"outside"}}>{elAns}</li>
