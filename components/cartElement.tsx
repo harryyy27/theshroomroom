@@ -67,7 +67,7 @@ export default function CartElement({_id,idx,name,quantity,price,fresh,size,stri
             </select>
             </div>
             
-            <p className="product-price col-3">{!isSale?<span>£{quantity*price}</span>:<><span style={{textDecoration:"line-through"}}>£{Number(quantity*price).toFixed(2)}</span><span style={{marginLeft:"0.25rem",color:"green",fontWeight:"700"}}>£{Number(quantity*price*0.9).toFixed(2)}</span></>}</p>
+            <p className="product-price col-3">{!isSale?<span>£{(quantity*price).toFixed(2)}</span>:<><span style={{textDecoration:"line-through"}}>£{Number(quantity*price).toFixed(2)}</span><span style={{marginLeft:"0.25rem",color:"green",fontWeight:"700"}}>£{Number(quantity*price*0.9).toFixed(2)}</span></>}</p>
 
             <div className="col-4">
             <button className="cart-btn"onClick={async(e)=>{

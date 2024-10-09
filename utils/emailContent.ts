@@ -103,17 +103,13 @@ export function orderString(order:any){
                                     <a style="color:#943201;"href="${process.env.WEBSITE_NAME}/products/${name.replace(/[\s]/gi,'-')}">${fresh?"Fresh ":"Dry "}${name}${` ${size}`}</a>
                                         <!-- Variants -->
                                     </td>
-                                    <td style="text-align:center; padding:20px 10px; vertical-align:top;color:#343434;">${quantity}</td>
-                                    <td style="text-align:right; padding:20px 10px; vertical-align:top;color:#343434;">£${price*quantity}</td>
+                                    <td style="text-align:center; padding:20px 10px; vertical-align:top;color:#343434;">${Number(quantity)}</td>
+                                    <td style="text-align:right; padding:20px 10px; vertical-align:top;color:#343434;">£${(Number(price)*Number(quantity)).toFixed(2)}</td>
                                     </tr>
                                     `
                     })}
                     <!--  End of order items list -->
-                    <tr>
-                      <td colspan="2" style="padding:7px 10px 7px 20px;"><strong>Subtotal</strong></td>
-                      <td></td>
-                      <td style="padding:7px 10px 7px 20px; text-align:right;"><strong>£${order.products.items.reduce((acc:number,el:any)=>acc+el.price,0)}</strong></td>
-                    </tr>
+                   
                   </tbody>
                   <!-- end items loop -->
                 </table>
@@ -141,27 +137,27 @@ export function orderString(order:any){
                   <!-- start totals -->
                   <tbody>
                     <tr>
-                      <th style="width:320px;text-align:left; font-weight:normal; padding:15px 0;background-color:#fff;">Subtotal</th>
-                      <td style="width:320px;padding:15px 0; text-align:right;background-color:#fff;">£${order.products.items.reduce((acc:number,el:any)=>acc+el.price,0)}</td>
+                      <th style="width:320px;text-align:left; font-weight:normal; padding:15px 0;background-color:#fff;"><strong>Subtotal</strong></th>
+                      <td style="width:320px;padding:15px 0; text-align:right;background-color:#fff;">£${order.products.items.reduce((acc:number,el:any)=>acc+Number(el.quantity)*Number(el.price),0).toFixed(2)}</td>
                     </tr>
                     <tr>
-                      <th style="width:320px;text-align:left; font-weight:normal; padding:15px 0;background-color:#fff;">Delivery:</th>
-                      <td style="width:320px;padding:15px 0;text-align:right;background-color:#fff;">£${order.shippingCost}</td>
+                      <th style="width:320px;text-align:left; font-weight:normal; padding:15px 0;background-color:#fff;"><strong>Delivery</strong></th>
+                      <td style="width:320px;padding:15px 0;text-align:right;background-color:#fff;">£${Number(order.shippingCost).toFixed(2)}</td>
                     </tr>
                     ${
                       order.code?
                       `<tr>
-                      <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;">Total</th>
+                      <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;"><strong>Discount</strong></th>
                       <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${discountLogic[order.code].description}</td>
                     </tr>
                     
                     <tr>
-                      <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;">Total</th>
-                      <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${order.shippingCost+order.discountTotal}</td>
+                      <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;"><strong>Total</strong></th>
+                      <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${(Number(order.shippingCost)+Number(order.discountTotal)).toFixed(2)}</td>
                     </tr>`:
                     `<tr>
-                      <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;">Total</th>
-                      <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${order.shippingCost+order.products.items.reduce((acc:number,el:any)=>acc+el.price,0)}</td>
+                      <th style="width:320px; color:#343434; text-align:left; font-weight:bold;  padding:15px 0;"><strong>Total</strong></th>
+                      <td style="width:320px; color:#343434; padding:15px 0; text-align:right; font-weight:bold;">£${(Number(order.shippingCost)+order.products.items.reduce((acc:number,el:any)=>acc+Number(el.quantity)*Number(el.price),0)).toFixed(2)}</td>
                     </tr>`
 
                     }
@@ -296,16 +292,12 @@ export function subscriptionString(subscription:any,renewal:boolean){
                                         <!-- Variants -->
                                     </td>
                                     <td style="text-align:center; padding:20px 10px; vertical-align:top;">${quantity}</td>
-                                    <td style="text-align:right; padding:20px 10px; vertical-align:top;">£${price*quantity}</td>
+                                    <td style="text-align:right; padding:20px 10px; vertical-align:top;">£${(price*quantity).toFixed(2)}</td>
                                     </tr>
                                     `
                     })}
                     <!--  End of order items list -->
-                    <tr>
-                      <td colspan="2" style="padding:7px 10px 7px 20px;"><strong>Subtotal</strong></td>
-                      <td></td>
-                      <td style="padding:7px 10px 7px 20px; text-align:right;"><strong>£${subscription.products.items.reduce((acc:number,el:any)=>acc+el.price,0)}</strong></td>
-                    </tr>
+                   
                   </tbody>
                   <!-- end items loop -->
                 </table>
@@ -333,16 +325,16 @@ export function subscriptionString(subscription:any,renewal:boolean){
                   <!-- start totals -->
                   <tbody>
                     <tr>
-                      <th style="width:320px;text-align:left; font-weight:normal; padding:15px 0;background-color:#fff;">Subtotal</th>
-                      <td style="width:320px;padding:15px 0; text-align:right;background-color:#fff;">£${subscription.products.items.reduce((acc:number,el:any)=>acc+el.price,0)}</td>
+                      <th style="width:320px;text-align:left; font-weight:normal; padding:15px 0;background-color:#fff;"><strong>Subtotal</strong></th>
+                      <td style="width:320px;padding:15px 0; text-align:right;background-color:#fff;">£${subscription.products.items.reduce((acc:number,el:any)=>acc+Number(el.quantity)*Number(el.price),0).toFixed(2)}</td>
                     </tr>
                     <tr>
-                      <th style="width:320px;text-align:left; font-weight:normal; padding:15px 0;background-color:#fff;">Delivery:</th>
-                      <td style="width:320px;padding:15px 0;text-align:right;background-color:#fff;">£${subscription.shippingCost}</td>
+                      <th style="width:320px;text-align:left; font-weight:normal; padding:15px 0;background-color:#fff;"><strong>Delivery</strong></th>
+                      <td style="width:320px;padding:15px 0;text-align:right;background-color:#fff;">£${subscription.shippingCost.toFixed(2)}</td>
                     </tr>
                     <tr>
-                      <th style="width:320px; text-align:left; font-weight:bold;  padding:15px 0;">Total</th>
-                      <td style="width:320px; padding:15px 0; text-align:right; font-weight:bold;">£${subscription.shippingCost+subscription.products.items.reduce((acc:number,el:any)=>acc+el.price,0)}</td>
+                      <th style="width:320px; text-align:left; font-weight:bold;  padding:15px 0;"><strong>Total</strong></th>
+                      <td style="width:320px; padding:15px 0; text-align:right; font-weight:bold;">£${(subscription.shippingCost+subscription.products.items.reduce((acc:number,el:any)=>acc+Number(el.quantity)*Number(el.price),0)).toFixed(2)}</td>
                     </tr>
                   </tbody>
                   <!-- end totals -->
