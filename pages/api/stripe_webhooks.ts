@@ -145,7 +145,9 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                     
                     }
                     else{
-                        await User().findOneAndUpdate({currentSubscription:JSON.parse(payload).data.object})
+                        await User().findOneAndUpdate({currentSubscription:JSON.parse(payload).data.object.id})
+                        const newDate=new Date(JSON.parse(payload).data.object.current_period_end*1000)
+                        await Subscription().findOneAndUpdate({subscriptionId:JSON.parse(payload).data.object.id},{dateRenewal:newDate})
                         subscription_renewal=true;
                         success=true
                         

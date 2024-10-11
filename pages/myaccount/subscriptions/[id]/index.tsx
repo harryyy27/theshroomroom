@@ -434,15 +434,15 @@ export default function Subscription({setComponentLoading}:any){
                             {el.products.items.map((el_product:any,idxPr:number)=>{
                                 return(
                                     <li key={idxPr}>
-                                        <p><span>{el_product.name}</span><span> - £{el_product.price}</span></p>
+                                        <p><span>{el_product.name}</span><span> - £{el_product.price.toFixed(2)} {el_product.quantity>1?`x${el_product.quantity}`:''}</span></p>
                                     </li>
         
                                 )
                             })}
                         </ul>
-                        <p>Subtotal: {el.subtotal}</p>
-                        <p>Shipping cost: {el.shippingCost}</p>
-                        <p>Total: {el.total}</p>
+                        <p>Subtotal: £{el.subtotal.toFixed(2)}</p>
+                        <p>Shipping cost: £{el.shippingCost.toFixed(2)}</p>
+                        <p>Total: £{el.total.toFixed(2)}</p>
                         <div>
                         <h2>Delivery Address</h2>
                             <p>{dFirstName}</p>
