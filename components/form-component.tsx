@@ -37,7 +37,6 @@ export default function FormComponent(props:any){
                         }}
                         onChange={async(e)=>{
                             props.setVariable(e.target.value)
-                            // const myMethod= (e.target.matches(':-internal-autofill-selected')||e.target.matches(':-webkit-autofill'))
                             if(e.target!==document.activeElement){
                                 e.target.focus()
                             }
