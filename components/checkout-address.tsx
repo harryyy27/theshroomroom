@@ -259,25 +259,26 @@ export default function CheckoutForm(props: any) {
                 </div>
                 :null
             }
-            <form className={styles["form"]}  autoComplete="complete">
+            <form className={styles["form"]}  >
+
                 <input autoComplete="new-password" name="hidden" type="text" style={{ "display": "none" }} />
                 {
                     context.cartLoaded && props.user === null &&
                     <>
                         <h2>Guest Checkout</h2>
-                        <FormComponent user={props.user} labelName={"Email Address"} variable={props.guestEmailAddress} variableName={Object.keys(props.guestEmailAddress)[0]} setVariable={props.setGuestEmailAddress} variableVal={props.guestEmailAddressVal} setVariableVal={props.setGuestEmailAddressVal} inputType={"email"} required={!props.user} alternative={'sign in'} />
+                        <FormComponent autoComplete={"email"}user={props.user} labelName={"Email Address"} variable={props.guestEmailAddress} variableName={Object.keys(props.guestEmailAddress)[0]} setVariable={props.setGuestEmailAddress} variableVal={props.guestEmailAddressVal} setVariableVal={props.setGuestEmailAddressVal} inputType={"email"} required={!props.user} alternative={'sign in'} />
 
                     </>
 
                 }
                 <h2>Delivery Address</h2>
-                <FormComponent user={props.user} labelName={"First Name"} variable={props.dFirstName} variableName={Object.keys(props.dFirstName)[0]} setVariable={props.setDFirstName} variableVal={props.dFirstNameVal} setVariableVal={props.setDFirstNameVal} inputType={"text"} required={true} />
-                <FormComponent user={props.user} labelName={"Surname"} variable={props.dSurname} variableName={Object.keys(props.dSurname)[0]} setVariable={props.setDSurname} variableVal={props.dSurnameVal} setVariableVal={props.setDSurnameVal} inputType={"text"} required={true} />
-                <FormComponent user={props.user} labelName={"Street name and number"} variable={props.dFirstLine} variableName={Object.keys(props.dFirstLine)[0]} setVariable={props.setDFirstLine} variableVal={props.dFirstLineVal} setVariableVal={props.setDFirstLineVal} inputType={"text"} required={true} />
+                <FormComponent autoComplete={"shipping given-name"}user={props.user} labelName={"First Name"} variable={props.dFirstName} variableName={Object.keys(props.dFirstName)[0]} setVariable={props.setDFirstName} variableVal={props.dFirstNameVal} setVariableVal={props.setDFirstNameVal} inputType={"text"} required={true} />
+                <FormComponent autoComplete={"shipping family-name"}user={props.user} labelName={"Surname"} variable={props.dSurname} variableName={Object.keys(props.dSurname)[0]} setVariable={props.setDSurname} variableVal={props.dSurnameVal} setVariableVal={props.setDSurnameVal} inputType={"text"} required={true} />
+                <FormComponent autoComplete={"shipping address-line1"}user={props.user} labelName={"Street name and number"} variable={props.dFirstLine} variableName={Object.keys(props.dFirstLine)[0]} setVariable={props.setDFirstLine} variableVal={props.dFirstLineVal} setVariableVal={props.setDFirstLineVal} inputType={"text"} required={true} />
 
-                <FormComponent user={props.user} labelName={"2nd Line of address"} variable={props.dSecondLine} variableName={Object.keys(props.dSecondLine)[0]} setVariable={props.setDSecondLine} inputType={"text"} required={false} />
-                <FormComponent user={props.user} labelName={"City"} variable={props.dCity} setVariable={props.setDCity} variableName={Object.keys(props.dCity)[0]} variableVal={props.dCityVal} setVariableVal={props.setDCityVal} inputType={"text"} required={true} />
-                <FormComponent user={props.user} labelName={"Postcode"} variable={props.dPostcode} variableName={Object.keys(props.dPostcode)[0]} setVariable={props.setDPostcode} variableVal={props.dPostcodeVal} setVariableVal={props.setDPostcodeVal} inputType={"text"} required={true} callback={localPostcodeValidate} params={validPostcodes} />
+                <FormComponent autoComplete={"shipping address-line2"}user={props.user} labelName={"2nd Line of address"} variable={props.dSecondLine} variableName={Object.keys(props.dSecondLine)[0]} setVariable={props.setDSecondLine} inputType={"text"} required={false} />
+                <FormComponent autoComplete={"shipping address-level2"}user={props.user} labelName={"City"} variable={props.dCity} setVariable={props.setDCity} variableName={Object.keys(props.dCity)[0]} variableVal={props.dCityVal} setVariableVal={props.setDCityVal} inputType={"text"} required={true} />
+                <FormComponent autoComplete={"shipping postal-code"}user={props.user} labelName={"Postcode"} variable={props.dPostcode} variableName={Object.keys(props.dPostcode)[0]} setVariable={props.setDPostcode} variableVal={props.dPostcodeVal} setVariableVal={props.setDPostcodeVal} inputType={"text"} required={true} callback={localPostcodeValidate} params={validPostcodes} />
                 {
                     updateErr?
                     <p style={{"color":"red"}}>Update failed, please refresh the page and try again</p>
@@ -285,7 +286,7 @@ export default function CheckoutForm(props: any) {
                     null
                 }
                 <Link className="link" href="/delivery">See delivery postcodes available for fresh mushrooms here</Link>
-                <FormComponent user={props.user} labelName={"Phone Number"} variable={props.dPhoneNumber} variableName={Object.keys(props.dPhoneNumber)[0]} setVariable={props.setDPhoneNumber} variableVal={props.dPhoneNumberVal} setVariableVal={props.setDPhoneNumberVal} inputType={"text"} required={true} />
+                <FormComponent autoComplete={"shipping tel"}user={props.user} labelName={"Phone Number"} variable={props.dPhoneNumber} variableName={Object.keys(props.dPhoneNumber)[0]} setVariable={props.setDPhoneNumber} variableVal={props.dPhoneNumberVal} setVariableVal={props.setDPhoneNumberVal} inputType={"text"} required={true} />
 
                 <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>
                     <label htmlFor="billingDelivery">Billing same as delivery:</label>
@@ -295,14 +296,14 @@ export default function CheckoutForm(props: any) {
                     !props.billingDelivery?
                     <>
                         <h2>Billing Address</h2>
-                        <FormComponent user={props.user} labelName={"First Name"} variable={props.bFirstName} variableName={Object.keys( props.bFirstName )[0]} setVariable={props.setBFirstName} variableVal={props.bFirstNameVal} setVariableVal={props.setBFirstNameVal} inputType={"text"} required={true} />
-                        <FormComponent user={props.user} labelName={"Surname"} variable={props.bSurname} variableName={Object.keys( props.bSurname)[0]} setVariable={props.setBSurname} variableVal={props.bSurnameVal} setVariableVal={props.setBSurnameVal} inputType={"text"} required={true} />
-                        <FormComponent user={props.user} labelName={"Street name and number"} variable={props.bFirstLine} variableName={Object.keys(props.bFirstLine)[0]} setVariable={props.setBFirstLine} variableVal={props.bFirstLineVal} setVariableVal={props.setBFirstLineVal} inputType={"text"} required={true} />
+                        <FormComponent autoComplete={"billing given-name"}user={props.user} labelName={"First Name"} variable={props.bFirstName} variableName={Object.keys( props.bFirstName )[0]} setVariable={props.setBFirstName} variableVal={props.bFirstNameVal} setVariableVal={props.setBFirstNameVal} inputType={"text"} required={true} />
+                        <FormComponent autoComplete={"billing family-name"}user={props.user} labelName={"Surname"} variable={props.bSurname} variableName={Object.keys( props.bSurname)[0]} setVariable={props.setBSurname} variableVal={props.bSurnameVal} setVariableVal={props.setBSurnameVal} inputType={"text"} required={true} />
+                        <FormComponent autoComplete={"billing address-line1"}user={props.user} labelName={"Street name and number"} variable={props.bFirstLine} variableName={Object.keys(props.bFirstLine)[0]} setVariable={props.setBFirstLine} variableVal={props.bFirstLineVal} setVariableVal={props.setBFirstLineVal} inputType={"text"} required={true} />
 
-                        <FormComponent user={props.user} labelName={"2nd Line of address"} variable={props.bSecondLine} variableName={Object.keys( props.bSecondLine)[0]} setVariable={props.setBSecondLine} inputType={"text"} required={false} />
-                        <FormComponent user={props.user} labelName={"City"} variable={props.bCity} variableName={Object.keys( props.bCity)[0]} setVariable={props.setBCity} variableVal={props.bCityVal} setVariableVal={props.setBCityVal} inputType={"text"} required={true} />
-                        <FormComponent user={props.user} labelName={"Postcode"} variable={props.bPostcode} variableName={Object.keys(props.bPostcode)[0]} setVariable={props.setBPostcode} variableVal={props.bPostcodeVal} setVariableVal={props.setBPostcodeVal} inputType={"text"} required={true} />
-                        <FormComponent user={props.user} labelName={"Phone Number"} variable={props.bPhoneNumber} variableName={Object.keys(props.bPhoneNumber)[0]} setVariable={props.setBPhoneNumber} variableVal={props.bPhoneNumberVal} setVariableVal={props.setBPhoneNumberVal} inputType={"tel"} required={true} />
+                        <FormComponent autoComplete={"billing address-line2"}user={props.user} labelName={"2nd Line of address"} variable={props.bSecondLine} variableName={Object.keys( props.bSecondLine)[0]} setVariable={props.setBSecondLine} inputType={"text"} required={false} />
+                        <FormComponent autoComplete={"billing address-level2"}user={props.user} labelName={"City"} variable={props.bCity} variableName={Object.keys( props.bCity)[0]} setVariable={props.setBCity} variableVal={props.bCityVal} setVariableVal={props.setBCityVal} inputType={"text"} required={true} />
+                        <FormComponent autoComplete={"billing postal-code"}user={props.user} labelName={"Postcode"} variable={props.bPostcode} variableName={Object.keys(props.bPostcode)[0]} setVariable={props.setBPostcode} variableVal={props.bPostcodeVal} setVariableVal={props.setBPostcodeVal} inputType={"text"} required={true} />
+                        <FormComponent autoComplete={"billing tel"}user={props.user} labelName={"Phone Number"} variable={props.bPhoneNumber} variableName={Object.keys(props.bPhoneNumber)[0]} setVariable={props.setBPhoneNumber} variableVal={props.bPhoneNumberVal} setVariableVal={props.setBPhoneNumberVal} inputType={"tel"} required={true} />
 
                     </>:
                 null
