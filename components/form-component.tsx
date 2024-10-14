@@ -5,7 +5,7 @@ export default function FormComponent(props:any){
     return(
         <div className={styles["form-element-wrapper"]}>
                     <label className={styles["form-label"]} htmlFor={props.variableName+(props.page?props.page:'')}>{props.labelName}</label>
-                    <input className={styles["form-element"]} autoComplete="autocomplete" type={props.inputType} required={props.required} id={props.variableName+(props.page?props.page:'')} value={props.variable||'' } disabled={props.disabled}
+                    <input className={styles["form-element"]} autoComplete={props.autoComplete} type={props.inputType} required={props.required} id={props.variableName+(props.page?props.page:'')} value={props.variable||'' } disabled={props.disabled}
                         onBlur={async(e)=>{
                             if(props.required){
                                 if(props.callback){
@@ -37,8 +37,10 @@ export default function FormComponent(props:any){
                         }}
                         onChange={async(e)=>{
                             props.setVariable(e.target.value)
+                            if(e.target!==document.activeElement){
+                                e.target.focus()
+                            }
                             if(props.required&&typeof props.variableVal==="boolean"){
-
                                 if(props.callback){
                                     if(await props.callback(e.target.value,props.params,setCustomVal)){
                                         if(e.target.checkValidity()){
