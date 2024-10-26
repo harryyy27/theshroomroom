@@ -2,7 +2,7 @@ const config:{[key:string]:{question:string,answer:string | string[] }[]} = {
     lions_mane:[
    { 
     question:"Additional information",
-    answer:["Do not use lion's mane if you are pregnant", "If you are using blood thinning medication, please consult a health care professional before using lion's mane","If you are showing signs of an allergic reaction, seek medical help immediately.","Do not give lion's mane to children."] 
+    answer:["Do not use lion's mane if you are pregnant", "If you are using blood thinning medication, please consult a health care professional before using lion's mane","If you are showing signs of an allergic reaction, seek medical help immediately.","Please consult a qualified health care professional before giving lion's mane to children."] 
 },
 {
     question: "Delivery information",
