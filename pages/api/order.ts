@@ -48,7 +48,7 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 }
                 if(body.discountId){
                     let checkDiscount = await Discounts().findOne({_id:body.discountId})
-                    if(!checkDiscount.users.every((el:any)=>el.email!==body.email)){
+                    if(!checkDiscount.users.every((el:any)=>el.email!==body.email)&&checkDiscount.oneTime){
                         await dbSession?.abortTransaction()
                         const discountFailed = await Discounts().findOne({_id:body.discountId})
                         var error = new Error(`Discount ${discountFailed.codeName} already claimed`)

@@ -647,11 +647,37 @@ const DiscountSchema = new Schema({
     },
     codesAvailable:{
         type:Number,
-        required:true
+        required:false
+    },
+    startDate:{
+        type:Date,
+        required:false,
     },
     expiryDate:{
         type:Date,
-        required:true,
+        required:false,
+    },
+    codeExtensions:{
+        type:[{
+            codeExtension: String,
+            startDate:{
+                type:Date,
+                required:true
+            },
+            expiryDate:{
+                type:Date,
+                required:true,
+            },
+        }],
+        required:false
+    },
+    codesUsed:{
+        type:[String],
+        required:false
+    },
+    maxPrice:{
+        type:Number,
+        required:true
     },
     products:{
         productIds:[
@@ -664,7 +690,11 @@ const DiscountSchema = new Schema({
         email:String,
         postcode: String,
         firstLine: String,
-    }]
+    }],
+    oneTime:{
+        type:Boolean,
+        required:true
+    }
 })
 const Discounts = function(){
     return models.Discounts || model("Discounts",DiscountSchema)

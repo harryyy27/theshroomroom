@@ -147,10 +147,12 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 var codeName=''
                 var shippingCost;
                 var discount;
+                var postcode;
                 if(subscriptionCheckout===false&&body?.split('&code').length==2&&sesh&&sesh.user){
                     codeName = body?.split('&code=')[1]
                     shippingCost=Number(body?.split('shippingCost=')[1].split('&')[0])
                     discount = await Discounts().findOne({codeName:codeName})
+                    postcode=body?.split('&postcode=')[1].split('&')[0]
                 }
                 else{
 
@@ -179,7 +181,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 var discountFailed=false;
                 const todayDate=Date.now()
                 if(discount?.codesAvailable>=1){
-                    total=Number(discountLogic[codeName as string].newTotal(total).toFixed(2))
+                    total=Number(discountLogic[codeName as string].newTotal(total, {dPostcode:postcode}).toFixed(2))
                 }
                 else if(+new Date(saleDates.countdownDate)-todayDate<0 && +new Date(saleDates.saleEndDate)-todayDate>0){
                     total*=0.9
