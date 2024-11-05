@@ -148,6 +148,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 var shippingCost;
                 var discount;
                 var postcode;
+                console.log(body)
                 if(subscriptionCheckout===false&&body?.split('&code').length==2&&sesh&&sesh.user){
                     codeName = body?.split('&code=')[1]
                     shippingCost=Number(body?.split('shippingCost=')[1].split('&')[0])
@@ -156,17 +157,20 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 }
                 else{
 
-                    shippingCost = Number(body?.split('shippingCost=')[1])
+                    shippingCost = Number(body?.split('shippingCost=')[1].split('&')[0])
                 }
-                
+                console.log(shippingCost)
                 let total;
                 if(sesh&&sesh.user&&sesh.user.cart){
+                    console.log('user')
+                    console.log(sesh.user.cart)
                     total = Number(sesh.user.cart.items.reduce((a:number,b:Product)=>{
                         return a+b.price*b.quantity
                     },0).toFixed(2))
         
                 }
                 else if(Cart) {
+                    console.log('cart')
                     total = Number(JSON.parse(Cart).items.reduce((a:number,b:Product)=>{
                         return a+b.price*b.quantity
                     },0).toFixed(2))
@@ -191,6 +195,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
                 else{
                     discountFailed=true
                 }
+                console.log(total)
                 if(!sesh&&!Cart){
                     return res.status(200).json({
                         props:{

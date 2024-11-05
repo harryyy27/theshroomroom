@@ -79,6 +79,7 @@ export default function CheckoutForm(props: any) {
         //     props.setShippingTypeVal(true)
         // }
         else if(!standardShippingPostcodes.every((el:any)=>!props.dPostcode.toLowerCase().trim().split(' ').join('').startsWith(el.toLowerCase()))){
+            console.log('oiii')
             props.setShippingCost(5)
             props.setShippingCostVal(true)
             props.setShippingType("standard")
@@ -118,7 +119,7 @@ export default function CheckoutForm(props: any) {
 
     const handleChangeShipping=(e:any)=>{
         try{
-            props.setShippingCost(e.target.value)
+            props.setShippingCost(Number(e.target.value))
             props.setShippingCostVal(true)
             props.setShippingType(e.target.id)
             props.setShippingTypeVal(true)
