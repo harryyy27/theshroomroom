@@ -65,15 +65,21 @@ export default function CheckoutForm(props: any) {
             setIsSale(true)
         }
         if(props.local){
-            console.log('set')
             props.setShippingCost(0)
             props.setShippingCostVal(true)
             props.setShippingType("free")
             props.setShippingTypeVal(true)
 
         }
-        else if(context.state.cart.items.every((el:any)=>!el.fresh)||!standardShippingPostcodes.every((el:any)=>!props.dPostcode.toLowerCase().trim().split(' ').join('').startsWith(el.toLowerCase()))){
-            console.log('not set')
+
+        // else if(context.state.cart.items.every((el:any)=>!el.fresh)||!standardShippingPostcodes.every((el:any)=>!props.dPostcode.toLowerCase().trim().split(' ').join('').startsWith(el.toLowerCase()))){
+        //     props.setShippingCost(5)
+        //     props.setShippingCostVal(true)
+        //     props.setShippingType("standard")
+        //     props.setShippingTypeVal(true)
+        // }
+        else if(!standardShippingPostcodes.every((el:any)=>!props.dPostcode.toLowerCase().trim().split(' ').join('').startsWith(el.toLowerCase()))){
+            console.log('oiii')
             props.setShippingCost(5)
             props.setShippingCostVal(true)
             props.setShippingType("standard")
@@ -113,7 +119,7 @@ export default function CheckoutForm(props: any) {
 
     const handleChangeShipping=(e:any)=>{
         try{
-            props.setShippingCost(e.target.value)
+            props.setShippingCost(Number(e.target.value))
             props.setShippingCostVal(true)
             props.setShippingType(e.target.id)
             props.setShippingTypeVal(true)
@@ -152,13 +158,14 @@ export default function CheckoutForm(props: any) {
     }
     async function handleCheckCode(e:FormEvent){
         e.preventDefault()
-        const res = await fetch(`/api/discount-code?codeName=${code}&postcode=${props.dPostcode}&email=${props.user.email}`)
+        const res = await fetch(`/api/discount-code?codeName=${code}&postcode=${props.dPostcode}&email=${props.user.email}&subtotal=${context.state.subTotal.toFixed(2).toString()}`)
         const resJson = await res.json()
         if(resJson.success){
             if(discountLogic.hasOwnProperty(code)){
                 const indexCode = code
                 const discountFunction = discountLogic[indexCode].newTotal
-                const newDiscountTotal = discountFunction(context.state.subTotal)
+                console.log(context.state.subTotal)
+                const newDiscountTotal = discountFunction(context.state.subTotal,{dPostcode:props.dPostcode})
                 props.setCode(code)
                 props.setDiscountId(resJson.discountId)
                 setDiscountTotal(newDiscountTotal)
@@ -194,14 +201,15 @@ export default function CheckoutForm(props: any) {
                         :null
                 }
                 <div>
-                    <input type="radio" id="standard" name="shipping" value={5} checked={props.shippingType==="standard"}disabled={!context.state.cart.items.every((el:any)=>!el.fresh)} onChange={(e)=>handleChangeShipping(e)} />
+                {/* disabled={!context.state.cart.items.every((el:any)=>!el.fresh)} */}
+                    <input type="radio" id="standard" name="shipping" value={5} checked={props.shippingType==="standard"} onChange={(e)=>handleChangeShipping(e)} />
                     <label htmlFor="standard">Standard</label>
                 </div>
-                {
+                {/* {
                     !context.state.cart.items.every((el:any)=>!el.fresh)?
                         <p>We currently only deliver fresh mushrooms locally</p>
                         :null
-                }
+                } */}
                 </fieldset>
                 {
                     props.user&&!props.subscription?

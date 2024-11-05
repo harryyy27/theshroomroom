@@ -31,6 +31,9 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 const email=req.url.split('email=')[1]
                 const discount = await Discounts().findOne({_id:id})
                 const {codesAvailable,expiryDate,startDate}=discount
+                if(!discount){
+                    return res.status(400).json({success:false, error:"Code not found"})
+                }
                 if(codesAvailable<=0){
                     return res.status(202).json({success:false,error:"No codes available"})
                 }
@@ -47,7 +50,8 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
             else if(req.url?.includes('?codeName')){
                 const codeName=req.url.split('?codeName=')[1].split('&postcode=')[0]
                 const postcode=req.url.split('postcode=')[1].split('&email=')[0]
-                const email=req.url.split('email=')[1].replace('%40','@')
+                const email=req.url.split('email=')[1].replace('%40','@').split('&subtotal=')[0]
+                const price=Number(req.url.split('subtotal=')[1])
                 const discount = await Discounts().findOne({codeName:codeName})
                 const discounts = await Discounts().find({})
                 if(!discount){
@@ -55,22 +59,47 @@ async function handler(req:NextApiRequest,res:NextApiResponse){
                 }
                 if(!discount.users.every((el:any)=>{
                     return el.email.trim()!==email.trim()
-                })){
+                })&&discount.oneTime){
                     return res.status(202).json({success:false,error:"Code already claimed."})
                 }
-                const {codesAvailable,expiryDate,startDate,_id}=discount
-                if(codesAvailable<=0){
-                    return res.status(202).json({success:false,error:"No codes available"})
-                }
-                else if(+new Date(startDate as Date)-Date.now()>0){
-                    return res.status(202).json({success:false,error:"This code has not yet started"})
-                }
-                else if(+new Date(expiryDate as Date)-Date.now()<0){
-                    return res.status(202).json({success:false,error:"This code is no longer available"})
+                if(codeName.slice(0,3)!=='SU_'){
+                    const {codesAvailable,expiryDate,startDate,maxPrice,_id}=discount
+                
+                    if(codesAvailable<=0){
+                        return res.status(202).json({success:false,error:"No codes available"})
+                    }
+                    else if(Number(price)>maxPrice){
+                        return res.status(202).json({success:false,error:`Please place an order worth less than £${maxPrice}`})
+                    }
+                    else if(+new Date(startDate as Date)-Date.now()>0){
+                        return res.status(202).json({success:false,error:"This code has not yet started"})
+                    }
+                    else if(+new Date(expiryDate as Date)-Date.now()<0){
+                        return res.status(202).json({success:false,error:"This code is no longer available"})
+                    }
+                    else {
+                        return res.status(200).json({success:true,discountId:_id})
+                    }
                 }
                 else {
-                    return res.status(200).json({success:true,discountId:_id})
+
+                    const {codeExtensions,codesUsed,maxPrice,_id}=discount
+                    if(!(codeExtensions.filter((el:any)=>el.codeExtension!==codeName.split('-')[1]).length===1)){
+                        return res.status(202).json({success:false,error:"This code extension does not exist"})
+                    }
+                    else if(codesUsed.includes(codeName.split('-')[1])){
+                        return res.status(202).json({success:false,error:"This code has already been used."})
+                    }
+                    else if(+new Date(codeExtensions.expiryDate as Date)-Date.now()<0){
+                        return res.status(202).json({success:false,error:"This code has expired."})
+
+                    }
+                    else {
+                        return res.status(200).json({success:true,discountId:_id})
+                    }
+
                 }
+                
             }
             else{
                 const discounts = await Discounts().find({})

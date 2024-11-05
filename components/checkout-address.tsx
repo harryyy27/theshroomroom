@@ -71,7 +71,7 @@ export default function CheckoutForm(props: any) {
         const keys = Object.keys(validPostcodesArr)
         let validPostcode=false
         let postcodeArea=''
-        const containsFresh = !context.state.cart.items.every((el:any)=>el.fresh===false)
+        // const containsFresh = !context.state.cart.items.every((el:any)=>el.fresh===false)
         keys.forEach((key:string)=>{
             if(!validPostcodesArr[key as string].every((el:string)=>{
                 return !formPostcode.toLowerCase().trim().split(' ').join('').startsWith(el.toLowerCase())}
@@ -80,12 +80,15 @@ export default function CheckoutForm(props: any) {
                 postcodeArea=key
             }
         })
-        if(containsFresh===false&&formPostcode.length>0){
+        if(formPostcode.length>0){
             validPostcode=true
         }
-        else if(containsFresh===true&&postcodeArea===''){
-            setCustomVal('We do not currently deliver fresh mushrooms to this postcode, use the link below to see postcodes we currently deliver to')
-        }
+        // if(containsFresh===false&&formPostcode.length>0){
+        //     validPostcode=true
+        // }
+        // else if(containsFresh===true&&postcodeArea===''){
+        //     setCustomVal('We do not currently deliver fresh mushrooms to this postcode, use the link below to see postcodes we currently deliver to')
+        // }
         if(validPostcode&&postcodeArea!==''){
                     props.setLocal(true)
                     return true
@@ -285,7 +288,7 @@ export default function CheckoutForm(props: any) {
                     :
                     null
                 }
-                <Link className="link" href="/delivery">See delivery postcodes available for fresh mushrooms here</Link>
+                {/* <Link className="link" href="/delivery">See delivery postcodes available for fresh mushrooms here</Link> */}
                 <FormComponent autoComplete={"shipping tel"}user={props.user} labelName={"Phone Number"} variable={props.dPhoneNumber} variableName={Object.keys(props.dPhoneNumber)[0]} setVariable={props.setDPhoneNumber} variableVal={props.dPhoneNumberVal} setVariableVal={props.setDPhoneNumberVal} inputType={"text"} required={true} />
 
                 <div className={styles["form-element-wrapper"]+" add-vertical-margin"}>

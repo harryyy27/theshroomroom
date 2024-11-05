@@ -117,7 +117,7 @@ export default function Checkout(props:any){
         const keys = Object.keys(validPostcodesArr)
         let validPostcode=false
         let postcodeArea=''
-        const containsFresh = !context.state.cart.items.every((el:any)=>el.fresh===false)
+        // const containsFresh = !context.state.cart.items.every((el:any)=>el.fresh===false)
         keys.forEach((key:string)=>{
             if(!validPostcodesArr[key as string].every((el:string)=>{
                 return !formPostcode.toLowerCase().trim().startsWith(el.toLowerCase())}
@@ -126,7 +126,10 @@ export default function Checkout(props:any){
                 postcodeArea=key
             }
         })
-        if(containsFresh===false&&formPostcode.length>0){
+        // if(containsFresh===false&&formPostcode.length>0){
+        //     validPostcode=true
+        // }
+        if(formPostcode.length>0){
             validPostcode=true
         }
         if(validPostcode&&postcodeArea!==''){
@@ -145,7 +148,7 @@ export default function Checkout(props:any){
     }
     async function handleGetPaymentIntent(){
         var subscription = window.location.href.split('checkout?').length>1;
-            const res= await fetch(`/api/get-payment-intent?subscription=${subscription?true:false}&shippingCost=${shippingCost}${code!==''?`&code=${code}`:''}`)
+            const res= await fetch(`/api/get-payment-intent?subscription=${subscription?true:false}&shippingCost=${shippingCost}&postcode=${dPostcode}${code!==''?`&code=${code}`:''}`)
             const resJson = await res.json()
         
         return resJson

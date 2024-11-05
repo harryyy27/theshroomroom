@@ -88,7 +88,7 @@ export default function CheckoutForm(props: any) {
 
         }
         else {
-            setDiscountTotal(discountLogic[props.code as string].newTotal(context.state.subTotal))
+            setDiscountTotal(discountLogic[props.code as string].newTotal(context.state.subTotal,{dPostcode:props.dPostcode}))
             setDiscountDescription(discountLogic[props.code as string].description)
         }
         
