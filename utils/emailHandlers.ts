@@ -80,7 +80,7 @@ function template(content:string,websiteName:string|undefined){
     </body>
     </html>`
 }
-function discountCodeHtmlTemplate(discountCode:string) {
+function discountCodeHtmlTemplate(discountCode:string,discountDescription:string) {
   return `
 
     <table cellspacing="0" cellpadding="0" style="border-collapse:collapse; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; margin-bottom:100px; text-align:left;width:700px;color:#343434;">
@@ -93,6 +93,7 @@ function discountCodeHtmlTemplate(discountCode:string) {
             <td style="color:#343434; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:14px; padding:15px 30px 0;width:640px;">
               <p>Thank you for joining our mailing list!</p>
               <p>Your discount code is ${discountCode}</p>
+              <p>${discountDescription}</p>
               <p>Happy spending!</p>
             </td>
           </tr>
@@ -177,22 +178,15 @@ export async function receiveUpdatesHandler(email:string,user:any,websiteName:st
       let content = ''
       const active_code = process.env.ACTIVE_DISCOUNT_CODE
       let description;
-      if(active_code!==undefined){
-        description = discountLogic[active_code].description
+        description = discountLogic["DC_TrustMega25"].description
 
-      }
-      if(+saleDates.saleEndDate-todayDate>0 && active_code!==undefined&&description!==undefined){
-              content =receiveUpdateString(user,email,discountCodeHtmlTemplate(active_code))
+      
+              content =receiveUpdateString(user,email,discountCodeHtmlTemplate("DC_TrustMega25",description))
 
             
             //25%
             //
             
-        }
-        else {
-          content =receiveUpdateString(user,email,'')
-
-        }
       
         await sendEmail({
             subject: "Thank you for subscribing to Mega Mushrooms!",
@@ -259,27 +253,11 @@ export async function subscriptionHandler(subscription:any,websiteName:string|un
 export async function registerHandler(email:string,user:any,websiteName:string|undefined,companyEmail:string|undefined,discount:boolean | null){
     try{
         let active_code=process.env.ACTIVE_DISCOUNT_CODE
-        let description;
-        if(active_code!==undefined){
-          description = discountLogic[active_code].description
+        let description= discountLogic["DC_TrustMega25"].description
   
-        }
-        let content;
-        if(discount!==null&&active_code!==undefined){
-          if(discount===true){
-            content= registerString(user,email,discountCodeHtmlTemplate(active_code))
-          }
-          else{
-            const invitationString = 'for ' + description;
-            content= registerString(user,email,discountInvitationHtmlTemplate(invitationString,websiteName as string))
-
-          }
+        
+        let content= registerString(user,email,discountCodeHtmlTemplate("DC_TrustMega25",description))
           
-        }
-        else{
-          content = registerString(user,email,'')
-
-        }
         await sendEmail({
             subject: `Welcome to Mega Mushrooms`,
             html:template(content,websiteName),
