@@ -43,19 +43,7 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse) {
             await user.save()
             await ReceiveUpdates().findOneAndDelete({email:body.username})
             const nowDate = Date.now()
-            if((+saleDates.countdownDate-nowDate<0)&&+saleDates.saleEndDate-nowDate>0){
-                if(body.updates){
-                    await registerHandler(body.username,user,process.env.WEBSITE_NAME,companyEmail,true)
-                }
-                else {
-
-                    await registerHandler(body.username,user,process.env.WEBSITE_NAME,companyEmail,false)
-                }
-                
-            }
-            else {
-                await registerHandler(body.username,user,process.env.WEBSITE_NAME,companyEmail,null)
-            }
+            await registerHandler(body.username,user,process.env.WEBSITE_NAME,companyEmail,true)
             
             return res.status(200).json({message: 'Registered successfully'})
 
