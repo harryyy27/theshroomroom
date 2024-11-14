@@ -143,8 +143,8 @@ export default function Header(){
                     <li className={router.pathname.includes("wholesale")?styles["nav-element"]+" "+styles["active-link-pri"]:styles["nav-element"]}><Link className={styles["nav-link"]} href="/wholesale" onClick={()=>menuOpen()}><span>Wholesale</span></Link></li>
                     <li className={router.pathname.includes("about")?styles["nav-element"]+" "+styles["active-link-pri"]:styles["nav-element"]}><Link className={styles["nav-link"]} href="/about"onClick={()=>menuOpen()}><span>About us</span></Link></li>
                     <li className={router.pathname.includes("what-we-grow")?styles["nav-element"]+" "+styles["active-link-pri"]:styles["nav-element"]}><Link className={styles["nav-link"]} href="/what-we-grow"onClick={()=>menuOpen()}><span>What we grow</span></Link></li>
+                    <li className={router.pathname.includes("blog")?styles["nav-element"]+" "+styles["active-link-pri"]:styles["nav-element"]}><Link className={styles["nav-link"]} href="/blog"onClick={()=>menuOpen()}><span>Blog</span></Link></li>
                     <li className={router.pathname.includes("contact-us")?styles["nav-element"]+" "+styles["active-link-pri"]:styles["nav-element"]}><Link className={styles["nav-link"]} href="/contact-us"onClick={()=>menuOpen()}><span>Contact us</span></Link></li>
-
                     {/* <li className={styles["nav-element"]}>
                         <span className={styles["nav-heading"]} onClick={(e)=>{
                             const target = e.target as Element;
